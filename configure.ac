@@ -41,12 +41,6 @@ AC_HEADER_STDC
 AC_CHECK_HEADERS([xdrfile.h],,AC_MSG_ERROR([No header files found for XDRFILE! You must provide a path to the include files or the root installation directory with --with-xdr-dir=root]))
 
 
-# Check whether to use user defined literals feature of c++ of std=c++11. This for icpc version 16 and lower
-AC_ARG_ENABLE(intel,[AS_HELP_STRING([--enable-intel],[compile trjSaxs without user-define literals])],enable_intel=yes,enable_intel=no)
-if test x"$enable_intel" = x"yes"; then
-   AC_DEFINE([__INTEL],1,[Enable compilation withou user-define literals in Units.hh])
-fi
-
 # Check whether the user wants to use a particular MPI installation
 
 AC_ARG_ENABLE(mpi, [AS_HELP_STRING([--enable-mpi],[compile trjSaxs with MPI support])], enable_mpi=$enableval, enable_mpi=no)

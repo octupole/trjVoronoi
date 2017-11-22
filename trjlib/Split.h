@@ -12,12 +12,10 @@
 #include <string>
 #include <vector>
 #include <regex>
+#include <sstream>
 
 using std::string;
 using std::vector;
-#ifdef __INTEL
-vector<std::string> split(const std::string &, char);
-#else
-vector<std::string> split(const std::string &, std::string);
-#endif
+vector<string> split(const string & );
+void cleanString(string &);
 #endif /* SPLIT_H_ */

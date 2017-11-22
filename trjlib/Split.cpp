@@ -6,34 +6,21 @@
  */
 
 #include "Split.h"
-
-#ifdef __INTEL
-std::vector<std::string> split(const std::string& s, char delimiter)
-{
-   std::vector<std::string> tokens;
-   std::string token;
-   std::istringstream tokenStream(s);
-   while (std::getline(tokenStream, token, delimiter))
-   {
-      tokens.push_back(token);
-   }
-   return tokens;
+const string toErase{"\t \n"};
+vector<string> split(const string & s){
+	std::stringstream iss(s);
+	vector<string> tokens;
+	copy(std::istream_iterator<string>(iss),
+			std::istream_iterator<string>(),
+			std::back_inserter<vector<string> >(tokens));
+	for(unsigned int o=0;o<tokens.size();o++)
+		tokens[o].erase(remove_if(tokens[o].begin(),tokens[o].end(),::isspace),tokens[o].end());
+	return tokens;
 }
-#else
-std::vector<std::string> split(const std::string & s0, const std::string delim) {
-	cout << "ukka"<<endl;
-
-	vector<string> result;
-	string s{s0};
-	std::regex e{delim};
-
-	std::regex_token_iterator<std::string::iterator> rend;
-	std::regex_token_iterator<std::string::iterator> d ( s.begin(), s.end(), e, -1 );
-	while (d!=rend) {
-		string str=*d++;
-		if(str.size() == 0) continue;
-		result.push_back(str);
+void cleanString(string & s){
+	std::size_t found = s.find_first_of(toErase);
+	while(found != string::npos){
+		s.erase(found,1);
+		found=s.find_first_of(toErase,found+1);
 	}
-	return result;
 }
-#endif

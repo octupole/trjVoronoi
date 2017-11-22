@@ -14,7 +14,7 @@ libtrj_a_SOURCES = FComms.cpp  Fstream.cpp  FstreamF.cpp  Metric.cpp  NewMPI.cpp
 	Finalize.cpp  FstreamC.cpp  HeaderTrj.cpp  MyUtilClass.cpp  Split.cpp  histograms.cpp
 
 LDADD = libtrj.a
-include_HEADERS = Array.h Fstream.h  HeaderTrj.h  NewMPI.h  Units.hh\
+include_HEADERS = Array.h Fstream.h  HeaderTrj.h  NewMPI.h \
 	Communicator.hpp FstreamC.h  Metric.h  PickSelection.h  histograms.hpp\
 	FComms.h  FstreamF.h  MyUtilClass.h  Split.h   myEnums.hpp\
 	Finalize.h  Ftypedefs.h  MyVec.h   Timer.h

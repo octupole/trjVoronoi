@@ -27,10 +27,6 @@
 #include "VoronoiPrint.h"
 #include "ResidueTypes.h"
 
-#ifndef __INTEL
-#include "Units.hh"
-using namespace Units;
-#endif
 
 using namespace std;
 

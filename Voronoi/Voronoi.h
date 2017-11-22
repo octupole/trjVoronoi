@@ -27,7 +27,7 @@ using namespace MATRIX;
 using namespace DVECT;
 using Matrix=MATRIX::MMatrix<double>;
 using namespace std;
-#include "voro++/voro++.hh"
+#include "voro++.hh"
 using namespace voro;
 using namespace Topol_NS;
 using namespace std;

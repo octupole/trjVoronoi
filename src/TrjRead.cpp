@@ -41,22 +41,6 @@ TrjRead::TrjRead(int nv,char ** v): trjInput::trjInput(nv,v) {
 }
 void TrjRead::Input(){
 	ifstream ftest,fdefdomain;
-#ifdef __INTEL  //  set the conversion factors by hand as until intel c++ compiler version 16 user-defined literals are not allowed
-	struct dummy{
-		double val;
-	};
-	dummy e0_conversion{0.694461547828659};
-	ConvFactor=55.7036562713774;
-#else
-	auto bimbo=1.0_el/(1.0_nm*1.0_nm);
-
-	auto fluct_en=(1.0/(4.0*M_PI))*bimbo*1.0_el*1.0_nm/eps0;
-	auto Factor=fluct_en/(kt300/avogad) ;
-	ConvFactor=Factor.val;
-
-	auto FieldConv=1.0_Volt/1.0_nm;
-	auto e0_conversion=4.0*M_PI*FieldConv*eps0/bimbo;
-#endif
 	int pGroup{-1}; // From 0 to ngrps, ngrps no. of selected groups
 	bool bPrintVols{true};
 	bool bPrintAreas{false};

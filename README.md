@@ -35,7 +35,6 @@ The command ./configure --help will tell what are the options available for comp
 has amongst others the following options:
 
 * --enable-intel          compile without user-define literals to compile on an intel compiler<br />
-* --enable-mpi           compile with MPI support<br />
 
 Finally, the installation is completed by: <br/>
 
