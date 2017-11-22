@@ -17,7 +17,10 @@ extern "C"
 #define XTC_MAGIC 1995
 
 static const int header_size = 16;
+#ifndef XDR_H_
+#define XDR_H_
 typedef struct XDR XDR;
+#endif
 
   static off_t xtc_get_next_frame_start(FILE *fp, XDR *xdrs, int natoms);
   static int xtc_get_current_frame_number(FILE *fp, XDR *xdrs, int natoms, int * bOK);

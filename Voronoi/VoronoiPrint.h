@@ -7,18 +7,13 @@
 
 #ifndef VORONOIPRINT_H_
 #define VORONOIPRINT_H_
-#ifndef FALSE
-#  define FALSE   0
-#endif
-#ifndef TRUE
-#  define TRUE    1
-#endif
 
 class VoronoiPrint {
 public:
 	static int pGroup;
 	static bool bPrintVols;
 	static bool bPrintAreas;
+	static bool bPrintShell;
 	VoronoiPrint();
 	virtual ~VoronoiPrint();
 };

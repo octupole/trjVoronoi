@@ -38,6 +38,7 @@ trjInput::trjInput(int ntot,char ** v) {
 	inmap["-detP"]=in;
 	inmap["-detO"]=in;
 	inmap["-det"]=in;
+	inmap["-shell"]=in;
 
 	map<string,vector<string> >::iterator it=inmap.begin();
 	for(int n=0;it!=inmap.end();++it,n++){

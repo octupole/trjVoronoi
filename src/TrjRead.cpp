@@ -169,6 +169,10 @@ void TrjRead::Input(){
 			if(inmap["-parea"].size() != 1) throw string(" No argument for " + inmap["-parea"][0] + " option ");
 				bPrintAreas=true;
 		}
+		if(!inmap["-shell"].empty()) {
+			if(inmap["-shell"].size() != 1) throw string(" No argument for " + inmap["-shell"][0] + " option ");
+				VoronoiPrint::bPrintShell=true;
+		}
 		if(!inmap["-detP"].empty()) {
 			if(inmap["-detP"].size() < 2) throw string("\n String expected for " + inmap["-detP"][0] + " option\n ");
 			if(inmap["-detP"].size() > 2) throw string("\n More than one entry for " + inmap["-detP"][0] + " option \n");

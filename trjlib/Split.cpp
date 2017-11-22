@@ -7,7 +7,22 @@
 
 #include "Split.h"
 
+#ifdef __INTEL
+std::vector<std::string> split(const std::string& s, char delimiter)
+{
+   std::vector<std::string> tokens;
+   std::string token;
+   std::istringstream tokenStream(s);
+   while (std::getline(tokenStream, token, delimiter))
+   {
+      tokens.push_back(token);
+   }
+   return tokens;
+}
+#else
 std::vector<std::string> split(const std::string & s0, const std::string delim) {
+	cout << "ukka"<<endl;
+
 	vector<string> result;
 	string s{s0};
 	std::regex e{delim};
@@ -21,8 +36,4 @@ std::vector<std::string> split(const std::string & s0, const std::string delim) 
 	}
 	return result;
 }
-string rmComments(const string & s, const string comment){
-	std::regex e{comment};
-	string result{std::regex_replace(s,e,"")};
-	return result;
-}
+#endif

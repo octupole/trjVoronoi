@@ -98,7 +98,7 @@ public:
 		return 0;
 	}
 	static string types(int n){return _types[n];};
-	static const int Size(){return TOTTYPES;};
+	static int Size(){return TOTTYPES;};
 	static int getTypes(const string & s){
 		try{
 			for(int n=0;n<TOTTYPES;n++){

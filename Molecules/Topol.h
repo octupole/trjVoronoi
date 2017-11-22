@@ -22,7 +22,7 @@
 #include "Groups.h"
 #include "TopolPDB.h"
 #include "myEnums.hpp"
-#include "Split.h"
+//#include "Split.h"
 #include "Finalize.h"
 
 using std::accumulate;

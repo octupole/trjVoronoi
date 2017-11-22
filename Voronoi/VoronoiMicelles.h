@@ -13,6 +13,7 @@ namespace Voro{
 class VoronoiMicelles: public Voro::Voronoi {
 	virtual void WriteIt(std::ofstream &);
 	virtual void __extraInit(Topol &,bool);
+	virtual void __compShell();
 public:
 
 	VoronoiMicelles(Topol &,bool);

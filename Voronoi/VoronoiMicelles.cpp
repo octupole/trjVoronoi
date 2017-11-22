@@ -71,7 +71,21 @@ void VoronoiMicelles::getData(){
 		}
 		Vols[o]=sum_v;
 	}
+	if(VoronoiPrint::bPrintShell) __compShell();
+}
+void VoronoiMicelles::__compShell(){
+	for(size_t o0=0;o0<this->SelectedResidues.size() ;o0++) {
+		int o=this->SelectedResidues[o0];
+		vector<int> & cindex=CIndex[o];
+		for(unsigned int ia=0;ia<cindex.size();ia++){
+			int n=cindex[ia];
+			int type_n=types[n];
+			for(unsigned int p=0;p<Neighs[n].size();p++){
 
+			}
+
+		}
+	}
 }
 void VoronoiMicelles::WriteIt(std::ofstream & fout){
 	static bool firsttime{true};

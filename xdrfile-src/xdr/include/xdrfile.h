@@ -672,8 +672,10 @@ enum xdr_op
 #        error Use system XDR libraries instead, or update xdrfile.c
 #    endif
 #endif
-
+#ifndef XDR_H_
+#define XDR_H_
 typedef struct XDR XDR;
+#endif
 XDR * xdrfile_get_xdr(XDRFILE * xd);
 
 struct XDR

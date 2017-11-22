@@ -7,8 +7,9 @@
 
 #include "VoronoiPrint.h"
 int VoronoiPrint::pGroup=-1;
-bool VoronoiPrint::bPrintVols=TRUE;
-bool VoronoiPrint::bPrintAreas=TRUE;
+bool VoronoiPrint::bPrintVols=true;
+bool VoronoiPrint::bPrintAreas=true;
+bool VoronoiPrint::bPrintShell=false;
 
 VoronoiPrint::VoronoiPrint() {
 	// TODO Auto-generated constructor stub

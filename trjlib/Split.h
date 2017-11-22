@@ -15,7 +15,9 @@
 
 using std::string;
 using std::vector;
+#ifdef __INTEL
+vector<std::string> split(const std::string &, char);
+#else
 vector<std::string> split(const std::string &, std::string);
-string rmComments(const string & , const string );
-
+#endif
 #endif /* SPLIT_H_ */

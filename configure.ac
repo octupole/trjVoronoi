@@ -5,7 +5,6 @@ AC_PREREQ([2.69])
 AC_INIT([trjVoronoi],[0.2],[Massimo.Marchi@cea.fr])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/trjVoronoi.cpp])
-AC_CONFIG_HEADERS([config.h])
 
 AC_CONFIG_MACRO_DIR([m4])
 

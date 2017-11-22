@@ -74,6 +74,7 @@ protected:
 	void gather(vector<int> & y);
 	virtual void WriteIt(std::ofstream &);
 	virtual void __extraInit(Topol &,bool);
+	virtual void __compShell(){};
 	Voronoi();
 public:
 	Voronoi(Topol &,bool);

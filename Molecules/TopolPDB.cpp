@@ -66,9 +66,15 @@ void TopolPDB::sDetPolsegment(string s0,string s){
 	DetPolSegment={vector<string>(2)};
 	DetPolSegment[0]=s0;
 	vector<string> vs;
+#ifdef __INTEL
+	vector<string> vs0=split(s,' ');
+	if(vs0.size() ==1)  vs=split(vs0[0],' ');
+	else vs=vs0;
+#else
 	vector<string> vs0=split(s,"\n");
 	if(vs0.size() ==1)  vs=split(vs0[0],R"(\s\t)");
 	else vs=vs0;
+#endif
 	for(auto it: vs)
 		DetPolSegment[1]+=it+" ";
 	string subP=s0+"_P";
