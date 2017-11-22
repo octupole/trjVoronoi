@@ -38,6 +38,7 @@ has amongst others the following options:
 * --enable-mpi           compile with MPI support<br />
 
 Finally, the installation is completed by: <br/>
+
 make<br />
 make install<br />
 
