@@ -29,8 +29,10 @@ make<br />
 make install<br />
 
 Following the installation of the xdr package, you should return to the installation directory and issue:<br />
+
 sh bootstrap <br />
 ./configure <br />
+
 The command ./configure --help will tell what are the options available for compilation. Noticeably ./configure 
 has amongst others the following options:
 
