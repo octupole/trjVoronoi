@@ -5,8 +5,6 @@ trjVoronoi computes the atomic Voronoi volumes and surfaces of a molecular dynam
 written in .dcd or .xtc format. It requires a .pdb file containing the coordinates of the whole system, including waters and ions. 
 The code uses voro++ by Chris H. Rycroft to compute properties of molecular systems in solution from molecular dynamics trajectories 
 obtained with GROMACS and NAMD. 
-## Code Example
-
 
 ## Motivation
 
