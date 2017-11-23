@@ -1,6 +1,5 @@
 # trjVoronoi
-![Image of Yaktocat]
-(https://octupole.github.io/trjVoronoi/images/customLogo.jpeg)
+
 ## Synopsis
 
 trjVoronoi computes the atomic Voronoi volumes and surfaces of a molecular dynamic trajectory 
