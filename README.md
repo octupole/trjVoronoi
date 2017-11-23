@@ -21,14 +21,14 @@ is contained in the directory $SOURCE/xdrfile-src, where $SOURCE is the director
 
 For installation, after you have changed directory to $SOURCE/xdrfile-src, issue 
 
-sh bootstrap <br />
+sh autogen.sh <br />
 ./configure<br />
 make<br />
 make install<br />
 
 Following the installation of the xdr package, you should return to the installation directory and issue:<br />
 
-sh bootstrap <br />
+sh autogen.sh <br />
 ./configure <br />
 
 The command ./configure --help will tell what are the options available for compilation. Noticeably ./configure 
