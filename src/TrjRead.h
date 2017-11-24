@@ -17,6 +17,8 @@
 #include <vector>
 #include <string>
 #include <iterator>
+
+#include "../Voronoi/VoronoiSetter.h"
 #include "FstreamC.h"
 #include "FstreamF.h"
 #include "Finalize.h"
@@ -24,7 +26,6 @@
 #include "Finalize.h"
 #include "myEnums.hpp"
 #include "MyUtilClass.h"
-#include "VoronoiPrint.h"
 #include "ResidueTypes.h"
 
 

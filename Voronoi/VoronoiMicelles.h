@@ -14,6 +14,7 @@ class VoronoiMicelles: public Voro::Voronoi {
 	virtual void WriteIt(std::ofstream &);
 	virtual void __extraInit(Topol &,bool);
 	virtual void __compShell();
+	virtual void __searchNeighs(int ,int);
 public:
 
 	VoronoiMicelles(Topol &,bool);

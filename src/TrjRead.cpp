@@ -154,8 +154,18 @@ void TrjRead::Input(){
 				bPrintAreas=true;
 		}
 		if(!inmap["-shell"].empty()) {
-			if(inmap["-shell"].size() != 1) throw string(" No argument for " + inmap["-shell"][0] + " option ");
-				VoronoiPrint::bPrintShell=true;
+			int Nm=inmap["-shell"].size();
+			switch(Nm){
+				case 1:
+					break;
+				case 2:
+					stringstream(inmap["-shell"][1])>> VoronoiSetter::maxLevel;
+					break;
+				default:
+					throw string("\n More than one entry for " + inmap["-shell"][0] + " option \n");
+					break;
+			}
+			VoronoiSetter::bPrintShell=true;
 		}
 		if(!inmap["-detP"].empty()) {
 			if(inmap["-detP"].size() < 2) throw string("\n String expected for " + inmap["-detP"][0] + " option\n ");
@@ -218,9 +228,9 @@ void TrjRead::Input(){
 	gFoutx=foutx;
 
 	gFpdb=&fpdb;
-	VoronoiPrint::bPrintAreas=bPrintAreas;
-    VoronoiPrint::bPrintVols=bPrintVols;
-    VoronoiPrint::pGroup=pGroup;
+	VoronoiSetter::bPrintAreas=bPrintAreas;
+    VoronoiSetter::bPrintVols=bPrintVols;
+    VoronoiSetter::pGroup=pGroup;
 
 	try{
 		if(!Reference.empty() && !SelRes.empty()) {

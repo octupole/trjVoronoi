@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <algorithm>
 #include "FAtoms.h"
 
 #include <cstring>
@@ -17,9 +18,9 @@
 #include "Array.h"
 #include <fstream>
 #include <iomanip>
-#include "VoronoiPrint.h"
 #include "Topol.h"
 #include "MyUtilClass.h"
+#include "VoronoiSetter.h"
 
 
 using namespace Array;
@@ -69,12 +70,13 @@ protected:
 	vector<vector<double> > Surface;
 	vector<int> RealResidue;
 	vector<string> Residue;
-
+	vector<vector<int>> wShells;
 	double VolCell{0};
 	void gather(vector<int> & y);
 	virtual void WriteIt(std::ofstream &);
 	virtual void __extraInit(Topol &,bool);
 	virtual void __compShell(){};
+	virtual void __searchNeighs(int a,int b){};
 	Voronoi();
 public:
 	Voronoi(Topol &,bool);

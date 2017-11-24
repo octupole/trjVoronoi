@@ -200,8 +200,8 @@ void Voronoi::WriteIt(std::ofstream & fout){
 	fout << "######>> At step No. " << setw(10) << setprecision(2) << fixed<< time << endl;
 	int po=0;
 	for(int o=0;o<nresid;o++) {
-		if(!VoronoiPrint::bPrintVols)continue;
-		if(getTypesRes(o) != VoronoiPrint::pGroup && VoronoiPrint::pGroup != -1) continue;
+		if(!VoronoiSetter::bPrintVols)continue;
+		if(getTypesRes(o) != VoronoiSetter::pGroup && VoronoiSetter::pGroup != -1) continue;
 		double a=Vols[o]*1000.0;
 		string l=Residue[o];
 		int rres=RealResidue[o]+1;
@@ -226,7 +226,7 @@ void Voronoi::WriteIt(std::ofstream & fout){
 		}
 	}
 
-	if(VoronoiPrint::bPrintAreas ){
+	if(VoronoiSetter::bPrintAreas ){
 		fout << "# Area format:        ";
 		for(int o=0;o<nc;o++) fout << setw(1) << fixed << " areatype(" << o << ") ";
 		fout << endl;
@@ -235,7 +235,7 @@ void Voronoi::WriteIt(std::ofstream & fout){
 		for(int o=0;o<nresid ;o++){
 			string l=Residue[o];
 			int o_type=getTypesRes(o);
-			if(VoronoiPrint::pGroup != -1 && o_type != VoronoiPrint::pGroup) continue;
+			if(VoronoiSetter::pGroup != -1 && o_type != VoronoiSetter::pGroup) continue;
 			fout  << right << setw(5)<< l << " " << setw(5) << fixed << RealResidue[o]+1 << ' ' << setw(3) << fixed << o_type << ' ' ;
 			for(int p=0;p<nc;p++) {
 				double a=area[o][p]*100.0;

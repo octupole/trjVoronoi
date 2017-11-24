@@ -8,14 +8,15 @@
 #ifndef VORONOIPRINT_H_
 #define VORONOIPRINT_H_
 
-class VoronoiPrint {
+class VoronoiSetter {
 public:
 	static int pGroup;
 	static bool bPrintVols;
 	static bool bPrintAreas;
 	static bool bPrintShell;
-	VoronoiPrint();
-	virtual ~VoronoiPrint();
+	static int maxLevel;
+	VoronoiSetter();
+	virtual ~VoronoiSetter();
 };
 
 #endif /* VORONOIPRINT_H_ */

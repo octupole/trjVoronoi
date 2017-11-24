@@ -95,6 +95,7 @@ void ExecuteVoronoi<T>::__RunTrajectory(Atoms<T> * atmx){
 
 		Comms->getStream() << *vor;
 		if(bTest) vor->testVol();
+
 		cout << fixed << setw(5) << "----> Time Step " << ntime <<"\n";
 
 	}

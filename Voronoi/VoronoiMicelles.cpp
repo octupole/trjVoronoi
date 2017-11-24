@@ -6,8 +6,10 @@
  */
 
 #include <VoronoiMicelles.h>
+
 namespace Voro{
 VoronoiMicelles::VoronoiMicelles(Topol & myTop, bool bH): Voronoi::Voronoi(myTop,bH){
+	wShells=vector<vector<int>>(VoronoiSetter::maxLevel);
 	__extraInit(myTop,bH);
 }
 void VoronoiMicelles::__extraInit(Topol & myTop, bool bH){
@@ -71,20 +73,39 @@ void VoronoiMicelles::getData(){
 		}
 		Vols[o]=sum_v;
 	}
-	if(VoronoiPrint::bPrintShell) __compShell();
+	if(VoronoiSetter::bPrintShell) __compShell();
 }
+
+void VoronoiMicelles::__searchNeighs(int Level,int n){
+	Level++;
+	if(Level > VoronoiSetter::maxLevel) return;
+	for(unsigned int p=0;p<Neighs[n].size();p++){
+		int o=Neighs[n][p];
+		if(types[o] == Water) {
+			wShells[Level-1].push_back(o);
+			__searchNeighs(Level,o);
+		}
+	}
+};
+
+
 void VoronoiMicelles::__compShell(){
+	for(auto & it: wShells) it.clear();
+
 	for(size_t o0=0;o0<this->SelectedResidues.size() ;o0++) {
 		int o=this->SelectedResidues[o0];
 		vector<int> & cindex=CIndex[o];
 		for(unsigned int ia=0;ia<cindex.size();ia++){
 			int n=cindex[ia];
 			int type_n=types[n];
-			for(unsigned int p=0;p<Neighs[n].size();p++){
-
-			}
-
+			int Level=0;
+			__searchNeighs(Level,n);
 		}
+	}
+	for(int o{0};o< VoronoiSetter::maxLevel;o++){
+		std::sort(wShells[o].begin(),wShells[o].end());
+		auto it = std::unique (wShells[o].begin(), wShells[o].end());
+		wShells[o].resize( std::distance(wShells[o].begin(),it) );
 	}
 }
 void VoronoiMicelles::WriteIt(std::ofstream & fout){
@@ -107,8 +128,8 @@ void VoronoiMicelles::WriteIt(std::ofstream & fout){
 	int po=0;
 	for(size_t o0=0;o0<this->SelectedResidues.size() ;o0++) {
 		int o=this->SelectedResidues[o0];
-		if(!VoronoiPrint::bPrintVols)continue;
-		if(getTypesRes(o) != VoronoiPrint::pGroup && VoronoiPrint::pGroup != -1) continue;
+		if(!VoronoiSetter::bPrintVols)continue;
+		if(getTypesRes(o) != VoronoiSetter::pGroup && VoronoiSetter::pGroup != -1) continue;
 		double a=Vols[o]*1000.0;
 		string l=Residue[o];
 		(po%4)?fout << setw(10) << setprecision(4) << fixed<<  a << ' ' << setw(4) << l << ' ' << setw(5) << o+1<< ' ':
@@ -131,8 +152,31 @@ void VoronoiMicelles::WriteIt(std::ofstream & fout){
 			interface[o_type][p]+=a;
 		}
 	}
+	if(VoronoiSetter::bPrintShell){
+		vector<double> Vol0(wShells.size());
+		for(size_t o{0};o< wShells.size();o++){
+			Vol0[o]=0;
+			for(size_t p0{0};p0<wShells[o].size();p0++){
+				int p=wShells[o][p0];
+				Vol0[o]+=Vol[p];
+			}
+		}
+		fout<<endl;
+		fout << setw(10) << fixed<<left << "#wShell ";
+		fout << setw(10) << fixed << "ShellNo";
+		fout << setw(10) << fixed << "NoWat" ;
+		fout << setw(10) << setprecision(2) << fixed << "Vol/water" << " \n";
+		for(size_t o{0};o< wShells.size();o++){
+			double vol=Vol0[o]*1000.0;
+			fout << setw(10) <<left << fixed << " ";
+			fout << setw(10) <<left << fixed <<o;
+			fout << setw(10) <<left << fixed << wShells[o].size() ;
+			fout << setw(10) <<left << setprecision(2) << fixed << vol/static_cast<double>(wShells[o].size()) << " \n";
+		}
 
-	if(VoronoiPrint::bPrintAreas ){
+		fout<<endl;
+	}
+	if(VoronoiSetter::bPrintAreas ){
 		fout << "# Area format:             ";
 		for(size_t o0=0;o0<this->typesResidueMask.size() ;o0++) {
 			int o=this->typesResidueMask[o0];
@@ -146,7 +190,7 @@ void VoronoiMicelles::WriteIt(std::ofstream & fout){
 			int o{SelectedResidues[o0]};
 			string l=Residue[o];
 			int o_type=ResidueTypes::find(l);
-			if(VoronoiPrint::pGroup != -1 && o_type != VoronoiPrint::pGroup) continue;
+			if(VoronoiSetter::pGroup != -1 && o_type != VoronoiSetter::pGroup) continue;
 			fout  << right << setw(5)<< l << " " << setw(5) << fixed << ResidueTypes::getType(o_type) << ' ' << setw(3) << fixed << o+1 << ' ' ;
 			for(size_t p0=0;p0<this->typesResidueMask.size();p0++) {
 				int p=this->typesResidueMask[p0];
@@ -155,9 +199,8 @@ void VoronoiMicelles::WriteIt(std::ofstream & fout){
 			}
 			fout << endl;
 		}
+		fout<<endl;
 	}
-
-	fout << endl;
 
 	fout << "# Volume of selection " << endl <<"#        ";
 	for(size_t o0{0};o0<this->typesResidueMask.size();o0++) {
@@ -165,7 +208,7 @@ void VoronoiMicelles::WriteIt(std::ofstream & fout){
 		fout << fixed<<setw(12)<<right<<ResidueTypes::getType(o)<<"(" << setw(1)<< o << ")";
 	}
 
-	fout << endl;
+	fout << "\n"<< endl;
 	fout << "%$TotVol ";
 	for(size_t o0{0};o0<this->typesResidueMask.size();o0++) {
 		int o=this->typesResidueMask[o0];
@@ -173,12 +216,13 @@ void VoronoiMicelles::WriteIt(std::ofstream & fout){
 	}
 	fout << endl;
 
+	fout << "\n"<< endl;
 	fout << "# Interface area of selection " << endl << "#           ";
 	for(size_t o0{0};o0<this->typesResidueMask.size();o0++) {
 		int o=this->typesResidueMask[o0];
 		fout << fixed<<setw(10)<<right<<ResidueTypes::getType(o)<<"(" << setw(1)<< o << ")";
 	}
-	fout << endl;
+	fout << "\n"<< endl;
 	for(size_t o0{0};o0<this->typesResidueMask.size();o0++) {
 		int o=this->typesResidueMask[o0];
 		fout << "#   ";
@@ -192,6 +236,7 @@ void VoronoiMicelles::WriteIt(std::ofstream & fout){
 		}
 		fout << endl;
 	}
+	fout << "\n"<< endl;
 
 }
 

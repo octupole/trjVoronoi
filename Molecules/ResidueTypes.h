@@ -20,7 +20,7 @@ using std::vector;
 
 namespace Topol_NS {
 const int TOTTYPES=10;
-enum {Prot, Water, Ions, Surf, Dna, Cofact, OrgSol, DetPol, DetOil,Other};
+enum atomSpecies{Prot, Water, Ions, Surf, Dna, Cofact, OrgSol, DetPol, DetOil,Other};
 struct MyResidue{
 	int n;
 	string name;

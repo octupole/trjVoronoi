@@ -77,6 +77,7 @@ trjInput::trjInput(int ntot,char ** v) {
 			"\t\t*Important*: The polar atoms in the pdb and topology *MUST* all occur before the hydrophobic atoms.\n";
 	Usage[22]="\t -detP <string>// Define a name for the polar segment of a detergent residue \n";
 	Usage[23]="\t -detO <string>// Define a name for the hydrophobic segment of a detergent residue \n";
+	Usage[24]="\t -shell [2]<int n>// Compute number and average volume of the n-shell water neighbours around solute \n";
 	int n=1;
 	string key;
 	for(;n<ntot;){
