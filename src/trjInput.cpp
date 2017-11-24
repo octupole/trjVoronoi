@@ -55,29 +55,25 @@ trjInput::trjInput(int ntot,char ** v) {
 	Usage[8]="\t -hyd // Include hydrogens in Voronoi\n";
 	Usage[11]="\t -nodel // Do not delete temporary files in MPI runs \n";
 	Usage[10]="\t -del // Delete temporary files in MPI runs [default]\n";
-	Usage[12]="\t -rd // Use atomic radii in the Voronoi calculation \n";
-	Usage[13]="\t -nord // Do not use atomic radii in the Voronoi calculation [default]\n";
+	Usage[12]="\t -rd // Use atomic radii in the Voronoi calculation [default]\n";
+	Usage[13]="\t -nord // Do not use atomic radii in the Voronoi calculation \n";
 	Usage[14]="\t -solute <string selection>\n"
 			"\t\tDefine the residue of the solute to be used in the Voronoi analysis.\n";
-	Usage[15]="\t -select <string selection>\n"
-			"\t\tSelect the system. selection is a doubly quoted string defining the system extent. It must contain\n"
-			"\t\tresidues from the solvent and system.\n";
 
-	Usage[16]="\t -test // compute total volume from Voronoi or simulation cell parameters\n";
-	Usage[17]="\t -help // write some on line help \n";
-	Usage[18]="\t -pvol // Print volume \n";
-	Usage[19]="\t -parea // Write area \n";
-	Usage[20]="\t -pgroup group No. // pick a group to print [0 Protein] [1 Solvent]"
-			"\n\t\t[2 Ions] [3 Detergent] [4 DNA] \n";
-
-	Usage[21]="\t -det filename// Define the polar segment of a detergent residue \n"
-			"\t\tThe file finename contains two strings:\n"
+	Usage[15]="\t -test // compute total volume from Voronoi or simulation cell parameters\n";
+	Usage[16]="\t -help // write some on line help \n";
+	Usage[17]="\t -pvol // Print volume \n";
+	Usage[18]="\t -parea // Print area \n";
+	Usage[19]="\t -det filename// Define the polar segment of a detergent residue \n"
+			"\t\tThe file filename contains two strings:\n"
 			"\t\t   i) the first string is the name of the detergent residue \n"
 			"\t\t   ii)the second string contains the polar atoms of the residue\n"
-			"\t\t*Important*: The polar atoms in the pdb and topology *MUST* all occur before the hydrophobic atoms.\n";
-	Usage[22]="\t -detP <string>// Define a name for the polar segment of a detergent residue \n";
-	Usage[23]="\t -detO <string>// Define a name for the hydrophobic segment of a detergent residue \n";
-	Usage[24]="\t -shell [2]<int n>// Compute number and average volume of the n-shell water neighbours around solute \n";
+			"\t\t*Important*: The polar atoms in the pdb and topology *MUST* all occur\n"
+			"\t\tbefore the hydrophobic atoms.\n";
+	Usage[20]="\t -detP <string>// Define a name for the polar segment of a detergent residue \n";
+	Usage[21]="\t -detO <string>// Define a name for the hydrophobic segment of a detergent residue \n";
+	Usage[22]="\t -shell [2]<int n>// Compute number and average volume of the n-shell water\n"
+			"\t\tneighbours around solute \n";
 	int n=1;
 	string key;
 	for(;n<ntot;){
