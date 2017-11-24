@@ -50,7 +50,7 @@ trjInput::trjInput(int ntot,char ** v) {
 	Usage[3]="\t -o fileout \n";
 	Usage[4]="\t- b No. First Frame \n";
 	Usage[5]="\t -e No. Last Frame\n";
-	Usage[6]="\t -skip No. skipped frames [not implemented]\n";
+	Usage[6]="\t -skip No. skipped frames \n";
 	Usage[9]="\t -nohyd // Do not include hydrogens in Voronoi [default] \n";
 	Usage[8]="\t -hyd // Include hydrogens in Voronoi\n";
 	Usage[11]="\t -nodel // Do not delete temporary files in MPI runs \n";
