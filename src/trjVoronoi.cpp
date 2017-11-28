@@ -65,7 +65,7 @@
 #include "Timer.h"
 #include "ExecuteVoronoi.h"
 #include "NewMPI.h"
-#include "FAtoms.h"
+#include "AtomsCluster.h"
 #include "PickSelection.h"
 #include "Finalize.h"
 using namespace Topol_NS;
@@ -111,7 +111,10 @@ int main(int argc, char ** argv){
 	MyIn.gReference()=PickSelection(MyIn.gReference()).Select<Enums::Reference>(Def,MyTop); // Pick the Reference residue
 
 	int natoms=MyTop.Size();
-	atm=new FAtoms<double>(natoms);
+	if(MyIn.bbClust())
+		atm=new AtomsCluster<double>(natoms);
+	else
+		atm=new FAtoms<double>(natoms);
 
 	MyTop.InitSelection(MyIn.gReference(),Enums::Reference);
 

@@ -35,26 +35,26 @@ protected:
 	void rCluster(size_t);
 	void CompNei();
 public:
-	Contacts(vector<Dvect> & y,Matrix & co, Matrix & oc, double R, double Ri, size_t mystart): Ind(mystart), Rcut(R*0.1), Rcut_in(Ri*0.1){
+	Contacts(vector<Dvect> & y,Matrix & co, Matrix & oc, T R, T Ri, size_t mystart): Ind(mystart), Rcut(R*0.1), Rcut_in(Ri*0.1){
 		Init(y,co,oc);
 	}
-	Contacts(vector<Dvect> & y,Matrix & co, Matrix & oc, double R, double Ri): Rcut(R*0.1), Rcut_in(Ri*0.1) {
+	Contacts(vector<Dvect> & y,Matrix & co, Matrix & oc, T R, T Ri): Rcut(R*0.1), Rcut_in(Ri*0.1) {
 		Init(y,co,oc);
 	}
-	Contacts(vector<Dvect> & y,Matrix & co, Matrix & oc, double R): Rcut(R*0.1) {
+	Contacts(vector<Dvect> & y,Matrix & co, Matrix & oc, T R): Rcut(R*0.1) {
 		Init(y,co,oc);
 	}
 	Contacts(vector<Dvect> & y,Matrix & co, Matrix & oc){
 		Init(y,co,oc);
 	}
-	Contacts(double R,double R0):  Rcut(R*0.1),Rcut_in(R0*0.1){}
-	Contacts(double R0):  Rcut_in(R0*0.1){}
+	Contacts(T R,T R0):  Rcut(R*0.1),Rcut_in(R0*0.1){}
+	Contacts(T R0):  Rcut_in(R0*0.1){}
 	Contacts(){};
 	void operator()(vector<Dvect> & y,Matrix & co, Matrix & oc){
 		Init(y,co,oc);
 	}
 	vector<vector<int>> & NNL(){return nnl;}
-	void setR(double R, double Ri){Rcut=R*0.1;Rcut_in=Ri*0.1;}
+	void setR(T R, T Ri){Rcut=R*0.1;Rcut_in=Ri*0.1;}
 	virtual void Neighbors();
 	size_t next();
 	Dvect & operator[](size_t n){return v[n];}

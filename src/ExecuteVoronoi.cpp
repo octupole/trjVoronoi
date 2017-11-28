@@ -75,6 +75,9 @@ ExecuteVoronoi<T>::ExecuteVoronoi(trj::TrjRead & MyIn, Topol & Topology): Top(&T
 	vor=new VoronoiMicelles(Topology,bHyd);
 	Percolation<T>::setPercoCutoff(MyIn.gPercoCutoff());
 	Clustering=MyIn.bbClust();
+	Rcut=MyIn.gRcut();
+	Rcut_in=MyIn.gRcut_in();
+
 };
 template <typename T>
 void ExecuteVoronoi<T>::operator()(Atoms<T> * atx){
@@ -89,8 +92,10 @@ void ExecuteVoronoi<T>::__RunTrajectory(Atoms<T> * atmx){
 
 	myiterators::IteratorAtoms<T> iter_atm(atmx,finx,nstart,nend,nskip);
 	Contacts<T> * Con0;
-	if(Rcut_in < 0) Rcut_in=15.0;
-	Con0=new Contacts<T>(Rcut,Rcut_in);
+	Rcut_in=15.0;
+	Con0=new Contacts<T>(Rcut_in,Rcut_in);
+	cout << Rcut <<endl;
+	cout << Rcut_in <<endl;
 	while((++iter_atm).isReferenced()){
 		Atoms<T> * atmA=iter_atm();
 		Con0->setR(Rcut_in,Rcut_in);
@@ -98,11 +103,15 @@ void ExecuteVoronoi<T>::__RunTrajectory(Atoms<T> * atmx){
 		float ntime=atmA->getTime();
 		if(Clustering){
 			atmA->setrd(*Top);
-			static struct Once{Once(Atoms<T> * atmA){atmA->SetupPercolate();}} _Once(atmA);
+			atmA->SetupPercolate(*Top);
+			struct Once{
+				Once(Atoms<T> * atmA, Topol_NS::Topol * myTop){
+					atmA->SetupPercolate(*myTop);
+				}
+			} _Once(atmA, Top);
 			if(bOnce){
 				static struct Once_p{Once_p(Atoms<T> *atmA){atmA->Percolate();}} __Once_p(atmA);
 			}else atmA->Percolate();
-			atmA->Reconstruct(Con0);
 		}
 
 		vor->Start(ntime,*atmA);

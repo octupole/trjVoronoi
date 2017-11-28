@@ -93,12 +93,13 @@ void Voronoi::__extraInit(Topol & myTop, bool bH){
 }
 template <typename T>
 void Voronoi::Start(float frame, Atoms<T> & atm){
-	time=frame;
+		time=frame;
 	const int nx=NNN,ny=NNN,nz=NNN;
 	Metric<T> Mt=atm.getMt();
 	MMatrix<T> CO=Mt.getCO();
 	MMatrix<T> OC=Mt.getOC();
 	T VolTmp=Mt.getVol();
+	Matrix baba;
 	for(int o{0};o<DIM;o++)
 		for(int p{0};p<DIM;p++){
 			co[o][p]=static_cast<double>(CO[o][p]);
@@ -106,7 +107,6 @@ void Voronoi::Start(float frame, Atoms<T> & atm){
 		}
 	VolCell=static_cast<double>(VolTmp);
 	double bx=co[0][0], bxy=co[0][1], by=co[1][1],bxz=co[0][2],byz=co[1][2],bz=co[2][2];
-
 
 	vector<double> vertx;
 	if(Mycon) delete Mycon;

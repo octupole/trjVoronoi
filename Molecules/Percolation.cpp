@@ -61,7 +61,6 @@ Percolation<T>::Percolation(vector<vector<int> >& y, vector<double>  & rd,  vect
 	for(size_t o=0;o<Atoms.size();o++){
 		pResn[o]=resn[Atoms[o][0]];
 	}
-
 	myPercoCutoff=[this](int i,int j){if(PercoCutoff){return PercoCutoff;};return (pRd[i]+pRd[j])*OFFSET;};
 }
 template <typename T>

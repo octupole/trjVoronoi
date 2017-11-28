@@ -50,9 +50,7 @@ class ExecuteVoronoi {
 	/// @cond TEST
 	bool bDel{false};
 	bool bHyd{false};
-
-	double Rcut{0};
-	double Rcut_in{0};
+	double Rcut_in{-1.0},Rcut{-1.0};
 	/// @endcond
 	double MassSolute{-1.0}; ///< Molecular mass of the solute. Used to compute alpha.
 

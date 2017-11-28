@@ -18,7 +18,7 @@
 #include <string>
 #include <iterator>
 
-#include "../Voronoi/VoronoiSetter.h"
+#include "VoronoiSetter.h"
 #include "FstreamC.h"
 #include "FstreamF.h"
 #include "Finalize.h"

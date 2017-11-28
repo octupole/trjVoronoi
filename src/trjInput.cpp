@@ -38,7 +38,7 @@ trjInput::trjInput(int ntot,char ** v) {
 	inmap["-detP"]=in;
 	inmap["-detO"]=in;
 	inmap["-det"]=in;
-	inmap["-shell"]=in;
+	inmap["-clust"]=in;
 
 	map<string,vector<string> >::iterator it=inmap.begin();
 	for(int n=0;it!=inmap.end();++it,n++){
@@ -74,6 +74,12 @@ trjInput::trjInput(int ntot,char ** v) {
 	Usage[21]="\t -detO <string>// Define a name for the hydrophobic segment of a detergent residue \n";
 	Usage[22]="\t -shell [2]<int n>// Compute number and average volume of the n-shell water\n"
 			"\t\tneighbours around solute \n";
+	Usage[23]="\t -clust <float cutoff [0.0] in Angstroems>\n"
+			"\t\tDo clustering by percolation of the solute. This is used to make sure that the solute is at the\n"
+			"\t\tcenter of the cell. Doing clustering is expensive, it is always better to have the solute in the\n"
+			"\t\tmiddle already at simulation time. If cutoff is zero, the default, the cutoff is chosen according\n"
+			"\t\tmiddle to the Lennard-Jones sigma parameter\n";
+
 	int n=1;
 	string key;
 	for(;n<ntot;){

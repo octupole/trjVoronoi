@@ -61,7 +61,6 @@ public:
 
 };
 
-
 template <typename T>
 class Atoms {
 	using Dvect=DDvect<T>;
@@ -131,6 +130,7 @@ public:
 	virtual void Reconstruct(const string & x, Topol_NS::TopolMic &y){};
 	virtual void Reconstruct(Contacts<T> *x){};
 	virtual void SetupPercolate(){};
+	virtual void SetupPercolate(Topol_NS::Topol &x){};
 	virtual void Percolate(){};
 	virtual void Percolate(double y){}
 	virtual bool hasPerco() const {return false;}
