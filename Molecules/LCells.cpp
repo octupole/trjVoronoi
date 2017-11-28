@@ -12,6 +12,14 @@ LCells<T>::LCells(): nr(0){
 	// TODO Auto-generated constructor stub
 
 }
+template<typename T>
+bool LCells<T>::test(){
+	if(nc[XX] < 5) return false;
+	if(nc[YY] < 5) return false;
+	if(nc[ZZ] < 5) return false;
+	return true;
+}
+
 template <typename T>
 void LCells<T>::Index(){
 	if(nc[XX] < 0 && nc[YY] < 0 && nc[ZZ] < 0) return;

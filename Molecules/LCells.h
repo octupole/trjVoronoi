@@ -89,6 +89,7 @@ public:
 		return nnl;
 	}
 	void Index();
+	bool test();
 	vector<vector<int> > &List(bool=true);
 	virtual ~LCells();
 };

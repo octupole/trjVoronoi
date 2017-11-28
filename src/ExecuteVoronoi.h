@@ -18,6 +18,8 @@
 #include "FComms.h"
 #include "IteratorAtoms.h"
 #include "Finalize.h"
+#include "Percolation.h"
+#include "AtomsCluster.h"
 template<typename T>
 class Atoms;
 

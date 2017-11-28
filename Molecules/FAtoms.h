@@ -32,6 +32,7 @@ class bambi: public Atoms<T> {
 };
 template <typename T>
 class FAtoms: public Atoms<T> {
+protected:
 	using Atoms<T>::nr;
 	using Atoms<T>::setCoord;
 	using Atoms<T>::doCOtoOC;
@@ -39,7 +40,6 @@ class FAtoms: public Atoms<T> {
 	using Atoms<T>::xa;
 	using Atoms<T>::Mt;
 	using Atoms<T>::rd;
-protected:
 
 public:
 	using Atoms<T>::Atoms;

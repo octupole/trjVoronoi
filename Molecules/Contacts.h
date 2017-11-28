@@ -1,0 +1,63 @@
+/*
+ * Contacts.h
+ *
+ *  Created on: May 28, 2015
+ *      Author: marchi
+ */
+
+#ifndef SRC_CONTACTS_H_
+#define SRC_CONTACTS_H_
+#include "LCells.h"
+#include <algorithm>
+#include <limits>
+const size_t SIZE_T=10000000;
+const double RCUT=3.5*0.1;  // in nameters!
+const double RCUT_IN=3.0*0.1; // in nanometers!!
+
+template <typename T>
+class Contacts {
+	using Dvect=DDvect<T>;
+	using Matrix=MMatrix<T>;
+protected:
+	vector<Dvect> v;
+	vector<bool> b;
+	vector<size_t> List;
+	size_t Ind=0;
+	vector<vector<int> > nnl;
+
+	Matrix CO,OC;
+	T Rcut{RCUT}, Rcut_in{RCUT_IN};
+	virtual void Init(vector<Dvect> & y,Matrix & co, Matrix & oc){
+		CO=co;OC=oc;v.clear();v=y;b.clear();b=vector<bool>(v.size(),true);
+		List.clear();nnl.clear();
+		Ind=0;
+	}
+	void rCluster(size_t);
+	void CompNei();
+public:
+	Contacts(vector<Dvect> & y,Matrix & co, Matrix & oc, double R, double Ri, size_t mystart): Ind(mystart), Rcut(R*0.1), Rcut_in(Ri*0.1){
+		Init(y,co,oc);
+	}
+	Contacts(vector<Dvect> & y,Matrix & co, Matrix & oc, double R, double Ri): Rcut(R*0.1), Rcut_in(Ri*0.1) {
+		Init(y,co,oc);
+	}
+	Contacts(vector<Dvect> & y,Matrix & co, Matrix & oc, double R): Rcut(R*0.1) {
+		Init(y,co,oc);
+	}
+	Contacts(vector<Dvect> & y,Matrix & co, Matrix & oc){
+		Init(y,co,oc);
+	}
+	Contacts(double R,double R0):  Rcut(R*0.1),Rcut_in(R0*0.1){}
+	Contacts(double R0):  Rcut_in(R0*0.1){}
+	Contacts(){};
+	void operator()(vector<Dvect> & y,Matrix & co, Matrix & oc){
+		Init(y,co,oc);
+	}
+	vector<vector<int>> & NNL(){return nnl;}
+	void setR(double R, double Ri){Rcut=R*0.1;Rcut_in=Ri*0.1;}
+	virtual void Neighbors();
+	size_t next();
+	Dvect & operator[](size_t n){return v[n];}
+	virtual ~Contacts();
+};
+#endif /* SRC_CONTACTS_H_ */

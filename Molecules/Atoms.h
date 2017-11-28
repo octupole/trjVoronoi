@@ -16,6 +16,8 @@
 #include "MyUtilClass.h"
 #include "HeaderTrj.h"
 #include "TopolMic.h"
+#include "Contacts.h"
+
 #include "xdrfile.h"
 #include "xdrfile_xtc.h"
 #include "xdrfile_seek.h"
@@ -84,7 +86,8 @@ protected:
 	virtual void moveOffset(std::ifstream &);
 	virtual void WriteaStep(FstreamC * );
 	virtual void WriteaStep(FstreamF * );
-
+	virtual void __ReconstructOneCluster(vector<bool> & a){};
+	virtual Dvect __FindCell(const vector<vector<int>> & x,const vector<vector<int>> & y){return Dvect();};
 public:
 	Atoms(){};
 	Atoms(const int);
@@ -125,6 +128,13 @@ public:
 	virtual double getrd(int n){return rd[n];}
 
 	float getTime(){return time_c;}
+	virtual void Reconstruct(const string & x, Topol_NS::TopolMic &y){};
+	virtual void Reconstruct(Contacts<T> *x){};
+	virtual void SetupPercolate(){};
+	virtual void Percolate(){};
+	virtual void Percolate(double y){}
+	virtual bool hasPerco() const {return false;}
+
 	virtual void pdb(const vector<string> & c){};
 
 	friend Fstream & operator+=(Fstream & fin, Atoms & y){
