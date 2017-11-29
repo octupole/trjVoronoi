@@ -74,6 +74,7 @@ void VoronoiMicelles::getData(){
 		Vols[o]=sum_v;
 	}
 	if(VoronoiSetter::bPrintShell) __compShell();
+	if(!VolClusters.empty()) __computeAggregate();
 }
 
 void VoronoiMicelles::__searchNeighs(int Level,int n){
@@ -88,7 +89,24 @@ void VoronoiMicelles::__searchNeighs(int Level,int n){
 	}
 };
 
+void VoronoiMicelles::__computeAggregate(){
+	for(size_t o=0;o<this->Clusters.size() ;o++) {
+		vector<int> & cindex=this->Clusters[o];
+		for(unsigned int ia=0;ia<cindex.size();ia++){
+			int n=cindex[ia];
+			int atCluster_o=atClusters[n];
+			VolClusters[o]+=Vol[n];
+			for(unsigned int p=0;p<Neighs[n].size();p++){
+				int m=Neighs[n][p];
+				if(atClusters[m] == atCluster_o) continue;
+				int type_n=types[m];
+				SurfaceClusters[o][type_n]+=Surface[n][p];
+				AreaClusters[o]+=Surface[n][p];
+			}
 
+		}
+	}
+}
 void VoronoiMicelles::__compShell(){
 	for(auto & it: wShells) it.clear();
 
@@ -137,6 +155,28 @@ void VoronoiMicelles::WriteIt(std::ofstream & fout){
 		po++;
 	}
 	fout << endl;
+	if(!VolClusters.empty()){
+		int po{0};
+		fout <<endl;
+		fout << "#  Volumes of the cluster aggregates: "<<endl;
+		fout << "#  No of Clusters = " << fixed << left << VolClusters.size()<< " " <<endl;
+		fout << "#  " ;
+		for(size_t o{0};o< VolClusters.size();o++){
+			if(po%8){
+				fout << setw(2)  << fixed<<  o+1 << ' ';
+				fout << setw(10) << fixed<<setprecision(2) << VolClusters[o]*1000.0 << " ";
+			} else{
+			  fout << endl << "%$VolClust " << setw(2) << fixed << o+1 << ' ' ;
+			  fout << setw(10) << fixed << setprecision(2) << VolClusters[o]*1000.0 << ' ';
+			}
+			po++;
+
+		}
+		fout << endl;
+		fout << endl;
+
+	}
+
 
 	array2<double> interface;
 	interface.Allocate(nc,nc);
@@ -177,10 +217,12 @@ void VoronoiMicelles::WriteIt(std::ofstream & fout){
 		fout<<endl;
 	}
 	if(VoronoiSetter::bPrintAreas ){
-		fout << "# Area format:             ";
+		fout << "# Area format:            ";
 		for(size_t o0=0;o0<this->typesResidueMask.size() ;o0++) {
 			int o=this->typesResidueMask[o0];
-			fout << setw(1) << fixed << setw(8)<<ResidueTypes::getType(o)<< "(" <<setw(1)<< o << ") ";
+			stringstream ss;
+			ss<<o;
+			fout << setw(1) << fixed << right<<setw(12)<<ResidueTypes::getType(o)+"(" + ss.str()+ ") ";
 		}
 
 		fout << endl;
@@ -200,6 +242,33 @@ void VoronoiMicelles::WriteIt(std::ofstream & fout){
 			fout << endl;
 		}
 		fout<<endl;
+		if(!AreaClusters.empty()){
+			fout<<endl;
+
+			fout << "#                           "<<endl;
+			fout << "# Cluster Area format:      ";
+			for(size_t o0=0;o0<this->typesResidueMask.size() ;o0++) {
+				int o=this->typesResidueMask[o0];
+				stringstream ss;
+				ss<<o;
+				fout << fixed <<setw(11)<<ResidueTypes::getType(o)+"("+ss.str()+") ";
+			}
+			fout << "     Total "<<endl;
+			fout << "# "<<endl;
+			for(size_t o{0};o<SurfaceClusters.size();o++){
+				fout  << "%$AreaClust              " ;
+				for(size_t p0=0;p0<this->typesResidueMask.size();p0++) {
+					int p=this->typesResidueMask[p0];
+					double a=SurfaceClusters[o][p]*100.0;
+					fout << setw(11) << setprecision(2) << right<<fixed << a << ' ';
+				}
+				double a=AreaClusters[o]*100.0;
+				fout << setw(11) << setprecision(2) << fixed <<right << a << ' ';
+				fout << endl;
+
+			}
+			fout<<"\n\n";
+		}
 	}
 
 	fout << "# Volume of selection " << endl <<"#        ";

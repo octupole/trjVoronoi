@@ -80,14 +80,13 @@ Voronoi::Voronoi(Topol & myTop, bool bH){
 	nc=myTop.getmaxt();
 	area.Allocate(nresid,nc);
 	Vols.Allocate(nresid);
-	set<int> bibo;
+	set<int> tmp1;
 	for(string it: this->TypesName){
-		bibo.insert(ResidueTypes::find(it));
+		tmp1.insert(ResidueTypes::find(it));
 	}
-	for(auto it:bibo){
+	for(auto it:tmp1){
 		this->typesResidueMask.push_back(it);
 	}
-
 }
 void Voronoi::__extraInit(Topol & myTop, bool bH){
 }
@@ -119,6 +118,31 @@ void Voronoi::Start(float frame, Atoms<T> & atm){
 		double z=atm[cindex[o]][ZZ];
 		double r=Rdii[cindex[o]];
 		Mycon->put(*porder,o,x,y,z,r);
+	}
+	Percolation<T> * myPerco=atm.gPerco();
+	if(myPerco){
+		Clusters.clear();
+		atClusters.clear();
+		VolClusters.clear();
+		AreaClusters.clear();
+		SurfaceClusters.clear();
+		listcon mAtoms=myPerco->getAtoms();
+		listcon mClusters=myPerco->getCluster();
+		Clusters=listcon(mClusters.size());
+		atClusters=vector<int>(nr,-1);
+		for(size_t o{0};o<mClusters.size();o++)
+			for(size_t p{0};p<mClusters[o].size();p++){
+				int i0{mClusters[o][p]};
+				for(size_t n{0};n<CIndex[i0].size();n++){
+					int i{CIndex[i0][n]};
+					Clusters[o].push_back(i);
+					atClusters[i]=o;
+				}
+			}
+		VolClusters=vector<double>(Clusters.size(),0.0);
+		AreaClusters=vector<double>(Clusters.size(),0.0);
+		vector<double> vv(nc,0.0);
+		SurfaceClusters=vector<vector<double>>(Clusters.size(),vv);
 	}
 }
 void Voronoi::testVol(){

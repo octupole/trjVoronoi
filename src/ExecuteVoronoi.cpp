@@ -91,36 +91,43 @@ template <typename T>
 void ExecuteVoronoi<T>::__RunTrajectory(Atoms<T> * atmx){
 
 	myiterators::IteratorAtoms<T> iter_atm(atmx,finx,nstart,nend,nskip);
-	Contacts<T> * Con0;
-	Rcut_in=15.0;
-	Con0=new Contacts<T>(Rcut_in,Rcut_in);
-	cout << Rcut <<endl;
-	cout << Rcut_in <<endl;
 	while((++iter_atm).isReferenced()){
+		stringstream ss;
 		Atoms<T> * atmA=iter_atm();
-		Con0->setR(Rcut_in,Rcut_in);
 
 		float ntime=atmA->getTime();
+		int nClusters{0};
 		if(Clustering){
 			atmA->setrd(*Top);
-			atmA->SetupPercolate(*Top);
-			struct Once{
+			static struct Once{
 				Once(Atoms<T> * atmA, Topol_NS::Topol * myTop){
 					atmA->SetupPercolate(*myTop);
 				}
 			} _Once(atmA, Top);
 			if(bOnce){
-				static struct Once_p{Once_p(Atoms<T> *atmA){atmA->Percolate();}} __Once_p(atmA);
-			}else atmA->Percolate();
+				static struct Once_p{int nClusters{0};Once_p(Atoms<T> *atmA){nClusters=atmA->Percolate();}} __Once_p(atmA);
+				nClusters=__Once_p.nClusters;
+			}else {
+				nClusters=atmA->Percolate();
+			}
+		}
+		switch(nClusters){
+		case 0:
+			break;
+		case 1:
+			ss << "    " <<fixed << setw(4) << nClusters<<" cluster  <-----";
+			break;
+		default:
+			ss<< "    " << fixed << setw(4) << nClusters<<" clusters <-----";
 		}
 
 		vor->Start(ntime,*atmA);
 		vor->getData();
 
 		Comms->getStream() << *vor;
-		if(bTest) vor->testVol();
-		cout << fixed << setw(5) << "----> Time Step " << ntime <<"\n";
 
+		if(bTest) vor->testVol();
+		cout << fixed << setw(5) << "----> Time Step " << ntime << ss.str()<<"\n";
 	}
 
 	Comms->appendStreams();

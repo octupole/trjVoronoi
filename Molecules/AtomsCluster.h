@@ -76,11 +76,12 @@ public:
 	void Reconstruct(Contacts<T> *);
 	virtual void SetupPercolate(Topol_NS::Topol &);
 	void SetupPercolate();
-	void Percolate();
-	void Percolate(double y){
+	int Percolate();
+	int Percolate(double y){
 		Perco->setRcut(y);
-		this->Percolate();
+		return this->Percolate();
 	}
+	Percolation<T> * gPerco(){return Perco;}
 	virtual bool hasPerco() const {if(Perco) return true;return false;}
 
 	virtual ~AtomsCluster();

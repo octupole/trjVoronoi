@@ -14,7 +14,7 @@ vector<string> Percolation<T>::Select=vector<string>{"S","OS1","OS2","OS3","NA"}
 template <typename T>
 double Percolation<T>::PercoCutoff{0.0};
 
-const double OFFSET=1.4;
+const double OFFSET=1.5;
 
 struct op_mysort{
 	bool operator()(const vector<int>  & x,const vector<int> & y){
@@ -85,7 +85,6 @@ Percolation<T>::Percolation(vector<vector<int> >& y, vector<double>  & rd,  vect
 		}
 	}
 	myPercoCutoff=[this](int i,int j){if(PercoCutoff){return PercoCutoff;};return (pRd[i]+pRd[j])*OFFSET;};
-
 }
 
 template <typename T>
@@ -98,7 +97,7 @@ void Percolation<T>::rCluster(size_t m){
 	return;
 }
 template <typename T>
-void  Percolation<T>::gCluster(){
+int  Percolation<T>::gCluster(){
 	bAtoms.clear();
 	Clusters.clear();
 	bAtoms=vector<int>(Atoms.size(),-1);
@@ -139,12 +138,7 @@ void  Percolation<T>::gCluster(){
 		}
 
 	}
-	if(Clusters.size() == 1)
-		cout << "----> Found: " << fixed << setw(4) << Clusters.size()<<" cluster  <-----"<<endl;
-	else
-		cout << "----> Found: " << fixed << setw(4) << Clusters.size()<<" clusters <-----"<<endl;
-
-	return;
+	return Clusters.size();
 }
 
 template <typename T>
@@ -214,13 +208,15 @@ void Percolation<T>::doContacts(vector<Dvect> & v, Matrix & co, Matrix & oc){
 	}
 	LCells<T> Cells(co,X,Rcut);
 	Cells.Index();
-	vector<vector<int> > & nnl=Cells.List();
+	vector<vector<int> > & nnl=Cells.List(false);
 	vector<vector<int> > tmp=vector<vector<int> >(Atoms.size());
+
 	for(size_t nn=0;nn<nnl.size();nn++){
 		int n=N[nn][0];
 		int o=N[nn][1];
 		int i=Atoms[n][o];
 		Dvect xm=co*X[nn];
+
 		for(size_t mm0=0;mm0<nnl[nn].size();mm0++){
 			int mm=nnl[nn][mm0];
 			int m=N[mm][0];
@@ -234,7 +230,6 @@ void Percolation<T>::doContacts(vector<Dvect> & v, Matrix & co, Matrix & oc){
 			}
 		}
 	}
-
 	for(size_t n=0; n < Atoms.size() ; n++){
 		if(!tmp[n].empty()){
 			std::sort(tmp[n].begin(),tmp[n].end());
@@ -243,7 +238,6 @@ void Percolation<T>::doContacts(vector<Dvect> & v, Matrix & co, Matrix & oc){
 			Contacts[n]=tmp[n];
 		}
 	}
-
 }
 template <typename T>
 std::ostream & operator<<(std::ostream & fout , Percolation<T> & y){

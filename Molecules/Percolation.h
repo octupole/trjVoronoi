@@ -92,7 +92,7 @@ public:
 	void Accumulate(){count++;}
 	void doContacts(vector<DDvect<T>> &);
 	void doContacts(vector<DDvect<T>> &, MMatrix<T> &, MMatrix<T> &);
-	void gCluster();
+	int gCluster();
 	const listcon & getCluster() const {return Clusters;}
 	const vector<int> & getFirstCluster() const {return Clusters[0];}
 	listcon & getAtoms(){return Atoms;}

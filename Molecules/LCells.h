@@ -29,7 +29,7 @@ class LCells {
 	typedef vector<int> vectint;
 	int nr{0};
 	T Rcut{0.0};
-	const T Rmax{45};
+	const T Rmax{4.5};
 
 	vector<int> nc={-1,-1,-1};
 	vector<vectint>  indx;
@@ -39,36 +39,7 @@ class LCells {
 	vector<Dvect> x;
 	vector<vector<int> > nnl;
 	T Dist_ijk(int, int,int);
-	void Init(Matrix & co0, const vector<Dvect> & y){
-		T Rcut0=Rcut;
-		x=y;
-		co=co0;
-		oc=co.Inversion();
-		nr=x.size();
-
-		try{
-			if(co[XX][XX] < Rcut*2.0) throw string{"Box is too small to run with neighbor lists."};
-		}catch(const string & s){
-			cout << s<<endl;
-			exit(1);
-		}
-		if(co[XX][XX] > Rmax){
-			if(nc[XX] < 0){
-				nc[XX]=static_cast<int>(co[XX][XX]/Rcut0);
-				nc[YY]=static_cast<int>(co[YY][YY]/Rcut0);
-				nc[ZZ]=static_cast<int>(co[ZZ][ZZ]/Rcut0);
-			}
-			if(Chainp.size()) Chainp.clear();
-			Chainp=vector<vector<vector<vectint> > >(nc[XX]);
-			for(int m=0;m<nc[XX];m++){
-				Chainp[m]=vector<vector<vectint> >(nc[YY]);
-				for(int n=0;n<nc[YY];n++)
-					Chainp[m][n]=vector<vectint>(nc[ZZ]);
-			}
-		}
-		if(nnl.size()) nnl.clear();
-		nnl=vector<vectint>(nr);
-	}
+	void Init(Matrix & co0, const vector<Dvect> & y);
 public:
 	LCells();
 	LCells(Matrix & co0, const vector<Dvect> & y, T rcut): Rcut{rcut}{

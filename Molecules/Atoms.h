@@ -29,6 +29,9 @@ using std::vector;
 using namespace Enums;
 
 template <typename T>
+class Percolation;
+
+template <typename T>
 class brot{
 	MMatrix<T> co;
 public:
@@ -131,9 +134,10 @@ public:
 	virtual void Reconstruct(Contacts<T> *x){};
 	virtual void SetupPercolate(){};
 	virtual void SetupPercolate(Topol_NS::Topol &x){};
-	virtual void Percolate(){};
-	virtual void Percolate(double y){}
+	virtual int Percolate(){return 0;};
+	virtual int Percolate(double y){return 0;}
 	virtual bool hasPerco() const {return false;}
+	virtual Percolation<T> * gPerco(){return nullptr;}
 
 	virtual void pdb(const vector<string> & c){};
 

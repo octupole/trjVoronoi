@@ -21,6 +21,7 @@
 #include "Topol.h"
 #include "MyUtilClass.h"
 #include "VoronoiSetter.h"
+#include "Percolation.h"
 
 
 using namespace Array;
@@ -61,6 +62,8 @@ protected:
 	vector<double> Rdii;
 	array1<double> Vols;
 	array2<double> area;
+	vector<double> VolClusters,AreaClusters;
+	vector<vector<double>> SurfaceClusters;
 	container_periodic_poly * Mycon{nullptr};
 	particle_order * porder{nullptr};
 	static vector<string> label;
@@ -71,12 +74,15 @@ protected:
 	vector<int> RealResidue;
 	vector<string> Residue;
 	vector<vector<int>> wShells;
+	vector<vector<int>> Clusters;
+	vector<int> atClusters;
 	double VolCell{0};
 	void gather(vector<int> & y);
 	virtual void WriteIt(std::ofstream &);
 	virtual void __extraInit(Topol &,bool);
 	virtual void __compShell(){};
 	virtual void __searchNeighs(int a,int b){};
+	virtual void __computeAggregate(){};
 	Voronoi();
 public:
 	Voronoi(Topol &,bool);

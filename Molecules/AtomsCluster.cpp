@@ -20,7 +20,10 @@ void AtomsCluster<T>::SetupPercolate(Topol_NS::Topol & myTop){
 	auto Reference=myTop.gReferenceResidues();
 	auto Index=myTop.gCIndex();
 	auto atmss=myTop.getAtomName();
-	auto resn=myTop.getResinfo();
+
+	vector<string> resn(nr);
+	for(int o{0};o<nr;o++)
+		resn[o]=myTop.AtomResidue(o);
 	vector<vector<int>> MySel;
 	for(size_t o{0};o<Reference.size();o++){
 		MySel.push_back(Index[Reference[o]]);
@@ -30,7 +33,7 @@ void AtomsCluster<T>::SetupPercolate(Topol_NS::Topol & myTop){
 
 
 template <typename T>
-void AtomsCluster<T>::Percolate() {
+int AtomsCluster<T>::Percolate() {
 	try{
 		if(!Perco) throw string("Should initialize percolation. Abort.");
 	} catch(const string & s){
@@ -41,11 +44,9 @@ void AtomsCluster<T>::Percolate() {
 	Matrix co(Mt.getCO());
 	Matrix oc(Mt.getOC());
 	Perco->doContacts(v,co,oc);
-	Perco->gCluster();
+	int result=Perco->gCluster();
 	Perco->Accumulate();
-	auto Male=Perco->getCluster();
-
-	cout << Male.size()<<endl;
+	return result;
 }
 template<typename T>
 void AtomsCluster<T>::Reconstruct(const string & y, TopolMic & MyTop){

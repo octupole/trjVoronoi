@@ -75,10 +75,9 @@ trjInput::trjInput(int ntot,char ** v) {
 	Usage[22]="\t -shell [2]<int n>// Compute number and average volume of the n-shell water\n"
 			"\t\tneighbours around solute \n";
 	Usage[23]="\t -clust <float cutoff [0.0] in Angstroems>\n"
-			"\t\tDo clustering by percolation of the solute. This is used to make sure that the solute is at the\n"
-			"\t\tcenter of the cell. Doing clustering is expensive, it is always better to have the solute in the\n"
-			"\t\tmiddle already at simulation time. If cutoff is zero, the default, the cutoff is chosen according\n"
-			"\t\tmiddle to the Lennard-Jones sigma parameter\n";
+			"\t\tDo clustering by percolation of the solute. This is used to compute the surfaces and volumes\n"
+			"\t\tof each cluster. If the cutoff is zero, the default, the cutoff is chosen according to the\n"
+			"\t\tLennard-Jones sigma parameters multiplied by an offset factor of 1.5\n";
 
 	int n=1;
 	string key;
