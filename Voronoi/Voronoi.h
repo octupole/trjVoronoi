@@ -22,6 +22,7 @@
 #include "MyUtilClass.h"
 #include "VoronoiSetter.h"
 #include "Percolation.h"
+#include "TrackOfstream.h"
 
 
 using namespace Array;
@@ -35,7 +36,11 @@ using namespace Topol_NS;
 using namespace std;
 const int NNN=26;
 const char h[]="Hxxxxx";
-
+const int MAXSTR{7};
+template <typename T>
+inline char * as_byte(T & y){
+	return reinterpret_cast<char *> (&y);
+}
 namespace Voro{
 struct tArea{
 	int n;
@@ -128,6 +133,12 @@ public:
 		return getTypes(First);
 	}
 	string & getTypesName(int i) {return TypesName[types[i]];};
+	template <typename Stream>
+	void bPrintBody(Stream &, size_t);;
+
+	void bPrintHeader(ofstream &);
+	void bReadHeader(ifstream &){};
+	void bReadBody(ifstream &,size_t){};
 	friend std::ofstream & operator<<(std::ofstream & fout, Voronoi  & y){
 		y.WriteIt(fout);
 		return fout;

@@ -301,6 +301,49 @@ void Voronoi::WriteIt(std::ofstream & fout){
 
 
 }
+template <typename Stream>
+void Voronoi::bPrintBody(Stream & fout, size_t nframe){
+
+}
+
+void Voronoi::bPrintHeader(ofstream & fout){
+	fout.write(as_byte(nresid),sizeof(nresid));
+	fout.write(as_byte(nr),sizeof(nr));
+	fout.write(as_byte(nc),sizeof(nc));
+	size_t ntmp=SelectedResidues.size();
+	fout.write(as_byte(ntmp),sizeof(ntmp));
+	fout.write(as_byte(SelectedResidues[0]),sizeof(SelectedResidues[0])*ntmp);
+	fout.write(as_byte(types[0]),sizeof(types)*nc);
+	fout.write(as_byte(atTypes[0]),sizeof(atTypes)*nc);
+	fout.write(as_byte(Rdii[0]),sizeof(Rdii)*nc);
+	fout.write(as_byte(RealResidue[0]),sizeof(RealResidue[0])*nresid);
+
+	vector<string> tmp_s=Residue;
+	for(size_t o{0};o<nresid;o++)
+		tmp_s[o].resize(MAXSTR);
+	fout.write(as_byte(tmp_s[0]),sizeof(tmp_s)*nresid*MAXSTR);
+
+	ntmp=typesResidueMask.size();
+	fout.write(as_byte(ntmp),sizeof(ntmp));
+	fout.write(as_byte(typesResidueMask[0]),sizeof(typesResidueMask)*ntmp);
+	ntmp=TypesName.size();
+	fout.write(as_byte(ntmp),sizeof(ntmp));
+	fout.write(as_byte(TypesName[0]),sizeof(TypesName)*ntmp);
+	ntmp=cindex.size();
+	fout.write(as_byte(ntmp),sizeof(ntmp));
+	fout.write(as_byte(cindex[0]),sizeof(cindex)*ntmp);
+	ntmp=CIndex.size();
+	fout.write(as_byte(ntmp),sizeof(ntmp));
+	for(size_t o{0};o<ntmp;o++){
+		size_t ntmp0=CIndex[o].size();
+		fout.write(as_byte(ntmp0),sizeof(ntmp0));
+		fout.write(as_byte(CIndex[o][0]),sizeof(CIndex[o][0])*ntmp0);
+	}
+
+}
+
 template void Voronoi::Start(float, Atoms<double> &);
 template void Voronoi::Start(float, Atoms<float> &);
+template void Voronoi::bPrintBody(ofstream &,size_t);
+template void Voronoi::bPrintBody(TrackOfstream &,size_t);
 }

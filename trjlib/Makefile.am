@@ -17,5 +17,5 @@ LDADD = libtrj.a
 include_HEADERS = Array.h Fstream.h  HeaderTrj.h  NewMPI.h \
 	Communicator.hpp FstreamC.h  Metric.h  PickSelection.h  histograms.hpp\
 	FComms.h  FstreamF.h  MyUtilClass.h  Split.h   myEnums.hpp\
-	Finalize.h  Ftypedefs.h  MyVec.h   Timer.h
+	Finalize.h  Ftypedefs.h  MyVec.h   Timer.h TrackOfstream.h
 
