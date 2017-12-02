@@ -23,6 +23,7 @@
 #include "VoronoiSetter.h"
 #include "Percolation.h"
 #include "TrackOfstream.h"
+#include "Split.h"
 
 
 using namespace Array;
@@ -56,7 +57,8 @@ class Voronoi {
 protected:
 	Matrix co;
 	Matrix oc;
-	static int nresid,nr,nc;
+	static int nresid,nr,nc,nframe;
+	static ios::off_type sizeHeader,sizeBody;
 	vector<int> SelectedResidues;
 	static float time;
 	vector<int> types; // Type number per atom according to ResidueTypes::_Residue collection
@@ -88,6 +90,17 @@ protected:
 	virtual void __compShell(){};
 	virtual void __searchNeighs(int a,int b){};
 	virtual void __computeAggregate(){};
+	template <typename T>
+	void dmpVector(ofstream & f, vector<T> & v);
+	template <typename T>
+	void dmpVector(ofstream & f, vector<vector<T>> & v);
+	void dmpVector(ofstream & f, vector<string> & v);
+	template <typename T>
+	void rdVector(ifstream & , vector<T> &);
+	template <typename T>
+	void rdVector(ifstream & , vector<vector<T>> &);
+	void rdVector(ifstream & , vector<string> &);
+
 	Voronoi();
 public:
 	Voronoi(Topol &,bool);
@@ -133,12 +146,11 @@ public:
 		return getTypes(First);
 	}
 	string & getTypesName(int i) {return TypesName[types[i]];};
-	template <typename Stream>
-	void bPrintBody(Stream &, size_t);;
+	void bPrintBody(ofstream &);
 
 	void bPrintHeader(ofstream &);
-	void bReadHeader(ifstream &){};
-	void bReadBody(ifstream &,size_t){};
+	void bReadHeader(ifstream &);
+	void bReadBody(ifstream &);
 	friend std::ofstream & operator<<(std::ofstream & fout, Voronoi  & y){
 		y.WriteIt(fout);
 		return fout;

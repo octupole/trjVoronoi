@@ -28,6 +28,7 @@ public:
 		countW+=size;
 	}
 	ios::off_type gCountW(){return countW;}
+	void set0CountW(){countW=0;}
 
 	virtual ~TrackOfstream(){
 		if(out) delete out;
