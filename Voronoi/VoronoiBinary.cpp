@@ -10,12 +10,8 @@
 namespace Voro {
 void VoronoiBinary::bReadBody(ifstream & fin){
 	bool have_clusters{false};
-	exit(1);
 	fin.read(as_byte(have_clusters),sizeof(have_clusters));
 	fin.read(as_byte(nframe),sizeof(nframe));
-	cout << nframe <<endl;
-	exit(1);
-
 	if(have_clusters){
 		rdVector(fin,atClusters);
 		rdVector(fin,VolClusters);
@@ -72,45 +68,42 @@ void VoronoiBinary::bReadHeader(ifstream & fin){
 	fin.read(as_byte(nr),sizeof(nr));
 	fin.read(as_byte(nc),sizeof(nc));
 	rdVector(fin,SelectedResidues);
-	types=vector<int>(nc);
-	atTypes=vector<int>(nc);
-	Rdii=vector<double>(nc);
-	RealResidue=vector<int>(nresid);
-	fin.read(as_byte(types[0]),sizeof(types)*nc);
-	fin.read(as_byte(atTypes[0]),sizeof(atTypes)*nc);
-	fin.read(as_byte(Rdii[0]),sizeof(Rdii)*nc);
-	fin.read(as_byte(RealResidue[0]),sizeof(RealResidue[0])*nresid);
-	cout << "one"<<endl;
+	types=vector<int>(nr);
+	atTypes=vector<int>(nr);
+
+	Rdii=vector<double>(nr);
+	fin.read(as_byte(types[0]),sizeof(types[0])*nr);
+	fin.read(as_byte(atTypes[0]),sizeof(atTypes[0])*nr);
+	fin.read(as_byte(Rdii[0]),sizeof(Rdii[0])*nr);
 	rdVector(fin,Residue);
-	cout << "one"<<endl;
 	rdVector(fin,TypesName);
-	cout << "one"<<endl;
 	rdVector(fin,typesResidueMask);
-	cout << "one"<<endl;
 	rdVector(fin,cindex);
-	cout << "one"<<endl;
 	rdVector(fin,CIndex);
-	cout << CIndex.size()<<" " << nc<<endl;exit(1);
 };
 
 void VoronoiBinary::bPrintHeader(ofstream & fout){
+
 	fout.write(as_byte(nresid),sizeof(nresid));
 	fout.write(as_byte(nr),sizeof(nr));
 	fout.write(as_byte(nc),sizeof(nc));
 	dmpVector(fout,SelectedResidues);
-	fout.write(as_byte(types[0]),sizeof(types)*nc);
-	fout.write(as_byte(atTypes[0]),sizeof(atTypes)*nc);
-	fout.write(as_byte(Rdii[0]),sizeof(Rdii)*nc);
-	fout.write(as_byte(RealResidue[0]),sizeof(RealResidue[0])*nresid);
+	fout.write(as_byte(types[0]),sizeof(types[0])*nr);
+	fout.write(as_byte(atTypes[0]),sizeof(atTypes[0])*nr);
+	fout.write(as_byte(Rdii[0]),sizeof(Rdii[0])*nr);
 	dmpVector(fout,Residue);
 	dmpVector(fout,TypesName);
 	dmpVector(fout,typesResidueMask);
 	dmpVector(fout,cindex);
 	dmpVector(fout,CIndex);
+	cout << CIndex.size()<< " "<<CIndex.size()<< " "<<Residue.size()<< " "<<TypesName.size()<< " "<<Rdii.size()<< " "<<endl;
 }
 void VoronoiBinary::WriteIt(std::ofstream & fout){
-	if(writeBinary) bPrintBody(fout);
-	else VoronoiMicelles::WriteIt(fout);
+	if(writeBinary)
+		bPrintBody(fout);
+	else
+		VoronoiMicelles::WriteIt(fout);
+
 }
 void VoronoiBinary::ReadIt(std::ifstream & fin){
 	bReadBody(fin);
@@ -118,7 +111,12 @@ void VoronoiBinary::ReadIt(std::ifstream & fin){
 
 VoronoiBinary::VoronoiBinary(ifstream & fin) {
 	bReadHeader(fin);
-	cout << CIndex.size()<<" " << nc<<endl;exit(1);
+	Vol=vector<double>(nr);
+	Neighs=vector<vector<int>>(nr);
+	Surface=vector<vector<double>>(nr);
+	area.Allocate(nresid,nc);
+	Vols.Allocate(nresid);
+
 	this->readBinary=true;
 }
 VoronoiBinary::VoronoiBinary(ofstream & fout,Topol & myTop,bool bH): VoronoiMicelles::VoronoiMicelles(myTop,bH){

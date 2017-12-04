@@ -37,12 +37,6 @@ ExecuteVoronoi<T>::ExecuteVoronoi(trj::TrjRead & MyIn) {
 	nskip=MyIn.gnskip();
 	bTest=MyIn.bbTestVol();
 
-	try{
-		if(nnx ==1 || nny == 1|| nnz == 1) throw string("Grid dimensions are not set!");
-	}catch(const string & s){
-		cout << s <<endl;
-		Finale::Finalize::Final();
-	}
 	if(finx){
 		size_t TotFrame=finx->gFrameStep();
 		try{
@@ -77,6 +71,12 @@ ExecuteVoronoi<T>::ExecuteVoronoi(trj::TrjRead & MyIn) {
 	}
 	if(fin1x){
 		vor=new VoronoiBinary(*fin1x);
+		ofstream & fout=*foutx;
+
+		CurrMPI->Barrier();
+		Comms=new Parallel::FComms(CurrMPI,fout,fileout,nstart,nend,1e8,1);
+		nstart=Comms->getStart();
+		nend=Comms->getEnd();
 	}
 }
 template <typename T>
@@ -146,7 +146,16 @@ void ExecuteVoronoi<T>::__RunPost(){
 	myiterators::IteratorVoronoi iter_vor(vor,fin1x,nstart,nend);
 	while((++iter_vor).isReferenced()){
 		Voronoi * vorA=iter_vor();
+		vorA->getData();
+		Comms->getStream() << *vorA;
+		if(bTest) vor->testVol();
+
 	}
+	Comms->appendStreams();
+	if(bDel) Comms->removeFiles();
+	CurrMPI->Barrier();
+	CurrMPI->~NewMPI();
+	cout << "\nProgram completed: Output data written to " + fileout << "\n\n";
 }
 template <typename T>
 void ExecuteVoronoi<T>::__RunTrajectory(Atoms<T> * atmx){
@@ -183,6 +192,7 @@ void ExecuteVoronoi<T>::__RunTrajectory(Atoms<T> * atmx){
 		}
 
 		vor->Start(ntime,*atmA);
+		vor->doVoro__();
 		vor->getData();
 
 		Comms->getStream() << *vor;
@@ -210,6 +220,7 @@ void ExecuteVoronoi<T>::__RunPDB(Atoms<T> * atm){
 	atm->pdb(data);
 	float ntime=atm->getTime();
 	vor-> Start(ntime,*atm);
+	vor->doVoro__();
 	vor->getData();
 	Comms->getStream() << *vor;
 

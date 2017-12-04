@@ -8,7 +8,73 @@
 #include <VoronoiMicelles.h>
 
 namespace Voro{
-VoronoiMicelles::VoronoiMicelles(Topol & myTop, bool bH): Voronoi::Voronoi(myTop,bH){
+VoronoiMicelles::VoronoiMicelles(Topol & myTop, bool bH){
+	nr=myTop.Size();
+	Vol=vector<double>(nr);
+	Neighs=vector<vector<int>>(nr);
+	Surface=vector<vector<double>>(nr);
+	label=vector<string>(nr);
+	types=vector<int>(nr);
+	atTypes=vector<int>(nr);
+	SelectedResidues=myTop.gReferenceResidues();
+
+
+	label=myTop.getAtomName();
+	vector<vector<int> > & Index=myTop.gCIndex();
+	CIndex=vector<vector<int>>(Index.size());
+	for(size_t o=0;o<Index.size();o++){
+		for(size_t p=0;p<Index[o].size();p++){
+			size_t i=Index[o][p];
+			Vol[i]=0.0;
+			if(!bH){
+				string sub1=label[i];
+				if(sub1.find_first_not_of("1234") == 1){
+					if(sub1.compare(1,1,"H") != 0) {
+						cindex.push_back(i);
+						CIndex[o].push_back(i);
+					}
+				} else{
+					if(sub1.compare(0,1,"H") != 0) {
+						cindex.push_back(i);
+						CIndex[o].push_back(i);
+					}
+				}
+			} else {
+				cindex.push_back(i);
+				CIndex[o].push_back(i);
+			}
+		}
+	}
+	if(bH) {
+		cout << std::left << std::fixed<< "\n              " <<std::setw(10) <<
+				" Voronoi's calculation includes hydrogens " << endl;
+	} else{
+		cout << std::left << std::fixed<< "\n              " <<std::setw(10) <<
+				" Voronoi's calculation does not includes hydrogens " << endl;
+	}
+	cout <<"\n" << std::left << std::fixed<<"                  "<<std::setw(10) << " Atoms are  = " << "      "
+			<< std::setw(12) << cindex.size() << "\n" <<endl;
+
+	atTypes=myTop.gatResType();
+	nresid=myTop.ResSize();
+
+	TypesName=myTop.getTypeNames();
+	const vector<int> & tmp=myTop.getAtomTypeNo();
+	for(int o=0;o<nr;o++)
+		types[o]=tmp[o];
+	Residue=myTop.getResinfo();
+	Rdii=myTop.getrd();
+	nc=myTop.getmaxt();
+	area.Allocate(nresid,nc);
+	Vols.Allocate(nresid);
+	set<int> tmp1;
+	for(string it: this->TypesName){
+		tmp1.insert(ResidueTypes::find(it));
+	}
+	for(auto it:tmp1){
+		this->typesResidueMask.push_back(it);
+	}
+
 	wShells=vector<vector<int>>(VoronoiSetter::maxLevel);
 	__extraInit(myTop,bH);
 }
@@ -18,38 +84,6 @@ void VoronoiMicelles::__extraInit(Topol & myTop, bool bH){
 	area.Allocate(nresid,nc);
 }
 void VoronoiMicelles::getData(){
-	c_loop_order_periodic vl(*Mycon,*porder);
-	voronoicell_neighbor c;
-
-	double vol0;
-	vector<int> nei;
-	vector<double> area0;
-	vector<double> norm0;
-	for(unsigned int n=0;n<cindex.size();n++){
-		Vol[cindex[n]]=0.0;
-		Neighs[cindex[n]].clear();
-		Surface[cindex[n]].clear();
-	}
-
-	int ia=0;
-
-
-	if(vl.start())
-		do {
-			if(Mycon->compute_cell(c,vl)) {
-				vol0=c.volume();
-				c.neighbors(nei);
-				c.face_areas(area0);
-				gather(nei);
-				Vol[cindex[ia]]=vol0;
-				Neighs[cindex[ia]]=nei;
-				Surface[cindex[ia]]=area0;
-			}
-			ia++;
-		} while(vl.inc());
-	nei.clear();
-	area0.clear();
-
 
 	area=0.0;
 	for(int o=0;o<nresid;o++) {
@@ -70,6 +104,7 @@ void VoronoiMicelles::getData(){
 			vector<tArea>::iterator it=nei.begin();
 			for(;it != nei.end(); ++it)
 				area[o][types[it->n]]+=it->a;
+
 		}
 		Vols[o]=sum_v;
 	}
@@ -146,6 +181,7 @@ void VoronoiMicelles::WriteIt(std::ofstream & fout){
 	int po=0;
 	for(size_t o0=0;o0<this->SelectedResidues.size() ;o0++) {
 		int o=this->SelectedResidues[o0];
+
 		if(!VoronoiSetter::bPrintVols)continue;
 		if(getTypesRes(o) != VoronoiSetter::pGroup && VoronoiSetter::pGroup != -1) continue;
 		double a=Vols[o]*1000.0;

@@ -21,74 +21,7 @@ vector<string> Voronoi::label=vector<string>();
 
 Voronoi::Voronoi() {}
 
-Voronoi::Voronoi(Topol & myTop, bool bH){
-	nr=myTop.Size();
-	Vol=vector<double>(nr);
-	Neighs=vector<vector<int>>(nr);
-	Surface=vector<vector<double>>(nr);
-	label=vector<string>(nr);
-	types=vector<int>(nr);
-	atTypes=vector<int>(nr);
-	SelectedResidues=myTop.gReferenceResidues();
 
-
-	label=myTop.getAtomName();
-	vector<vector<int> > & Index=myTop.gCIndex();
-	CIndex=vector<vector<int>>(Index.size());
-	for(size_t o=0;o<Index.size();o++){
-		for(size_t p=0;p<Index[o].size();p++){
-			size_t i=Index[o][p];
-			Vol[i]=0.0;
-			if(!bH){
-				string sub1=label[i];
-				if(sub1.find_first_not_of("1234") == 1){
-					if(sub1.compare(1,1,"H") != 0) {
-						cindex.push_back(i);
-						CIndex[o].push_back(i);
-					}
-				} else{
-					if(sub1.compare(0,1,"H") != 0) {
-						cindex.push_back(i);
-						CIndex[o].push_back(i);
-					}
-				}
-			} else {
-				cindex.push_back(i);
-				CIndex[o].push_back(i);
-			}
-		}
-	}
-	if(bH) {
-		cout << std::left << std::fixed<< "\n              " <<std::setw(10) <<
- 				" Voronoi's calculation includes hydrogens " << endl;
-	} else{
-		cout << std::left << std::fixed<< "\n              " <<std::setw(10) <<
- 				" Voronoi's calculation does not includes hydrogens " << endl;
-	}
- 	cout <<"\n" << std::left << std::fixed<<"                  "<<std::setw(10) << " Atoms are  = " << "      "
- 			<< std::setw(12) << cindex.size() << "\n" <<endl;
-
-	atTypes=myTop.gatResType();
-	nresid=myTop.ResSize();
-
-	TypesName=myTop.getTypeNames();
-	const vector<int> & tmp=myTop.getAtomTypeNo();
-	for(int o=0;o<nr;o++)
-		types[o]=tmp[o];
-	RealResidue=myTop.getResind();
-	Residue=myTop.getResinfo();
-	Rdii=myTop.getrd();
-	nc=myTop.getmaxt();
-	area.Allocate(nresid,nc);
-	Vols.Allocate(nresid);
-	set<int> tmp1;
-	for(string it: this->TypesName){
-		tmp1.insert(ResidueTypes::find(it));
-	}
-	for(auto it:tmp1){
-		this->typesResidueMask.push_back(it);
-	}
-}
 void Voronoi::__extraInit(Topol & myTop, bool bH){
 }
 template <typename T>
@@ -165,8 +98,7 @@ void Voronoi::gather(vector<int> & it){
 	it=tmp;
 	tmp.clear();
 }
-
-void Voronoi::getData(){
+void Voronoi::doVoro__(){
 	c_loop_order_periodic vl(*Mycon,*porder);
 	voronoicell_neighbor c;
 
@@ -198,6 +130,10 @@ void Voronoi::getData(){
 		} while(vl.inc());
 	nei.clear();
 	area0.clear();
+
+}
+
+void Voronoi::getData(){
 	for(int o=0;o<nresid;o++) {
 		vector<int> & cindex=CIndex[o];
 		double sum_v=0.0;
@@ -221,90 +157,7 @@ void Voronoi::getData(){
 	}
 
 }
-void Voronoi::ReadIt(std::ifstream & fin){
 
-}
-void Voronoi::WriteIt(std::ofstream & fout){
-	fout << "######>> At step No. " << setw(10) << setprecision(2) << fixed<< time << endl;
-	int po=0;
-	for(int o=0;o<nresid;o++) {
-		if(!VoronoiSetter::bPrintVols)continue;
-		if(getTypesRes(o) != VoronoiSetter::pGroup && VoronoiSetter::pGroup != -1) continue;
-		double a=Vols[o]*1000.0;
-		string l=Residue[o];
-		int rres=RealResidue[o]+1;
-		(po%5)?fout << setw(10) << setprecision(4) << fixed<<  a << ' ' << setw(4) << l << ' ' << setw(5) << rres << ' ':
-		  fout << endl << "%$VolRes " << setw(10) << setprecision(4) << fixed << a << ' ' << setw(4) << l  <<' ' << setw(5) << rres << ' ';
-		po++;
-	}
-	fout << endl;
-
-	array2<double> interface;
-	interface.Allocate(nc,nc);
-	interface=0.0;
-	array1<double> VolSel;
-	VolSel.Allocate(nc);
-	VolSel=0.0;
-	for(int o=0;o<nresid ;o++){
-		int o_type=getTypesRes(o);
-		VolSel[o_type]+=Vols[o]*1000.0;
-		for(int p=0;p<nc;p++) {
-			double a=area[o][p]*100.0;
-			interface[o_type][p]+=a;
-		}
-	}
-
-	if(VoronoiSetter::bPrintAreas ){
-		fout << "# Area format:        ";
-		for(int o=0;o<nc;o++) fout << setw(1) << fixed << " areatype(" << o << ") ";
-		fout << endl;
-		fout  << "%$AreaRes " ;
-		int po=0;
-		for(int o=0;o<nresid ;o++){
-			string l=Residue[o];
-			int o_type=getTypesRes(o);
-			if(VoronoiSetter::pGroup != -1 && o_type != VoronoiSetter::pGroup) continue;
-			fout  << right << setw(5)<< l << " " << setw(5) << fixed << RealResidue[o]+1 << ' ' << setw(3) << fixed << o_type << ' ' ;
-			for(int p=0;p<nc;p++) {
-				double a=area[o][p]*100.0;
-				fout << setw(10) << setprecision(5) << fixed << a << ' ';
-			}
-			if(o+1==nresid) fout << endl;
-			else if(!((po+1)%2)) fout << endl << "%$AreaRes " ;
-			po++;
-		}
-	}
-
-	fout << endl;
-	fout << "#  Residue Types: ";
-	for(int o=0;o<nc;o++) fout << setw(1) << fixed << " " << TypesName[o] << "  ["<<  o << "],  ";
-	fout << endl;
-
-	fout << "# Volume of selection " << endl <<"#      ";
-	for(int o=0;o<nc;o++) fout << setw(1) << fixed << " Volumetype(" << o << ")  ";
-
-	fout << endl;
-	fout << "%$TotVol ";
-	for(int o=0;o<nc;o++){
-			fout << setw(15) << setprecision(4) << fixed << VolSel[o];
-	}
-	fout << endl;
-
-	fout << "# Interface area of selection " << endl << "#             ";
-	for(int o=0;o<nc;o++) fout << setw(1) << fixed << "  areatype(" << o << ")";
-	fout << endl;
-	for(int o=0;o<nc;o++){
-		fout << "%$AreaTot " << setw(3) << o ;
-		for(int p=0;p<o;p++)
-			fout <<setw(13) << setprecision(3) << fixed << ' ';
-
-		for(int p=o;p<nc;p++)
-			fout << setw(13) << interface[o][p] ;
-		fout << endl;
-	}
-
-
-}
 template <typename T>
 void Voronoi::dmpVector(ofstream & f, vector<T> & v){
 	size_t ntmp=v.size();
@@ -328,17 +181,14 @@ void Voronoi::dmpVector(ofstream & f, vector<string> & v){
 	for(auto it: v)
 		tmp_s+=it+" ";
 	size_t ntmp=tmp_s.size();
-	char * tmp_c=new char[ntmp];
+
 	f.write(as_byte(ntmp),sizeof(ntmp));
-	if(ntmp) f.write(as_byte(tmp_c[0]),sizeof(tmp_c[0])*ntmp);
-	delete []tmp_c;
+	if(ntmp) f.write(as_byte(tmp_s[0]),sizeof(tmp_s[0])*ntmp);
 }
 template <typename T>
 void Voronoi::rdVector(ifstream & f,vector<T> & v){
-	cout << "New "<<endl;
 	size_t ntmp;
 	f.read(as_byte(ntmp),sizeof(ntmp));
-	cout << ntmp <<endl;
 	if(!ntmp) return;
 	v.clear();
 	v=vector<T>(ntmp);
@@ -346,18 +196,14 @@ void Voronoi::rdVector(ifstream & f,vector<T> & v){
 }
 template <typename T>
 void Voronoi::rdVector(ifstream & f,vector<vector<T>> & v){
-	cout << "New 2"<<endl;
 	size_t ntmp;
 	f.read(as_byte(ntmp),sizeof(ntmp));
 	v.clear();
-	cout << ntmp <<endl;
 	if(!ntmp) return;
 	v=vector<vector<T>>(ntmp);
 	size_t ntmp0;
 	for(size_t o{0};o<ntmp;o++){
 		f.read(as_byte(ntmp0),sizeof(ntmp0));
-		cout << ntmp0 <<endl;
-
 		if(ntmp0) {
 			v[o]=vector<T>(ntmp0);
 			f.read(as_byte(v[o][0]),sizeof(T)*ntmp0);
@@ -365,17 +211,13 @@ void Voronoi::rdVector(ifstream & f,vector<vector<T>> & v){
 	}
 }
 void Voronoi::rdVector(ifstream & f,vector<string> & v){
-	cout << "New s"<<endl;
 	size_t ntmp;
 	v.clear();
 	f.read(as_byte(ntmp),sizeof(ntmp));
-	cout << ntmp<<endl;
 	if(!ntmp) return;
-	char * tmp_s=new char[ntmp];
-	f.read(as_byte(tmp_s[0]),sizeof(char)*(ntmp));
-	string tmp(tmp_s,tmp_s+ntmp);
-	v=split(tmp);
-	delete[]tmp_s;
+	string tmp_s(ntmp,' ');
+	f.read(as_byte(tmp_s[0]),sizeof(tmp_s[0])*(ntmp));
+	v=split(tmp_s);
 }
 
 template void Voronoi::Start(float, Atoms<double> &);

@@ -13,6 +13,8 @@ namespace Voro{
 class VoronoiMicelles: public Voro::Voronoi {
 protected:
 	void WriteIt(std::ofstream &);
+	void ReadIt(std::ifstream &){};
+
 	void __extraInit(Topol &,bool);
 	void __compShell();
 	void __searchNeighs(int ,int);
@@ -23,7 +25,7 @@ public:
 	VoronoiMicelles(ifstream & f){};
 	VoronoiMicelles(Topol &,bool);
 
-	void getData();
+	virtual void getData();
 	virtual ~VoronoiMicelles();
 };
 }

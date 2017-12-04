@@ -87,12 +87,12 @@ protected:
 	vector<int> atClusters;
 	double VolCell{0};
 	void gather(vector<int> & y);
-	virtual void WriteIt(std::ofstream &);
-	virtual void ReadIt(std::ifstream &);
+	virtual void WriteIt(std::ofstream &)=0;
+	virtual void ReadIt(std::ifstream &)=0;
 	virtual void __extraInit(Topol &,bool);
-	virtual void __compShell(){};
-	virtual void __searchNeighs(int a,int b){};
-	virtual void __computeAggregate(){};
+	virtual void __compShell()=0;
+	virtual void __searchNeighs(int a,int b)=0;
+	virtual void __computeAggregate()=0;
 	template <typename T>
 	void dmpVector(ofstream & f, vector<T> & v);
 	template <typename T>
@@ -112,9 +112,10 @@ protected:
 	Voronoi();
 public:
 	Voronoi(Topol &,bool);
-	Voronoi(ifstream & x){};
+	Voronoi(ifstream & x);
 	template <typename T>
 	void Start(float, Atoms<T> &);
+	void doVoro__();
 	virtual void getData();
 	virtual void sTname(Topol_NS::Topol & y ){};
 	virtual vector<double> & gTotHG(){static vector<double> t;return t;};
