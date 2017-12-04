@@ -26,6 +26,7 @@ VoronoiBinary::VoronoiBinary(ifstream & fin) {
 	Surface=vector<vector<double>>(nr);
 	area.Allocate(nresid,nc);
 	Vols.Allocate(nresid);
+	wShells=vector<vector<int>>(VoronoiSetter::maxLevel);
 
 	this->readBinary=true;
 }
