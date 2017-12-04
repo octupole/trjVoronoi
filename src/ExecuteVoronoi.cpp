@@ -9,6 +9,7 @@
 #include "Atoms.h"
 #include "Voronoi.h"
 #include "VoronoiMicelles.h"
+#include "VoronoiBinary.h"
 
 namespace Voro {
 
@@ -24,8 +25,9 @@ template <typename T>
 void ExecuteVoronoi<T>::__Print(ostream & y){}
 
 template <typename T>
-ExecuteVoronoi<T>::ExecuteVoronoi(trj::TrjRead & MyIn, Topol & Topology): Top(&Topology){
+ExecuteVoronoi<T>::ExecuteVoronoi(trj::TrjRead & MyIn) {
 	__SetUp(MyIn);
+
 	bOnce=MyIn.bbOnce();
 	nnx=MyIn.gnnx();
 	nny=MyIn.gnny();
@@ -34,6 +36,7 @@ ExecuteVoronoi<T>::ExecuteVoronoi(trj::TrjRead & MyIn, Topol & Topology): Top(&T
 	nend=MyIn.gnend();
 	nskip=MyIn.gnskip();
 	bTest=MyIn.bbTestVol();
+
 	try{
 		if(nnx ==1 || nny == 1|| nnz == 1) throw string("Grid dimensions are not set!");
 	}catch(const string & s){
@@ -72,21 +75,79 @@ ExecuteVoronoi<T>::ExecuteVoronoi(trj::TrjRead & MyIn, Topol & Topology): Top(&T
 		nstart=nstart+nChunk*MyTaskNo;
 
 	}
-	vor=new VoronoiMicelles(Topology,bHyd);
+	if(fin1x){
+		vor=new VoronoiBinary(*fin1x);
+	}
+}
+template <typename T>
+ExecuteVoronoi<T>::ExecuteVoronoi(trj::TrjRead & MyIn, Topol & Topology):
+ 	 ExecuteVoronoi<T>::ExecuteVoronoi(MyIn){
+	Top=&Topology;
+	ios::streampos len;
+	HeaderTrj header;
+// Read header of dcd file
+	try{
+		if(finx) {
+			finx->seekg(0,"end");
+			len=finx->tellg();
+			finx->seekg(0,"beg");
+			*finx>>header;
+			try{
+				if(!header.check(Top->Size())) {
+					stringstream ss0,ss1;
+					ss0<< Top->Size();
+					ss1<<header.getNatoms();
+					throw string("Number of atoms in the pdb ("+ss0.str()+") and trajectory files ("
+							+ss1.str()+") does not match!");}
+			}
+			catch(const string & s){cout << s<<endl;Finale::Finalize::Final();}
+			ofstream & fout=*foutx;
+
+			CurrMPI->Barrier();
+
+			Comms=new Parallel::FComms(CurrMPI,fout,fileout,nstart,nend,header.getNFR(),nskip);
+			nstart=Comms->getStart();
+			nend=Comms->getEnd();
+		}else{
+			ofstream & fout=*foutx;
+			CurrMPI->Barrier();
+			nstart=1;nend=1;nskip=1;
+			if(CurrMPI->Get_Size() > 1) throw string("Cannot compute Voronoi from a PDB file in Parallel!");
+			Comms=new Parallel::FComms(CurrMPI,fout,fileout,nstart,nend,header.getNFR(),nskip);
+			nstart=Comms->getStart();
+			nend=Comms->getEnd();
+		}
+	} catch(const string & s){cout << s<<endl;
+	Finale::Finalize::Final();exit(1);}
+
+	if(binOutput)
+		vor=new VoronoiBinary(*foutx,Topology,bHyd);
+	else
+		vor=new VoronoiMicelles(Topology,bHyd);
 	Percolation<T>::setPercoCutoff(MyIn.gPercoCutoff());
 	Clustering=MyIn.bbClust();
 	Rcut=MyIn.gRcut();
 	Rcut_in=MyIn.gRcut_in();
-
 };
 template <typename T>
 void ExecuteVoronoi<T>::operator()(Atoms<T> * atx){
+	if(!atx) {
+		__RunPost();
+		return;
+	}
 	if(finx)
 		__RunTrajectory(atx);
 	else
 		__RunPDB(atx);
 }
 
+template <typename T>
+void ExecuteVoronoi<T>::__RunPost(){
+	myiterators::IteratorVoronoi iter_vor(vor,fin1x,nstart,nend);
+	while((++iter_vor).isReferenced()){
+		Voronoi * vorA=iter_vor();
+	}
+}
 template <typename T>
 void ExecuteVoronoi<T>::__RunTrajectory(Atoms<T> * atmx){
 
@@ -167,10 +228,12 @@ void ExecuteVoronoi<T>::__SetUp(trj::TrjRead & MyIn){
 
 	bDel=MyIn.bbDel();
 	bHyd=MyIn.bbHyd();
+	binOutput=MyIn.bbOutBin();
 	fileout_bin=MyIn.gfileout_bin();
 
 	fpdb=MyIn.gFpdb();
 	finx=MyIn.gFinx();
+	fin1x=MyIn.gFin1();
 	foutx=MyIn.gFoutx();
 
 	fidb=MyIn.gFidb();
@@ -179,42 +242,6 @@ void ExecuteVoronoi<T>::__SetUp(trj::TrjRead & MyIn){
 	foutx=new ofstream();
 
 
-	ios::streampos len;
-	HeaderTrj header;
-// Read header of dcd file
-	try{
-		if(finx) {
-			finx->seekg(0,"end");
-			len=finx->tellg();
-			finx->seekg(0,"beg");
-			*finx>>header;
-			try{
-				if(!header.check(Top->Size())) {
-					stringstream ss0,ss1;
-					ss0<< Top->Size();
-					ss1<<header.getNatoms();
-					throw string("Number of atoms in the pdb ("+ss0.str()+") and trajectory files ("
-							+ss1.str()+") does not match!");}
-			}
-			catch(const string & s){cout << s<<endl;Finale::Finalize::Final();}
-			ofstream & fout=*foutx;
-
-			CurrMPI->Barrier();
-
-			Comms=new Parallel::FComms(CurrMPI,fout,fileout,nstart,nend,header.getNFR(),nskip);
-			nstart=Comms->getStart();
-			nend=Comms->getEnd();
-		}else{
-			ofstream & fout=*foutx;
-			CurrMPI->Barrier();
-			nstart=1;nend=1;nskip=1;
-			if(CurrMPI->Get_Size() > 1) throw string("Cannot compute Voronoi from a PDB file in Parallel!");
-			Comms=new Parallel::FComms(CurrMPI,fout,fileout,nstart,nend,header.getNFR(),nskip);
-			nstart=Comms->getStart();
-			nend=Comms->getEnd();
-		}
-	} catch(const string & s){cout << s<<endl;
-	Finale::Finalize::Final();exit(1);}
 	/*
 	 * Define and dimension RhoSaxs and Saxs classes
 	 */

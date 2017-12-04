@@ -11,13 +11,16 @@
 #include <Voronoi.h>
 namespace Voro{
 class VoronoiMicelles: public Voro::Voronoi {
+protected:
 	void WriteIt(std::ofstream &);
 	void __extraInit(Topol &,bool);
 	void __compShell();
 	void __searchNeighs(int ,int);
 	void __computeAggregate();
+	VoronoiMicelles(){};
 public:
 
+	VoronoiMicelles(ifstream & f){};
 	VoronoiMicelles(Topol &,bool);
 
 	void getData();

@@ -94,7 +94,6 @@ int main(int argc, char ** argv){
 	trj::TrjRead MyIn(argc,argv);
 	MyIn.Input();
 	Topol_NS::TopolMic MyTop;
-
 	vector<string> data;
 	if(MyIn.gFpdb()){
 		// read pdb file to construct topology
@@ -108,19 +107,21 @@ int main(int argc, char ** argv){
 	typedef map<string,vector<vector<int> > > mappa;
 	mappa & Def=MyTop.getDef();
 
-	MyIn.gReference()=PickSelection(MyIn.gReference()).Select<Enums::Reference>(Def,MyTop); // Pick the Reference residue
+	if(MyIn.gFin1()){
+		MyRun=new Voro::ExecuteVoronoi<double>(MyIn);
+	} else {
+		MyIn.gReference()=PickSelection(MyIn.gReference()).Select<Enums::Reference>(Def,MyTop); // Pick the Reference residue
 
-	int natoms=MyTop.Size();
-	if(MyIn.bbClust())
-		atm=new AtomsCluster<double>(natoms);
-	else
-		atm=new FAtoms<double>(natoms);
+		int natoms=MyTop.Size();
+		if(MyIn.bbClust())
+			atm=new AtomsCluster<double>(natoms);
+		else
+			atm=new FAtoms<double>(natoms);
 
-	MyTop.InitSelection(MyIn.gReference(),Enums::Reference);
+		MyTop.InitSelection(MyIn.gReference(),Enums::Reference);
 
-
-	MyRun=new Voro::ExecuteVoronoi<double>(MyIn,MyTop);
-
+		MyRun=new Voro::ExecuteVoronoi<double>(MyIn,MyTop);
+	}
 	(*MyRun)(atm);
 
 	return 0;

@@ -17,6 +17,7 @@
 #include "Topol.h"
 #include "FComms.h"
 #include "IteratorAtoms.h"
+#include "IteratorVoronoi.h"
 #include "Finalize.h"
 #include "Percolation.h"
 #include "AtomsCluster.h"
@@ -34,7 +35,7 @@ class ExecuteVoronoi {
 	Topol * Top{nullptr}; ///< An instantiated Topol class pointer.
 	Topol * TopPBC{nullptr};
 
-	int nstart{0},nend{-1},nskip{1}; ///< Where to start to end and how many steps to skip in between
+	long int nstart{0},nend{-1},nskip{1}; ///< Where to start to end and how many steps to skip in between
 	ios::streampos len;
 	static size_t nnx,nny,nnz; ///< The three dimension of the grid
 	bool Clustering{false}; ///< Do clustering or not
@@ -50,6 +51,7 @@ class ExecuteVoronoi {
 	/// @cond TEST
 	bool bDel{false};
 	bool bHyd{false};
+	bool binOutput{false};
 	double Rcut_in{-1.0},Rcut{-1.0};
 	/// @endcond
 	double MassSolute{-1.0}; ///< Molecular mass of the solute. Used to compute alpha.
@@ -60,7 +62,7 @@ class ExecuteVoronoi {
 	ifstream * fpdb{nullptr}; ///< input stream pointer for pdb file
 	Fstream * finx{nullptr}; ///< Interface for special input stream for trajectory files
 	ofstream * foutx{nullptr}; ///< output stream
-
+	ifstream * fin1x{nullptr}; ///<input stream pointer to saved voronoi binary file
 	/// @cond TEST
 	ifstream * fidb{nullptr};
 	Voronoi * vor{nullptr};
@@ -78,7 +80,9 @@ class ExecuteVoronoi {
 	void __SetUp(trj::TrjRead & y);
 	void __RunPDB(Atoms<T> *);
 	void __RunTrajectory(Atoms<T> *);
+	void __RunPost();
 public:
+	ExecuteVoronoi(trj::TrjRead & x);
 	ExecuteVoronoi(trj::TrjRead & x, Topol & y);
 	ExecuteVoronoi()=delete;
 	/** \brief Initiate communication class

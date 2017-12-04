@@ -55,10 +55,12 @@ struct tAcomp{
 };
 class Voronoi {
 protected:
-	Matrix co;
-	Matrix oc;
+	Matrix co{0};
+	Matrix oc{0};
 	static int nresid,nr,nc,nframe;
-	static ios::off_type sizeHeader,sizeBody;
+	static ios::streampos sizeHeader,sizeBody;
+	bool readBinary{false};
+	bool writeBinary{false};
 	vector<int> SelectedResidues;
 	static float time;
 	vector<int> types; // Type number per atom according to ResidueTypes::_Residue collection
@@ -86,6 +88,7 @@ protected:
 	double VolCell{0};
 	void gather(vector<int> & y);
 	virtual void WriteIt(std::ofstream &);
+	virtual void ReadIt(std::ifstream &);
 	virtual void __extraInit(Topol &,bool);
 	virtual void __compShell(){};
 	virtual void __searchNeighs(int a,int b){};
@@ -100,11 +103,16 @@ protected:
 	template <typename T>
 	void rdVector(ifstream & , vector<vector<T>> &);
 	void rdVector(ifstream & , vector<string> &);
+	virtual void bPrintBody(ofstream &){};
+
+	virtual void bPrintHeader(ofstream &){};
+	virtual void bReadHeader(ifstream &){};
+	virtual void bReadBody(ifstream &){};
 
 	Voronoi();
 public:
 	Voronoi(Topol &,bool);
-
+	Voronoi(ifstream & x){};
 	template <typename T>
 	void Start(float, Atoms<T> &);
 	virtual void getData();
@@ -146,14 +154,13 @@ public:
 		return getTypes(First);
 	}
 	string & getTypesName(int i) {return TypesName[types[i]];};
-	void bPrintBody(ofstream &);
-
-	void bPrintHeader(ofstream &);
-	void bReadHeader(ifstream &);
-	void bReadBody(ifstream &);
 	friend std::ofstream & operator<<(std::ofstream & fout, Voronoi  & y){
 		y.WriteIt(fout);
 		return fout;
+	}
+	friend std::ifstream & operator>>(std::ifstream & fin, Voronoi  & y){
+		y.ReadIt(fin);
+		return fin;
 	}
 };
 }

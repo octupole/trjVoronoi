@@ -10,7 +10,9 @@ AM_CXXFLAGS = -std=c++11
 # this lists the binaries to produce, the (non-PHONY, binary) targets in
 # the previous manual Makefile
 lib_LIBRARIES = libvoro.a
-libvoro_a_SOURCES = Voronoi.cpp  VoronoiMicelles.cpp VoronoiSetter.cpp
+libvoro_a_SOURCES = Voronoi.cpp  VoronoiMicelles.cpp VoronoiSetter.cpp\
+	VoronoiBinary.cpp IteratorVoronoi.cpp
 
 LDADD = libvoro.a
-include_HEADERS = Voronoi.h  VoronoiMicelles.h VoronoiSetter.h
+include_HEADERS = Voronoi.h  VoronoiMicelles.h VoronoiSetter.h\
+	VoronoiBinary.h IteratorVoronoi.h

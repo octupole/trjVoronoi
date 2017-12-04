@@ -120,6 +120,8 @@ class TrjRead: public trjInput {
 	bool bIsrd{true};
 	bool bClust{false};
 	bool bOnce{false};
+	bool bPost{false};
+	bool bOutBin{false};
 
 	int MyOrder{1};
 	size_t BoxMultiply{1};
@@ -186,6 +188,8 @@ public:
 	Values<bool> bbIsrd{bIsrd};
 	Values<bool> bbClust{bClust};
 	Values<bool> bbOnce{bOnce};
+	Values<bool> bbPost{bPost};
+	Values<bool> bbOutBin{bOutBin};
 
 
 	Streams<Fstream> gFinx;

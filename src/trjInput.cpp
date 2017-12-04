@@ -12,6 +12,8 @@ trjInput::trjInput(int ntot,char ** v) {
 	vector<string> in;
 
 	inmap["-o"]=in;
+	inmap["-obin"]=in;
+	inmap["-in"]=in;
 	inmap["-dcd"]=in;
 	inmap["-xtc"]=in;
 	inmap["-b"]=in;
@@ -32,6 +34,7 @@ trjInput::trjInput(int ntot,char ** v) {
 	inmap["-surface"]=in;
 	inmap["-protein"]=in;
 	inmap["-water"]=in;
+	inmap["-shell"]=in;
 	inmap["-channels"]=in;
 	inmap["-solute"]=in;
 	inmap["-select"]=in;
@@ -50,31 +53,34 @@ trjInput::trjInput(int ntot,char ** v) {
 	Usage[3]="\t -o fileout \n";
 	Usage[4]="\t- b No. First Frame \n";
 	Usage[5]="\t -e No. Last Frame\n";
-	Usage[6]="\t -skip No. skipped frames \n";
+	Usage[6]="\t -obin file.bin\n";
+	Usage[7]="\t -in file.bin\n";
+
+	Usage[8]="\t -skip No. skipped frames \n";
 	Usage[9]="\t -nohyd // Do not include hydrogens in Voronoi [default] \n";
-	Usage[8]="\t -hyd // Include hydrogens in Voronoi\n";
+	Usage[10]="\t -hyd // Include hydrogens in Voronoi\n";
 	Usage[11]="\t -nodel // Do not delete temporary files in MPI runs \n";
-	Usage[10]="\t -del // Delete temporary files in MPI runs [default]\n";
-	Usage[12]="\t -rd // Use atomic radii in the Voronoi calculation [default]\n";
-	Usage[13]="\t -nord // Do not use atomic radii in the Voronoi calculation \n";
-	Usage[14]="\t -solute <string selection>\n"
+	Usage[12]="\t -del // Delete temporary files in MPI runs [default]\n";
+	Usage[13]="\t -rd // Use atomic radii in the Voronoi calculation [default]\n";
+	Usage[14]="\t -nord // Do not use atomic radii in the Voronoi calculation \n";
+	Usage[15]="\t -solute <string selection>\n"
 			"\t\tDefine the residue of the solute to be used in the Voronoi analysis.\n";
 
-	Usage[15]="\t -test // compute total volume from Voronoi or simulation cell parameters\n";
-	Usage[16]="\t -help // write some on line help \n";
-	Usage[17]="\t -pvol // Print volume \n";
-	Usage[18]="\t -parea // Print area \n";
-	Usage[19]="\t -det filename// Define the polar segment of a detergent residue \n"
+	Usage[16]="\t -test // compute total volume from Voronoi or simulation cell parameters\n";
+	Usage[17]="\t -help // write some on line help \n";
+	Usage[18]="\t -pvol // Print volume \n";
+	Usage[19]="\t -parea // Print area \n";
+	Usage[20]="\t -det filename// Define the polar segment of a detergent residue \n"
 			"\t\tThe file filename contains two strings:\n"
 			"\t\t   i) the first string is the name of the detergent residue \n"
 			"\t\t   ii)the second string contains the polar atoms of the residue\n"
 			"\t\t*Important*: The polar atoms in the pdb and topology *MUST* all occur\n"
 			"\t\tbefore the hydrophobic atoms.\n";
-	Usage[20]="\t -detP <string>// Define a name for the polar segment of a detergent residue \n";
-	Usage[21]="\t -detO <string>// Define a name for the hydrophobic segment of a detergent residue \n";
-	Usage[22]="\t -shell [2]<int n>// Compute number and average volume of the n-shell water\n"
+	Usage[21]="\t -detP <string>// Define a name for the polar segment of a detergent residue \n";
+	Usage[22]="\t -detO <string>// Define a name for the hydrophobic segment of a detergent residue \n";
+	Usage[23]="\t -shell [2]<int n>// Compute number and average volume of the n-shell water\n"
 			"\t\tneighbours around solute \n";
-	Usage[23]="\t -clust <float cutoff [0.0] in Angstroems>\n"
+	Usage[24]="\t -clust <float cutoff [0.0] in Angstroems>\n"
 			"\t\tDo clustering by percolation of the solute. This is used to compute the surfaces and volumes\n"
 			"\t\tof each cluster. If the cutoff is zero, the default, the cutoff is chosen according to the\n"
 			"\t\tLennard-Jones sigma parameters multiplied by an offset factor of 1.5\n";

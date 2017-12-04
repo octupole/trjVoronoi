@@ -154,8 +154,9 @@ void TrjRead::Input(){
 				bPrintAreas=true;
 		}
 		if(!inmap["-shell"].empty()) {
-			if(inmap["-shell"].size() != 1) throw string(" No argument for " + inmap["-shell"][0] + " option ");
-				VoronoiSetter::bPrintShell=true;
+			if(inmap["-shell"].size() > 2) throw string(" More than one entry for " + inmap["-shell"][0] + " option ");
+			VoronoiSetter::bPrintShell=true;
+			if(inmap["-shell"].size() == 2) stringstream(inmap["-shell"][1])>> VoronoiSetter::maxLevel;
 		}
 		if(!inmap["-detP"].empty()) {
 			if(inmap["-detP"].size() < 2) throw string("\n String expected for " + inmap["-detP"][0] + " option\n ");
@@ -163,6 +164,24 @@ void TrjRead::Input(){
 			string myDetP=inmap["-detP"][1];
 			Topol_NS::ResidueTypes::addDetPolar(myDetP);
 		}
+		if(!inmap["-obin"].empty()) {
+			if(inmap["-obin"].size() < 2) throw string("\n filename expected for " + inmap["-obin"][0] + " option \n");
+			if(inmap["-obin"].size() > 2) throw string("\n More than one entry for " + inmap["-obin"][0] + " option \n");
+			fileout=inmap["-obin"][1];
+			bOutBin=true;
+		}
+		if(!inmap["-in"].empty()) {
+			if(inmap["-in"].size() < 2) throw string("\n at least one filename expected for " + inmap["-in"][0] + " option\n ");
+			if(inmap["-in"].size() > 2) throw string("\n More than one entry for " + inmap["-in"][0] + " option \n");
+			filein=inmap["-in"][1];
+			ftest.open(filein.c_str(),ios::in);
+			if(!ftest) throw string("\n Cannot open system " + filein + "!!\n");
+			ftest.close();
+			fin1=new ifstream(filein,ios_base::binary);
+			inputfile=true;
+			bPost=true;
+		}
+
 		if(!inmap["-detO"].empty()) {
 			if(inmap["-detO"].size() < 2) throw string("\n String expected for " + inmap["-detO"][0] + " option\n ");
 			if(inmap["-detO"].size() > 2) throw string("\n More than one entry for " + inmap["-detO"][0] + " option \n");
@@ -220,7 +239,7 @@ void TrjRead::Input(){
 
 
 	gFinx=finx;
-	gFin2x=fin2x;
+	gFin1=fin1;
 	gFout_xtcx=fout_xtcx;
 	gFout_pdbx=fout_pdbx;
 	gFoutx=foutx;
