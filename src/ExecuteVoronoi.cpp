@@ -144,12 +144,25 @@ void ExecuteVoronoi<T>::operator()(Atoms<T> * atx){
 template <typename T>
 void ExecuteVoronoi<T>::__RunPost(){
 	myiterators::IteratorVoronoi iter_vor(vor,fin1x,nstart,nend);
+	stringstream ss;
 	while((++iter_vor).isReferenced()){
 		Voronoi * vorA=iter_vor();
 		vorA->getData();
 		Comms->getStream() << *vorA;
 		if(bTest) vor->testVol();
+		switch(vor->nClusters()){
+		case 0:
+			break;
+		case 1:
+			ss << "    " <<fixed << setw(4) << vor->nClusters()<<" cluster  <-----";
+			break;
+		default:
+			ss<< "    " << fixed << setw(4) << vor->nClusters()<<" clusters <-----";
+		}
 
+
+
+		cout << fixed << setw(5) << "----> Time Step " << vor->gTime() << ss.str()<<"\n";
 	}
 	Comms->appendStreams();
 	if(bDel) Comms->removeFiles();

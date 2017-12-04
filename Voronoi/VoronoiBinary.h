@@ -15,10 +15,6 @@ namespace Voro {
 class VoronoiBinary: public VoronoiMicelles {
 	void WriteIt(std::ofstream &);
 	void ReadIt(std::ifstream &);
-	void bPrintBody(ofstream &);
-	void bPrintHeader(ofstream &);
-	void bReadHeader(ifstream &);
-	void bReadBody(ifstream &);
 public:
 	VoronoiBinary(ifstream &);
 	VoronoiBinary(ofstream &,Topol &,bool);

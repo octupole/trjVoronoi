@@ -103,11 +103,11 @@ protected:
 	template <typename T>
 	void rdVector(ifstream & , vector<vector<T>> &);
 	void rdVector(ifstream & , vector<string> &);
-	virtual void bPrintBody(ofstream &){};
+	void bPrintBody(ofstream &);
 
-	virtual void bPrintHeader(ofstream &){};
-	virtual void bReadHeader(ifstream &){};
-	virtual void bReadBody(ifstream &){};
+	void bPrintHeader(ofstream &);
+	void bReadHeader(ifstream &);
+	void bReadBody(ifstream &);
 
 	Voronoi();
 public:
@@ -117,14 +117,10 @@ public:
 	void Start(float, Atoms<T> &);
 	void doVoro__();
 	virtual void getData();
-	virtual void sTname(Topol_NS::Topol & y ){};
-	virtual vector<double> & gTotHG(){static vector<double> t;return t;};
-	virtual void sTotHG(vector<double> & y){}
-	virtual void copyhgtotot(){};
-	virtual void copytottohg(){};
-	virtual void Channels(){};
 
 	const Matrix & getCO(){return co;}
+	static float gTime(){return time;}
+	size_t nClusters(){return Clusters.size();}
 	void testVol();
 	virtual ~Voronoi(){
 		delete Mycon;
