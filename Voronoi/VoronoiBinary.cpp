@@ -30,8 +30,9 @@ VoronoiBinary::VoronoiBinary(ifstream & fin) {
 
 	this->readBinary=true;
 }
-VoronoiBinary::VoronoiBinary(ofstream & fout,Topol & myTop,bool bH): VoronoiMicelles::VoronoiMicelles(myTop,bH){
-	this->bPrintHeader(fout);
+VoronoiBinary::VoronoiBinary(ofstream & fout,Topol & myTop,bool bH, Parallel::NewMPI * curr): VoronoiMicelles::VoronoiMicelles(myTop,bH){
+	if(!curr->Get_Rank())
+		this->bPrintHeader(fout);
 	this->writeBinary=true;
 }
 

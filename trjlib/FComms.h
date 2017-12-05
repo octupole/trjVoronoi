@@ -22,8 +22,12 @@ using std::ios;
 using std::ofstream;
 using std::ifstream;
 using std::fstream;
-namespace Parallel {
 
+namespace Parallel {
+template <typename T>
+inline char * as_byte(T & y){
+	return reinterpret_cast<char *> (&y);
+}
 class FComms {
 	ofstream * fout{nullptr};
 	string * filename{nullptr};

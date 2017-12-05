@@ -24,6 +24,7 @@
 #include "Percolation.h"
 #include "TrackOfstream.h"
 #include "Split.h"
+#include "voro++.hh"
 
 
 using namespace Array;
@@ -31,7 +32,6 @@ using namespace MATRIX;
 using namespace DVECT;
 using Matrix=MATRIX::MMatrix<double>;
 using namespace std;
-#include "voro++.hh"
 using namespace voro;
 using namespace Topol_NS;
 using namespace std;
@@ -57,7 +57,7 @@ class Voronoi {
 protected:
 	Matrix co{0};
 	Matrix oc{0};
-	static int nresid,nr,nc,nframe;
+	static int nresid,nr,nc;
 	static ios::streampos sizeHeader,sizeBody;
 	bool readBinary{false};
 	bool writeBinary{false};
@@ -112,6 +112,7 @@ protected:
 	Voronoi();
 public:
 	Voronoi(Topol &,bool);
+	Voronoi(Topol &,bool, Parallel::NewMPI *);
 	Voronoi(ifstream & x);
 	template <typename T>
 	void Start(float, Atoms<T> &);

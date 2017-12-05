@@ -11,7 +11,6 @@ namespace Voro{
 int Voronoi::nresid=0;
 int Voronoi::nr=0;
 int Voronoi::nc=0;
-int Voronoi::nframe=0;
 float Voronoi::time=0.0;
 vector<string> Voronoi::label=vector<string>();
 
@@ -223,7 +222,6 @@ void Voronoi::bReadBody(ifstream & fin){
 	bool have_clusters{false};
 	fin.read(as_byte(have_clusters),sizeof(have_clusters));
 	fin.read(as_byte(time),sizeof(time));
-	fin.read(as_byte(nframe),sizeof(nframe));
 	if(have_clusters){
 		rdVector(fin,atClusters);
 		rdVector(fin,VolClusters);
@@ -247,7 +245,6 @@ void Voronoi::bPrintBody(ofstream & fout){
 	bool have_clusters=!Clusters.empty();
 	fout.write(as_byte(have_clusters),sizeof(have_clusters));
 	fout.write(as_byte(time),sizeof(time));
-	fout.write(as_byte(nframe),sizeof(nframe));
 	if(have_clusters){
 		dmpVector(fout,atClusters);
 		dmpVector(fout,VolClusters);
@@ -265,7 +262,6 @@ void Voronoi::bPrintBody(ofstream & fout){
 	dmpVector(fout,Vol_);
 	dmpVector(fout,Neighs_);
 	dmpVector(fout,Surface_);
-	nframe++;
 }
 void Voronoi::bReadHeader(ifstream & fin){
 	fin.seekg (0, fin.end);
@@ -293,6 +289,31 @@ void Voronoi::bReadHeader(ifstream & fin){
 	rdVector(fin,typesResidueMask);
 	rdVector(fin,cindex);
 	rdVector(fin,CIndex);
+ 	cout << std::fixed << std::setw(6)<< "\n\t\tTopology extracted from header binary file. \n\tNumber of atoms including hydrogens: "
+ 			<< nr << " Number of residues: " << nresid << "\n\n";
+ 	cout << std::showpoint << std::fixed << std::left;
+ 	cout << std::setw(17) << "  Residue Name"<< std::setw(16) << "No. of Atoms" << std::setw(17)
+ 	<< "Residue Type" << std::setw(17) << "Residue Type Numb." << endl;;
+
+ 	size_t AtomTotal=0;
+ 	map<int,map<string,int>> noatTypes;
+ 	for(size_t o{0};o < CIndex.size();o++){
+ 		noatTypes[ResidueTypes::find(Residue[o])][Residue[o]]+=CIndex[o].size();
+ 	}
+ 	for(auto it=noatTypes.begin();it!= noatTypes.end();it++){
+ 		int myRes=it->first;
+ 		for (auto itt=it->second.begin(); itt != it->second.end();itt++){
+ 			cout << std::left << std::fixed<< "    " <<std::setw(10) <<
+ 					itt->first << "      " << std::setw(12) << itt->second
+ 						<< "   " << std::setw(19) <<ResidueTypes::getType(myRes)<< std::setw(17) << it->first << endl;
+
+ 			AtomTotal+=itt->second;
+ 		}
+
+ 	}
+	cout <<"\n" << std::left << std::fixed<< "    " <<std::setw(10) << " Total  = " << "      "
+ 			<< std::setw(12) << AtomTotal << "\n" <<endl;
+
 };
 
 void Voronoi::bPrintHeader(ofstream & fout){

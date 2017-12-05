@@ -59,7 +59,7 @@ if test x"$enable_mpi" = x"yes"; then
 
    AC_CHECK_PROG(MPIRUN, mpirun, mpirun)
    AC_SUBST(MPIRUN)
-   AC_DEFINE([__MPI],1,[Enable MPI compilation])
+   AC_DEFINE([HAVE_MPI],1,[Enable MPI compilation])
 fi
 
 AM_CONDITIONAL(MPI, test "$enable_mpi" = "yes")

@@ -93,23 +93,24 @@ int main(int argc, char ** argv){
 	 */
 	trj::TrjRead MyIn(argc,argv);
 	MyIn.Input();
-	Topol_NS::TopolMic MyTop;
-	vector<string> data;
-	if(MyIn.gFpdb()){
-		// read pdb file to construct topology
-		for(string str;getline(*MyIn.gFpdb(),str);){
-			data.push_back(str);
-		}
-	}
-	topPDB.sDetPolsegment(MyIn.gsDetResidue(),MyIn.gsPolarAtoms());
-	topPDB(data);
-	MyTop(topPDB,MyIn.bbIsrd());
-	typedef map<string,vector<vector<int> > > mappa;
-	mappa & Def=MyTop.getDef();
+	timer::Timer myTime;
 
 	if(MyIn.gFin1()){
 		MyRun=new Voro::ExecuteVoronoi<double>(MyIn);
 	} else {
+		Topol_NS::TopolMic MyTop;
+		vector<string> data;
+		if(MyIn.gFpdb()){
+			// read pdb file to construct topology
+			for(string str;getline(*MyIn.gFpdb(),str);){
+				data.push_back(str);
+			}
+		}
+		topPDB.sDetPolsegment(MyIn.gsDetResidue(),MyIn.gsPolarAtoms());
+		topPDB(data);
+		MyTop(topPDB,MyIn.bbIsrd());
+		typedef map<string,vector<vector<int> > > mappa;
+		mappa & Def=MyTop.getDef();
 		MyIn.gReference()=PickSelection(MyIn.gReference()).Select<Enums::Reference>(Def,MyTop); // Pick the Reference residue
 
 		int natoms=MyTop.Size();
@@ -122,7 +123,10 @@ int main(int argc, char ** argv){
 
 		MyRun=new Voro::ExecuteVoronoi<double>(MyIn,MyTop);
 	}
-	(*MyRun)(atm);
 
+	(*MyRun)(atm);
+	double Steps=(double) (MyIn.gnend()-MyIn.gnstart())/(double) MyIn.gnskip();
+	double nsteps=Steps<=0?1.0:Steps;
+	cout << "\n----> Elapsed Time per step:  " << myTime/nsteps << " sec " <<endl;
 	return 0;
 }

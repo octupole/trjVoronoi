@@ -382,7 +382,7 @@ void Topol::ExtractInfo(TopolPDB & data,bool bRD){
  	atResType=vector<int>(nr);
 
  	cout << std::fixed << std::setw(6)<< "\n Topology extracted from pdb file. Number of atoms: "
- 			<< nr << " Number of residue: " << nres << "\n\n";
+ 			<< nr << " Number of residues: " << nres << "\n\n";
  	cout << std::showpoint << std::fixed << std::left;
  	cout << std::setw(17) << "  Residue Name"<< std::setw(16) << "No. of Atoms" << std::setw(17)
  	<< "Residue Type" << std::setw(17) << "Residue Type Numb." << endl;;

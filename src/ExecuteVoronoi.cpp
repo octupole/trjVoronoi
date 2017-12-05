@@ -55,20 +55,6 @@ ExecuteVoronoi<T>::ExecuteVoronoi(trj::TrjRead & MyIn) {
 		if(finx && nend-nstart+1 < nskip) throw string("\nNumber of selected steps is smaller than -skip parameter. Change and rerun.\n");
 	}catch(const string & s) {cout << s <<endl;Finale::Finalize::Final();}
 
-	if(CurrMPI->AmI_Parallel()){
-
-		auto MyTaskNo=CurrMPI->Get_Rank();
-		try{
-			if(finx && (nend-nstart+1)/nskip < int(CurrMPI->Get_Size())) throw string(" The number of CPUs is larger than the number "
-					"of the trajectory steps. Change and rerun. ");
-		}catch(const string & s) {cout << s <<endl;Finale::Finalize::Final();}
-		auto ntot=(nend-nstart+1)/nskip;
-		auto ntask=CurrMPI->Get_Size();
-		auto nChunk=(ntot/ntask)*nskip;
-		nend=nstart+nChunk*(MyTaskNo+1)-1;
-		nstart=nstart+nChunk*MyTaskNo;
-
-	}
 	if(fin1x){
 		vor=new VoronoiBinary(*fin1x);
 		ofstream & fout=*foutx;
@@ -121,7 +107,7 @@ ExecuteVoronoi<T>::ExecuteVoronoi(trj::TrjRead & MyIn, Topol & Topology):
 	Finale::Finalize::Final();exit(1);}
 
 	if(binOutput)
-		vor=new VoronoiBinary(*foutx,Topology,bHyd);
+		vor=new VoronoiBinary(*foutx,Topology,bHyd, CurrMPI);
 	else
 		vor=new VoronoiMicelles(Topology,bHyd);
 	Percolation<T>::setPercoCutoff(MyIn.gPercoCutoff());

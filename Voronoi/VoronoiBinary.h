@@ -17,7 +17,7 @@ class VoronoiBinary: public VoronoiMicelles {
 	void ReadIt(std::ifstream &);
 public:
 	VoronoiBinary(ifstream &);
-	VoronoiBinary(ofstream &,Topol &,bool);
+	VoronoiBinary(ofstream &,Topol &,bool, Parallel::NewMPI *);
 
 	virtual ~VoronoiBinary();
 };

@@ -21,7 +21,7 @@ finx{y},nstart{nstrt}, nend{nnd}{
 
 IteratorVoronoi & IteratorVoronoi::operator++(){
 	ifstream & fin=*finx;
-	while(!finx->fail()){
+	while(finx->tellg() < len && !finx->fail()){
 		if(ntime < nstart) {fin>> *p;ntime++;;continue;}
 		if(nend != -1 && ntime > nend) break;
 

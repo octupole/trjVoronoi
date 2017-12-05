@@ -23,6 +23,7 @@ protected:
 public:
 
 	VoronoiMicelles(ifstream & f){};
+	VoronoiMicelles(Topol & x,bool y, Parallel::NewMPI * curr): VoronoiMicelles(x,y){}
 	VoronoiMicelles(Topol &,bool);
 
 	virtual void getData();
