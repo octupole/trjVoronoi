@@ -104,7 +104,9 @@ protected:
 	vector<vector<int> > CIndex;
 	map<string,vector<string> > MapElements; // Map of element per residue
 
-	void ExtractInfo(TopolPDB & ,bool);
+	virtual void ExtractInfo(TopolPDB & ,bool);
+	virtual void ExtractInfoMic(TopolPDB & ,bool){};
+
 	void FindGroups(vector<Dvect> &,int);
 	void AllignGroups(vector<Dvect> &,int &,vector<int>&,int );
 public:

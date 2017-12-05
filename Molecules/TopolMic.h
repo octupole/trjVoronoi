@@ -12,11 +12,10 @@ namespace Topol_NS {
 
 class TopolMic: public Topol {
 	vector<string> CurrentPDB;
-	virtual void ExtractInfo(TopolPDB & ,bool);
+	void ExtractInfoMic(TopolPDB & ,bool);
 public:
 	TopolMic();
 	TopolMic(TopolPDB &, bool);
-	TopolMic & operator()(TopolPDB &,bool);
 	vector<string> & getStringTypeNames(){return TypeNames;};
 	virtual ~TopolMic();
 	bool CheckResidue(const string & );

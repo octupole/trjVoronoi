@@ -106,9 +106,12 @@ public:
 Topol::Topol(){}
 Topol::Topol(TopolPDB & y, bool x){
 	ExtractInfo(y,x);
+	ExtractInfoMic(y,x);
 }
 Topol & Topol::operator()(TopolPDB & y,bool x){
 	ExtractInfo(y,x);
+	ExtractInfoMic(y,x);
+
 	return *this;
 }
 

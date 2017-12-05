@@ -98,8 +98,7 @@ int main(int argc, char ** argv){
 	if(MyIn.gFin1()){
 		MyRun=new Voro::ExecuteVoronoi<double>(MyIn);
 	} else {
-		Topol_NS::TopolMic * MyTopx;
-		MyTopx=new Topol_NS::TopolMic;
+		Topol_NS::TopolMic MyTop;
 		vector<string> data;
 		if(MyIn.gFpdb()){
 			// read pdb file to construct topology
@@ -109,19 +108,19 @@ int main(int argc, char ** argv){
 		}
 		topPDB.sDetPolsegment(MyIn.gsDetResidue(),MyIn.gsPolarAtoms());
 		topPDB(data);
-		(*MyTopx)(topPDB,MyIn.bbIsrd());
+		(MyTop)(topPDB,MyIn.bbIsrd());
 		typedef map<string,vector<vector<int> > > mappa;
-		mappa & Def=MyTopx->getDef();
-		MyIn.gReference()=PickSelection(MyIn.gReference()).Select<Enums::Reference>(Def,*MyTopx); // Pick the Reference residue
+		mappa & Def=MyTop.getDef();
+		MyIn.gReference()=PickSelection(MyIn.gReference()).Select<Enums::Reference>(Def,MyTop); // Pick the Reference residue
 
-		int natoms=MyTopx->Size();
+		int natoms=MyTop.Size();
 		if(MyIn.bbClust())
 			atm=new AtomsCluster<double>(natoms);
 		else
 			atm=new FAtoms<double>(natoms);
 
-		MyTopx->InitSelection(MyIn.gReference(),Enums::Reference);
-		MyRun=new Voro::ExecuteVoronoi<double>(MyIn,(*MyTopx));
+		MyTop.InitSelection(MyIn.gReference(),Enums::Reference);
+		MyRun=new Voro::ExecuteVoronoi<double>(MyIn,MyTop);
 
 	}
 

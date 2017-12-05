@@ -11,11 +11,10 @@ namespace Topol_NS {
 TopolMic::TopolMic():Topol::Topol(){
 
 }
-TopolMic::TopolMic(TopolPDB & data, bool x): Topol::Topol() {
-	ExtractInfo(data,x);
+TopolMic::TopolMic(TopolPDB & data, bool x): Topol::Topol(data,x) {
 }
-void TopolMic::ExtractInfo(TopolPDB & data,bool bRD){
-	Topol::ExtractInfo(data,bRD);
+void TopolMic::ExtractInfoMic(TopolPDB & data,bool bRD){
+	//Topol::ExtractInfo(data,bRD);
 	int nat=0;
 	MyResidue mytmp;
 	map<string,map<int,vector<int> > > Defs,DefsNH;
@@ -62,10 +61,7 @@ void TopolMic::ExtractInfo(TopolPDB & data,bool bRD){
 		}
 	}
 }
-TopolMic & TopolMic::operator()(TopolPDB & y,bool x){
-	ExtractInfo(y,x);
-	return *this;
-}
+
 
 TopolMic::~TopolMic() {
 	// TODO Auto-generated destructor stub
