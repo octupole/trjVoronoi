@@ -218,15 +218,41 @@ void Voronoi::rdVector(ifstream & f,vector<string> & v){
 	f.read(as_byte(tmp_s[0]),sizeof(tmp_s[0])*(ntmp));
 	v=split(tmp_s);
 }
+void Voronoi::bPrintBody(ofstream & fout){
+	bool have_clusters=!Clusters.empty();
+	fout.write(as_byte(have_clusters),sizeof(have_clusters));
+	fout.write(as_byte(time),sizeof(time));
+	if(have_clusters){
+		dmpVector(fout,atClusters);
+		dmpVector(fout,VolClusters);
+		dmpVector(fout,Clusters);
+		dmpVector(fout,AreaClusters);
+		dmpVector(fout,SurfaceClusters);
+	}
+	vector<double> Vol_(cindex.size());
+	vector<vector<int>> Neighs_(cindex.size());
+	vector<vector<double>> Surface_(cindex.size());
+	for(size_t o{0};o<cindex.size();o++){
+		Vol_[o]=Vol[cindex[o]];
+		Neighs_[o]=Neighs[cindex[o]];
+		Surface_[o]=Surface[cindex[o]];
+	}
+	dmpVector(fout,Vol_);
+	dmpVector(fout,Neighs_);
+	dmpVector(fout,Surface_);
+}
+
 void Voronoi::bReadBody(ifstream & fin){
 	bool have_clusters{false};
 	fin.read(as_byte(have_clusters),sizeof(have_clusters));
 	fin.read(as_byte(time),sizeof(time));
+
 	if(have_clusters){
 		rdVector(fin,atClusters);
 		rdVector(fin,VolClusters);
 		rdVector(fin,Clusters);
 		rdVector(fin,AreaClusters);
+		rdVector(fin,SurfaceClusters);
 	}
 	vector<double> Vol_;
 	vector<vector<int>> Neighs_;
@@ -241,28 +267,6 @@ void Voronoi::bReadBody(ifstream & fin){
 	}
 }
 
-void Voronoi::bPrintBody(ofstream & fout){
-	bool have_clusters=!Clusters.empty();
-	fout.write(as_byte(have_clusters),sizeof(have_clusters));
-	fout.write(as_byte(time),sizeof(time));
-	if(have_clusters){
-		dmpVector(fout,atClusters);
-		dmpVector(fout,VolClusters);
-		dmpVector(fout,Clusters);
-		dmpVector(fout,AreaClusters);
-	}
-	vector<double> Vol_(cindex.size());
-	vector<vector<int>> Neighs_(cindex.size());
-	vector<vector<double>> Surface_(cindex.size());
-	for(size_t o{0};o<cindex.size();o++){
-		Vol_[o]=Vol[cindex[o]];
-		Neighs_[o]=Neighs[cindex[o]];
-		Surface_[o]=Surface[cindex[o]];
-	}
-	dmpVector(fout,Vol_);
-	dmpVector(fout,Neighs_);
-	dmpVector(fout,Surface_);
-}
 void Voronoi::bReadHeader(ifstream & fin){
 	fin.seekg (0, fin.end);
 	int length = fin.tellg();

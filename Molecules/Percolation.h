@@ -85,9 +85,9 @@ class Percolation {
 public:
 	static void setPercoCutoff(double cut){PercoCutoff=cut;}
 	Percolation(){};
-	Percolation(listcon & , vector<string> &, vector<double> &);
-	Percolation(vector<vector<int> > & , vector<double> &,  vector<string> &);
-	Percolation(vector<vector<int> > & , vector<double> &,  vector<string> &, vector<string> &);
+	Percolation(const listcon & , const vector<string> &, const vector<double> &);
+	Percolation(const vector<vector<int> > & , const vector<double> &, const vector<string> &);
+	Percolation(const vector<vector<int> > & , const vector<double> &, const  vector<string> &, const vector<string> &);
 	void setRcut(double y){Rcut=y;};
 	void Accumulate(){count++;}
 	void doContacts(vector<DDvect<T>> &);

@@ -417,7 +417,6 @@ void Topol::ExtractInfo(TopolPDB & data,bool bRD){
  		}
  		o++;
  	}
-
 // 	FindGroups(xc,mytype.gWaterId());
 }
 } /* namespace Topol_NS */

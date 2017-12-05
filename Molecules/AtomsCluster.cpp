@@ -17,17 +17,17 @@ void AtomsCluster<T>::SetupPercolate(){
 }
 template <typename T>
 void AtomsCluster<T>::SetupPercolate(Topol_NS::Topol & myTop){
-	auto Reference=myTop.gReferenceResidues();
-	auto Index=myTop.gCIndex();
-	auto atmss=myTop.getAtomName();
+	auto & Reference=myTop.gReferenceResidues();
 
+	auto & atmss=myTop.getAtomName();
+	auto & Index=myTop.gCIndex();
 	vector<string> resn(nr);
 	for(int o{0};o<nr;o++)
 		resn[o]=myTop.AtomResidue(o);
 	vector<vector<int>> MySel;
-	for(size_t o{0};o<Reference.size();o++){
+	for(size_t o{0};o<Reference.size();o++)
 		MySel.push_back(Index[Reference[o]]);
-	}
+
 	Perco=new Percolation<T>(MySel,rd,resn,atmss);
 }
 

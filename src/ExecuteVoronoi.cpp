@@ -106,14 +106,17 @@ ExecuteVoronoi<T>::ExecuteVoronoi(trj::TrjRead & MyIn, Topol & Topology):
 	} catch(const string & s){cout << s<<endl;
 	Finale::Finalize::Final();exit(1);}
 
+
 	if(binOutput)
 		vor=new VoronoiBinary(*foutx,Topology,bHyd, CurrMPI);
 	else
 		vor=new VoronoiMicelles(Topology,bHyd);
 	Percolation<T>::setPercoCutoff(MyIn.gPercoCutoff());
+
 	Clustering=MyIn.bbClust();
 	Rcut=MyIn.gRcut();
 	Rcut_in=MyIn.gRcut_in();
+
 };
 template <typename T>
 void ExecuteVoronoi<T>::operator()(Atoms<T> * atx){
@@ -130,8 +133,8 @@ void ExecuteVoronoi<T>::operator()(Atoms<T> * atx){
 template <typename T>
 void ExecuteVoronoi<T>::__RunPost(){
 	myiterators::IteratorVoronoi iter_vor(vor,fin1x,nstart,nend);
-	stringstream ss;
 	while((++iter_vor).isReferenced()){
+		stringstream ss;
 		Voronoi * vorA=iter_vor();
 		vorA->getData();
 		Comms->getStream() << *vorA;
@@ -158,8 +161,8 @@ void ExecuteVoronoi<T>::__RunPost(){
 }
 template <typename T>
 void ExecuteVoronoi<T>::__RunTrajectory(Atoms<T> * atmx){
-
 	myiterators::IteratorAtoms<T> iter_atm(atmx,finx,nstart,nend,nskip);
+
 	while((++iter_atm).isReferenced()){
 		stringstream ss;
 		Atoms<T> * atmA=iter_atm();

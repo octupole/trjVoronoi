@@ -23,7 +23,7 @@ struct op_mysort{
 };
 
 template <typename T>
-Percolation<T>::Percolation(listcon & y, vector<string> & atnme, vector<double>  & rd){
+Percolation<T>::Percolation(const listcon & y,const  vector<string> & atnme, const vector<double>  & rd){
 	string tmp;
 	int m=0;
 	do{tmp+=" "+Select[m++]+" ";}while(m < Select.size());
@@ -50,7 +50,7 @@ Percolation<T>::Percolation(listcon & y, vector<string> & atnme, vector<double> 
 	myPercoCutoff=[this](int i,int j){if(PercoCutoff){return PercoCutoff;};return (pRd[i]+pRd[j])*OFFSET;};
 }
 template <typename T>
-Percolation<T>::Percolation(vector<vector<int> >& y, vector<double>  & rd,  vector<string> & resn){
+Percolation<T>::Percolation(const vector<vector<int> >& y,const  vector<double>  & rd,const   vector<string> & resn){
 	string tmp;
 	int m=0;
 	nr=rd.size();
@@ -64,7 +64,7 @@ Percolation<T>::Percolation(vector<vector<int> >& y, vector<double>  & rd,  vect
 	myPercoCutoff=[this](int i,int j){if(PercoCutoff){return PercoCutoff;};return (pRd[i]+pRd[j])*OFFSET;};
 }
 template <typename T>
-Percolation<T>::Percolation(vector<vector<int> >& y, vector<double>  & rd,  vector<string> & resn, vector<string> & atms) {
+Percolation<T>::Percolation(const vector<vector<int> >& y,const  vector<double>  & rd,const   vector<string> & resn, const vector<string> & atms) {
 	string tmp;
 	int m=0;
 	nr=rd.size();
