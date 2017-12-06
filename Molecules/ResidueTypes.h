@@ -38,7 +38,7 @@ public:
 	static int getTotTypes(){return TOTTYPES;}
 	static void addDetPolar(string s){_Residue[DetPol]+=s+" ";}
 	static void addDetOil(string s){_Residue[DetOil]+=s+" ";}
-	static string getReslist(int i){return _Residue[i];}
+	static string & getReslist(int i){return _Residue[i];}
 	static int find(string & );
 
 	size_t Sfind(string & y){

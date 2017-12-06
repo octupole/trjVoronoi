@@ -58,14 +58,14 @@
 
 #include <iterator>
 #include "TopolPDB.h"
-#include "TopolMic.h"
+#include "Topol.h"
 #include "Timer.h"
 #include "TrjRead.h"
 #include "myEnums.hpp"
 #include "Timer.h"
 #include "ExecuteVoronoi.h"
 #include "NewMPI.h"
-#include "AtomsCluster.h"
+#include "Atoms.h"
 #include "PickSelection.h"
 #include "Finalize.h"
 using namespace Topol_NS;
@@ -94,11 +94,11 @@ int main(int argc, char ** argv){
 	trj::TrjRead MyIn(argc,argv);
 	MyIn.Input();
 	timer::Timer myTime;
+	Topol_NS::Topol MyTop;
 
 	if(MyIn.gFin1()){
 		MyRun=new Voro::ExecuteVoronoi<double>(MyIn);
 	} else {
-		Topol_NS::TopolMic MyTop;
 		vector<string> data;
 		if(MyIn.gFpdb()){
 			// read pdb file to construct topology
@@ -114,10 +114,7 @@ int main(int argc, char ** argv){
 		MyIn.gReference()=PickSelection(MyIn.gReference()).Select<Enums::Reference>(Def,MyTop); // Pick the Reference residue
 
 		int natoms=MyTop.Size();
-		if(MyIn.bbClust())
-			atm=new AtomsCluster<double>(natoms);
-		else
-			atm=new FAtoms<double>(natoms);
+		atm=new Atoms<double>(natoms);
 
 		MyTop.InitSelection(MyIn.gReference(),Enums::Reference);
 		MyRun=new Voro::ExecuteVoronoi<double>(MyIn,MyTop);

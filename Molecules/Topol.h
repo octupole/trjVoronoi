@@ -104,8 +104,8 @@ protected:
 	vector<vector<int> > CIndex;
 	map<string,vector<string> > MapElements; // Map of element per residue
 
-	virtual void ExtractInfo(TopolPDB & ,bool);
-	virtual void ExtractInfoMic(TopolPDB & ,bool){};
+	void ExtractInfo(TopolPDB & ,bool);
+	void ExtractInfoMic(TopolPDB & ,bool);
 
 	void FindGroups(vector<Dvect> &,int);
 	void AllignGroups(vector<Dvect> &,int &,vector<int>&,int );
@@ -117,12 +117,14 @@ public:
 	Topol(TopolPDB &, bool);
 	Topol & operator()(TopolPDB &,bool);
 	virtual ~Topol();
-	virtual bool CheckResidue(const string & s){return true;};
-	virtual map<string,vector<vector<int> > > & getDef(){return DefRes;}
-	virtual map<string,vector<vector<int> > > & getDefNH(){return DefResNH;}
+	bool CheckResidue(const string & s);
+	vector<string> & getStringTypeNames(){return TypeNames;};
+
+	map<string,vector<vector<int> > > & getDef(){return DefRes;}
+	map<string,vector<vector<int> > > & getDefNH(){return DefResNH;}
 	vector<int> & gReferenceResidues(){return ReferenceResidues;};
 	void sReferenceResidues(vector<int> & v){ReferenceResidues=v;};
-	virtual void InitSelection(vector<string> &, Enums::myAtoms);
+	void InitSelection(vector<string> &, Enums::myAtoms);
 
 	size_t Size(){return nr;}
 	size_t ResSize(){return nres;}

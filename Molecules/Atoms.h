@@ -15,21 +15,19 @@
 #include <vector>
 #include "MyUtilClass.h"
 #include "HeaderTrj.h"
-#include "TopolMic.h"
+#include "Topol.h"
 #include "Contacts.h"
 
 #include "xdrfile.h"
 #include "xdrfile_xtc.h"
 #include "xdrfile_seek.h"
-
+#include "Percolation.h"
 
 using namespace DVECT;
 using namespace MATRIX;
 using std::vector;
 using namespace Enums;
 
-template <typename T>
-class Percolation;
 
 template <typename T>
 class brot{
@@ -90,12 +88,14 @@ protected:
 	virtual void WriteaStep(FstreamF * );
 	virtual void __ReconstructOneCluster(vector<bool> & a){};
 	virtual Dvect __FindCell(const vector<vector<int>> & x,const vector<vector<int>> & y){return Dvect();};
+	Percolation<T> * Perco{nullptr};
+
 public:
 	Atoms(){};
 	Atoms(const int);
 	Atoms(const AtomIndex &);
 	Atoms(const Atoms &);
-	virtual ~Atoms();
+	virtual ~Atoms(){delete Perco;};
 	struct plane{
 		Typedefs::real xc[4];
 		int n;
@@ -125,21 +125,26 @@ public:
 	Typedefs::real Dist(const int,const int);
 	vector<Dvect> getX() const {return x;};
 	vector<Dvect> getXA() const {return xa;};
-	virtual void setrd(vector<double> & rdx) {rd=rdx;};
-	virtual void setrd(Topol_NS::Topol & y){rd=y.getrd();};
-	virtual double getrd(int n){return rd[n];}
+	void setrd(vector<double> & rdx) {rd=rdx;};
+	void setrd(Topol_NS::Topol & y){
+		rd=y.getrd();
+
+	};
+	double getrd(int n){return rd[n];}
 
 	float getTime(){return time_c;}
-	virtual void Reconstruct(const string & x, Topol_NS::TopolMic &y){};
-	virtual void Reconstruct(Contacts<T> *x){};
-	virtual void SetupPercolate(){};
-	virtual void SetupPercolate(Topol_NS::Topol &x){};
-	virtual int Percolate(){return 0;};
-	virtual int Percolate(double y){return 0;}
-	virtual bool hasPerco() const {return false;}
-	virtual Percolation<T> * gPerco(){return nullptr;}
+	void SetupPercolate();
+	void SetupPercolate(Topol_NS::Topol &x);
+	int Percolate();
+	int Percolate(double y){
+		this->Perco->setRcut(y);
+		return this->Percolate();
+	}
 
-	virtual void pdb(const vector<string> & c){};
+	bool hasPerco() const {if(Perco) return true;return false;}
+	Percolation<T> * gPerco(){return Perco;}
+
+	void pdb(const vector<string> & c);
 
 	friend Fstream & operator+=(Fstream & fin, Atoms & y){
 		if(FstreamC * finC=dynamic_cast<FstreamC *> (&fin))

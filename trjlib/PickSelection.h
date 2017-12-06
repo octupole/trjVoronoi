@@ -12,7 +12,7 @@
 #include <string>
 #include <iostream>
 #include <set>
-#include "TopolMic.h"
+#include "Topol.h"
 #include "myEnums.hpp"
 
 using std::map;
@@ -27,7 +27,7 @@ typedef map<string,vector<vector<int> > > mappa;
 using namespace Topol_NS;
 using namespace Enums;
 struct ListTypeRes{
-	vector<string> operator()(Topol_NS::TopolMic & MyTop,string myType){
+	vector<string> operator()(Topol_NS::Topol & MyTop,string myType){
 		vector<string> & AllNames=MyTop.getStringTypeNames();
 		vector<string> & AllRes=MyTop.getrestype_s();
 		vector<string> NewRes;
@@ -45,11 +45,11 @@ struct PickSelection{
 	PickSelection(vector<string> & ss): SelRes{ss}{}
 
 	template <Enums::myAtoms enu>
-	vector<string> Select(mappa & Def, TopolMic & MyTop){
+	vector<string> Select(mappa & Def, Topol & MyTop){
 		return __doSelection(Def,MyTop);
 	}
 private:
-	vector<string> __doSelection(mappa & Def, TopolMic & MyTop){
+	vector<string> __doSelection(mappa & Def, Topol & MyTop){
 		vector<string> CSelect;
 		if(SelRes.empty()){
 			cout << "\n System residues are: ";

@@ -15,7 +15,6 @@ protected:
 	void WriteIt(std::ofstream &);
 	void ReadIt(std::ifstream &){};
 
-	void __extraInit(Topol &,bool);
 	void __compShell();
 	void __searchNeighs(int ,int);
 	void __computeAggregate();

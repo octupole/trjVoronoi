@@ -120,6 +120,7 @@ ExecuteVoronoi<T>::ExecuteVoronoi(trj::TrjRead & MyIn, Topol & Topology):
 };
 template <typename T>
 void ExecuteVoronoi<T>::operator()(Atoms<T> * atx){
+
 	if(!atx) {
 		__RunPost();
 		return;
@@ -161,6 +162,7 @@ void ExecuteVoronoi<T>::__RunPost(){
 }
 template <typename T>
 void ExecuteVoronoi<T>::__RunTrajectory(Atoms<T> * atmx){
+
 	myiterators::IteratorAtoms<T> iter_atm(atmx,finx,nstart,nend,nskip);
 
 	while((++iter_atm).isReferenced()){
@@ -205,6 +207,7 @@ void ExecuteVoronoi<T>::__RunTrajectory(Atoms<T> * atmx){
 
 	Comms->appendStreams();
 	if(bDel) Comms->removeFiles();
+	Comms->closeStream();   // close stream!!!
 	CurrMPI->Barrier();
 	CurrMPI->~NewMPI();
 	cout << "\nProgram completed: Output data written to " + fileout << "\n\n";

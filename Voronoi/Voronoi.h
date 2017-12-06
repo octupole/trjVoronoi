@@ -11,7 +11,7 @@
 #include <vector>
 #include <list>
 #include <algorithm>
-#include "FAtoms.h"
+#include "Atoms.h"
 
 #include <cstring>
 #include <set>
@@ -89,10 +89,12 @@ protected:
 	void gather(vector<int> & y);
 	virtual void WriteIt(std::ofstream &)=0;
 	virtual void ReadIt(std::ifstream &)=0;
-	virtual void __extraInit(Topol &,bool);
+
 	virtual void __compShell()=0;
 	virtual void __searchNeighs(int a,int b)=0;
 	virtual void __computeAggregate()=0;
+	void dmpString(ofstream &,string &);
+	void rdString(ifstream &,string &);
 	template <typename T>
 	void dmpVector(ofstream & f, vector<T> & v);
 	template <typename T>

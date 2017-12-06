@@ -64,7 +64,7 @@ VoronoiMicelles::VoronoiMicelles(Topol & myTop, bool bH){
 		types[o]=tmp[o];
 	Residue=myTop.getResinfo();
 	Rdii=myTop.getrd();
-	nc=myTop.getmaxt();
+	nc=ResidueTypes::Size();
 	area.Allocate(nresid,nc);
 	Vols.Allocate(nresid);
 	set<int> tmp1;
@@ -76,13 +76,8 @@ VoronoiMicelles::VoronoiMicelles(Topol & myTop, bool bH){
 	}
 
 	wShells=vector<vector<int>>(VoronoiSetter::maxLevel);
-	__extraInit(myTop,bH);
 }
-void VoronoiMicelles::__extraInit(Topol & myTop, bool bH){
-	nc=ResidueTypes::Size();
-	area.Deallocate();
-	area.Allocate(nresid,nc);
-}
+
 void VoronoiMicelles::getData(){
 
 	area=0.0;
@@ -131,6 +126,7 @@ void VoronoiMicelles::__computeAggregate(){
 			int n=cindex[ia];
 			int atCluster_o=atClusters[n];
 			VolClusters[o]+=Vol[n];
+
 			for(unsigned int p=0;p<Neighs[n].size();p++){
 				int m=Neighs[n][p];
 				if(atClusters[m] == atCluster_o) continue;
@@ -212,14 +208,8 @@ void VoronoiMicelles::WriteIt(std::ofstream & fout){
 		fout << endl;
 
 	}
-
-
-	array2<double> interface;
-	interface.Allocate(nc,nc);
-	interface=0.0;
-	array1<double> VolSel;
-	VolSel.Allocate(nc);
-	VolSel=0.0;
+	vector<double> VolSel(nc,0.0);
+	vector<vector<double>> interface(nc,VolSel);
 	for(int o=0;o<nresid ;o++){
 		int o_type=ResidueTypes::find(Residue[o]);
 		VolSel[o_type]+=Vols[o]*1000.0;

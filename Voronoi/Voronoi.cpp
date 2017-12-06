@@ -21,8 +21,6 @@ vector<string> Voronoi::label=vector<string>();
 Voronoi::Voronoi() {}
 
 
-void Voronoi::__extraInit(Topol & myTop, bool bH){
-}
 template <typename T>
 void Voronoi::Start(float frame, Atoms<T> & atm){
 		time=frame;
@@ -157,6 +155,12 @@ void Voronoi::getData(){
 
 }
 
+void Voronoi::dmpString(ofstream & f, string & s){
+	size_t ntmp=s.size();
+	f.write(as_byte(ntmp),sizeof(ntmp));
+	if(ntmp) f.write(as_byte(s[0]),sizeof(s[0])*ntmp);
+}
+
 template <typename T>
 void Voronoi::dmpVector(ofstream & f, vector<T> & v){
 	size_t ntmp=v.size();
@@ -184,6 +188,14 @@ void Voronoi::dmpVector(ofstream & f, vector<string> & v){
 	f.write(as_byte(ntmp),sizeof(ntmp));
 	if(ntmp) f.write(as_byte(tmp_s[0]),sizeof(tmp_s[0])*ntmp);
 }
+void Voronoi::rdString(ifstream & f, string & s){
+	size_t ntmp;
+	f.read(as_byte(ntmp),sizeof(ntmp));
+	s.clear();
+	s.assign(ntmp,' ');
+	if(ntmp) f.read(as_byte(s[0]),sizeof(s[0])*ntmp);
+}
+
 template <typename T>
 void Voronoi::rdVector(ifstream & f,vector<T> & v){
 	size_t ntmp;
@@ -224,10 +236,7 @@ void Voronoi::bPrintBody(ofstream & fout){
 	fout.write(as_byte(time),sizeof(time));
 	if(have_clusters){
 		dmpVector(fout,atClusters);
-		dmpVector(fout,VolClusters);
 		dmpVector(fout,Clusters);
-		dmpVector(fout,AreaClusters);
-		dmpVector(fout,SurfaceClusters);
 	}
 	vector<double> Vol_(cindex.size());
 	vector<vector<int>> Neighs_(cindex.size());
@@ -243,16 +252,20 @@ void Voronoi::bPrintBody(ofstream & fout){
 }
 
 void Voronoi::bReadBody(ifstream & fin){
+	static vector<double> vv(nc,0.0);
 	bool have_clusters{false};
 	fin.read(as_byte(have_clusters),sizeof(have_clusters));
 	fin.read(as_byte(time),sizeof(time));
 
 	if(have_clusters){
+		VolClusters.clear();
+		AreaClusters.clear();
+		SurfaceClusters.clear();
 		rdVector(fin,atClusters);
-		rdVector(fin,VolClusters);
 		rdVector(fin,Clusters);
-		rdVector(fin,AreaClusters);
-		rdVector(fin,SurfaceClusters);
+		VolClusters=vector<double>(Clusters.size(),0.0);
+		AreaClusters=vector<double>(Clusters.size(),0.0);
+		SurfaceClusters=vector<vector<double>>(Clusters.size(),vv);
 	}
 	vector<double> Vol_;
 	vector<vector<int>> Neighs_;
@@ -293,6 +306,12 @@ void Voronoi::bReadHeader(ifstream & fin){
 	rdVector(fin,typesResidueMask);
 	rdVector(fin,cindex);
 	rdVector(fin,CIndex);
+	int TOTTYPES=ResidueTypes::getTotTypes();
+	for(int o{0};o<TOTTYPES;o++){
+		string s;
+		rdString(fin,s);
+		ResidueTypes::getReslist(o)=s;
+	}
  	cout << std::fixed << std::setw(6)<< "\n\t\tTopology extracted from header binary file. \n\tNumber of atoms including hydrogens: "
  			<< nr << " Number of residues: " << nresid << "\n\n";
  	cout << std::showpoint << std::fixed << std::left;
@@ -334,6 +353,11 @@ void Voronoi::bPrintHeader(ofstream & fout){
 	dmpVector(fout,typesResidueMask);
 	dmpVector(fout,cindex);
 	dmpVector(fout,CIndex);
+	int TOTTYPES=ResidueTypes::getTotTypes();
+	for(int o{0};o<TOTTYPES;o++){
+		string s{ResidueTypes::getReslist(o)};
+		dmpString(fout,s);
+	}
 }
 
 template void Voronoi::Start(float, Atoms<double> &);

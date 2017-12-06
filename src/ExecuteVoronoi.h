@@ -20,7 +20,7 @@
 #include "IteratorVoronoi.h"
 #include "Finalize.h"
 #include "Percolation.h"
-#include "AtomsCluster.h"
+#include "Atoms.h"
 template<typename T>
 class Atoms;
 
