@@ -177,7 +177,6 @@ void VoronoiMicelles::WriteIt(std::ofstream & fout){
 	int po=0;
 	for(size_t o0=0;o0<this->SelectedResidues.size() ;o0++) {
 		int o=this->SelectedResidues[o0];
-
 		if(!VoronoiSetter::bPrintVols)continue;
 		if(getTypesRes(o) != VoronoiSetter::pGroup && VoronoiSetter::pGroup != -1) continue;
 		double a=Vols[o]*1000.0;

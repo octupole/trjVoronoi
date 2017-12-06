@@ -297,12 +297,9 @@ void Voronoi::bReadHeader(ifstream & fin){
 	types=vector<int>(nr);
 	atTypes=vector<int>(nr);
 
-	Rdii=vector<double>(nr);
 	fin.read(as_byte(types[0]),sizeof(types[0])*nr);
 	fin.read(as_byte(atTypes[0]),sizeof(atTypes[0])*nr);
-	fin.read(as_byte(Rdii[0]),sizeof(Rdii[0])*nr);
 	rdVector(fin,Residue);
-	rdVector(fin,TypesName);
 	rdVector(fin,typesResidueMask);
 	rdVector(fin,cindex);
 	rdVector(fin,CIndex);
@@ -347,9 +344,7 @@ void Voronoi::bPrintHeader(ofstream & fout){
 	dmpVector(fout,SelectedResidues);
 	fout.write(as_byte(types[0]),sizeof(types[0])*nr);
 	fout.write(as_byte(atTypes[0]),sizeof(atTypes[0])*nr);
-	fout.write(as_byte(Rdii[0]),sizeof(Rdii[0])*nr);
 	dmpVector(fout,Residue);
-	dmpVector(fout,TypesName);
 	dmpVector(fout,typesResidueMask);
 	dmpVector(fout,cindex);
 	dmpVector(fout,CIndex);
