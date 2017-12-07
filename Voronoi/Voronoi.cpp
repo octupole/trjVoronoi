@@ -238,13 +238,13 @@ void Voronoi::bPrintBody(ofstream & fout){
 		dmpVector(fout,atClusters);
 		dmpVector(fout,Clusters);
 	}
-	vector<double> Vol_(cindex.size());
+	vector<float> Vol_(cindex.size());
 	vector<vector<int>> Neighs_(cindex.size());
-	vector<vector<double>> Surface_(cindex.size());
+	vector<vector<float>> Surface_(cindex.size());
 	for(size_t o{0};o<cindex.size();o++){
 		Vol_[o]=Vol[cindex[o]];
 		Neighs_[o]=Neighs[cindex[o]];
-		Surface_[o]=Surface[cindex[o]];
+		Surface_[o]=vector<float>{Surface[cindex[o]].begin(),Surface[cindex[o]].end()};
 	}
 	dmpVector(fout,Vol_);
 	dmpVector(fout,Neighs_);
@@ -267,16 +267,16 @@ void Voronoi::bReadBody(ifstream & fin){
 		AreaClusters=vector<double>(Clusters.size(),0.0);
 		SurfaceClusters=vector<vector<double>>(Clusters.size(),vv);
 	}
-	vector<double> Vol_;
+	vector<float> Vol_;
 	vector<vector<int>> Neighs_;
-	vector<vector<double>> Surface_;
+	vector<vector<float>> Surface_;
 	rdVector(fin,Vol_);
 	rdVector(fin,Neighs_);
 	rdVector(fin,Surface_);
 	for(size_t o{0};o<cindex.size();o++){
 		Vol[cindex[o]]=Vol_[o];
 		Neighs[cindex[o]]=Neighs_[o];
-		Surface[cindex[o]]=Surface_[o];
+		Surface[cindex[o]]=vector<double>{Surface_[o].begin(), Surface_[o].end()};
 	}
 }
 
