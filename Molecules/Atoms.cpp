@@ -379,7 +379,32 @@ int Atoms<T>::Percolate() {
 	this->Perco->Accumulate();
 	return result;
 }
-
+template <typename T>
+vector<DDvect<T>> Atoms<T>::getGC(){
+	try{
+		if(!this->hasPerco()) throw string("Cannot compute clusters center of mass without percolation.");
+	}catch(const string & s){
+		cout << s<<endl;exit(1);
+	}
+	const vector<vector<int> > & mCluster=Perco->getCluster();
+	vector<vector<int> > & mAtoms=Perco->getAtoms();
+	vector<Dvect> R_CM=vector<Dvect>(mCluster.size());
+	for(size_t o=0;o<mCluster.size();o++){
+		Dvect cm{0};
+		T tmass=0.0;
+		for(size_t p=0;p<mCluster[o].size();p++){
+			int n=mCluster[o][p];
+			for(size_t q=0;q<mAtoms[n].size();q++){
+				int i=mAtoms[n][q];
+				for(int o1=0;o1<DIM;o1++) cm[o1]+=xa[i][o1];
+				tmass+=1.0;
+			}
+		}
+		cm/=tmass;
+		R_CM[o]=cm;
+	}
+	return R_CM;
+}
 
 template class Atoms<float>;
 template class Atoms<double>;

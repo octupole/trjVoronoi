@@ -145,6 +145,7 @@ public:
 	Percolation<T> * gPerco(){return Perco;}
 
 	void pdb(const vector<string> & c);
+	vector<Dvect> getGC();
 
 	friend Fstream & operator+=(Fstream & fin, Atoms & y){
 		if(FstreamC * finC=dynamic_cast<FstreamC *> (&fin))
