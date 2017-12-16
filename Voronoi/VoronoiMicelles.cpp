@@ -76,6 +76,11 @@ VoronoiMicelles::VoronoiMicelles(Topol & myTop, bool bH){
 	}
 
 	wShells=vector<vector<int>>(VoronoiSetter::maxLevel);
+	vector<int> allAtoms;
+	for(auto it0: CIndex)
+		for(auto it1: it0)
+			allAtoms.push_back(it1);
+	this->nWaters=std::count_if(allAtoms.begin(),allAtoms.end(),[this](int i){return types[i] == Water;});
 }
 
 void VoronoiMicelles::getData(){
@@ -107,17 +112,6 @@ void VoronoiMicelles::getData(){
 	if(!VolClusters.empty()) __computeAggregate();
 }
 
-void VoronoiMicelles::__searchNeighs(int Level,int n){
-	Level++;
-	if(Level > VoronoiSetter::maxLevel) return;
-	for(unsigned int p=0;p<Neighs[n].size();p++){
-		int o=Neighs[n][p];
-		if(types[o] == Water) {
-			wShells[Level-1].push_back(o);
-			__searchNeighs(Level,o);
-		}
-	}
-};
 
 void VoronoiMicelles::__computeAggregate(){
 	for(size_t o=0;o<this->Clusters.size() ;o++) {
@@ -138,25 +132,46 @@ void VoronoiMicelles::__computeAggregate(){
 		}
 	}
 }
+void VoronoiMicelles::__searchNeighs(int Level,int n){
+	Level++;
+	if(Level > VoronoiSetter::maxLevel) return;
+	for(unsigned int p=0;p<Neighs[n].size();p++){
+		int o=Neighs[n][p];
+		if(types[o] == Water) {
+			wShells[Level-1].push_back(o);
+			__searchNeighs(Level,o);
+		}
+	}
+};
+
 void VoronoiMicelles::__compShell(){
 	for(auto & it: wShells) it.clear();
-
-	for(size_t o0=0;o0<this->SelectedResidues.size() ;o0++) {
-		int o=this->SelectedResidues[o0];
+	for(size_t o=0;o<CIndex.size() ;o++) {
 		vector<int> & cindex=CIndex[o];
 		for(unsigned int ia=0;ia<cindex.size();ia++){
 			int n=cindex[ia];
 			int type_n=types[n];
+			if(type_n == Water) continue;
 			int Level=0;
 			__searchNeighs(Level,n);
 		}
 	}
+	int mWaters{0};
 	for(int o{0};o< VoronoiSetter::maxLevel;o++){
 		std::sort(wShells[o].begin(),wShells[o].end());
 		auto it = std::unique (wShells[o].begin(), wShells[o].end());
 		wShells[o].resize( std::distance(wShells[o].begin(),it) );
+		for(int p{o-1};p>= 0;p--){
+			auto it=std::set_difference(wShells[o].begin(),wShells[o].end(),wShells[p].begin()
+					,wShells[p].end(),wShells[o].begin());
+			wShells[o].resize(it-wShells[o].begin());
+		}
+
+		if(mWaters+=wShells[o].size() == nWaters) break;
 	}
 }
+
+
 void VoronoiMicelles::WriteIt(std::ofstream & fout){
 	static bool firsttime{true};
 	if(firsttime){
@@ -236,7 +251,8 @@ void VoronoiMicelles::WriteIt(std::ofstream & fout){
 			fout << setw(10) <<left << fixed << " ";
 			fout << setw(10) <<left << fixed <<o;
 			fout << setw(10) <<left << fixed << wShells[o].size() ;
-			fout << setw(10) <<left << setprecision(2) << fixed << vol/static_cast<double>(wShells[o].size()) << " \n";
+			fout << setw(10) <<left << setprecision(2) << fixed
+					<<(wShells[o].size()!=0?vol/static_cast<double>(wShells[o].size()):0.0) << " \n";
 		}
 
 		fout<<endl;

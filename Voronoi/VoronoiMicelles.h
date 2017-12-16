@@ -16,9 +16,10 @@ protected:
 	void ReadIt(std::ifstream &){};
 
 	void __compShell();
-	void __searchNeighs(int ,int);
+	void __searchNeighs(int,int);
 	void __computeAggregate();
 	VoronoiMicelles(){};
+
 public:
 
 	VoronoiMicelles(ifstream & f){};
