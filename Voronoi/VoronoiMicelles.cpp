@@ -8,6 +8,8 @@
 #include <VoronoiMicelles.h>
 
 namespace Voro{
+const double SURFFACTOR{0.08};
+
 VoronoiMicelles::VoronoiMicelles(Topol & myTop, bool bH){
 	nr=myTop.Size();
 	Vol=vector<double>(nr);
@@ -108,6 +110,13 @@ void VoronoiMicelles::getData(){
 		}
 		Vols[o]=sum_v;
 	}
+	NeighsRd=vector<vector<int>> (Neighs.size());
+	for(size_t o{0};o< Neighs.size();o++){
+		auto totS=std::accumulate(Surface[o].begin(),Surface[o].end(),0.0);
+		for(size_t p{0};p< Surface[o].size();p++)
+			if(Surface[o][p] > totS*SURFFACTOR) NeighsRd[o].push_back(Neighs[o][p]);
+	}
+	Neighsx=&NeighsRd;
 	if(VoronoiSetter::bPrintShell) __compShell();
 	if(!VolClusters.empty()) __computeAggregate();
 }
@@ -135,8 +144,8 @@ void VoronoiMicelles::__computeAggregate(){
 void VoronoiMicelles::__searchNeighs(int Level,int n){
 	Level++;
 	if(Level > VoronoiSetter::maxLevel) return;
-	for(unsigned int p=0;p<Neighs[n].size();p++){
-		int o=Neighs[n][p];
+	for(unsigned int p=0;p<(*Neighsx)[n].size();p++){
+		int o=(*Neighsx)[n][p];
 		if(types[o] == Water) {
 			wShells[Level-1].push_back(o);
 			__searchNeighs(Level,o);

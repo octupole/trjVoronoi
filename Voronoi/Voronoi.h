@@ -80,6 +80,9 @@ protected:
 	vector<int> cindex;
 	vector<vector<int> > CIndex;
 	vector<vector<int> > Neighs;
+	vector<vector<int> > NeighsRd;
+	vector<vector<int> > * Neighsx;
+
 	vector<vector<double> > Surface;
 	vector<int> RealResidue;
 	vector<string> Residue;
