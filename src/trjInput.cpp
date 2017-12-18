@@ -42,6 +42,7 @@ trjInput::trjInput(int ntot,char ** v) {
 	inmap["-detO"]=in;
 	inmap["-det"]=in;
 	inmap["-clust"]=in;
+	inmap["-json"]=in;
 
 	map<string,vector<string> >::iterator it=inmap.begin();
 	for(int n=0;it!=inmap.end();++it,n++){
@@ -80,10 +81,12 @@ trjInput::trjInput(int ntot,char ** v) {
 	Usage[22]="\t -detO <string>// Define a name for the hydrophobic segment of a detergent residue \n";
 	Usage[23]="\t -shell [2]<int n>// Compute number and average volume of the n-shell water\n"
 			"\t\tneighbours around solute \n";
-	Usage[24]="\t -clust <float cutoff [0.0] in Angstroems>\n"
+	Usage[24]="\t -clust <float cutoff [0.0] in \u00C5ngstr\u00F6ms>\n"
 			"\t\tDo clustering by percolation of the solute. This is used to compute the surfaces and volumes\n"
 			"\t\tof each cluster. If the cutoff is zero, the default, the cutoff is chosen according to the\n"
 			"\t\tLennard-Jones sigma parameters multiplied by an offset factor of 1.5\n";
+	Usage[25]="\t -json fileout \n"
+			"\t\tWrite output to a JSON format\n";
 
 	int n=1;
 	string key;

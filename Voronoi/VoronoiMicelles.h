@@ -12,7 +12,7 @@
 namespace Voro{
 class VoronoiMicelles: public Voro::Voronoi {
 protected:
-	void WriteIt(std::ofstream &);
+	virtual void WriteIt(std::ofstream &);
 	void ReadIt(std::ifstream &){};
 
 	void __compShell();
@@ -25,6 +25,7 @@ public:
 	VoronoiMicelles(ifstream & f){};
 	VoronoiMicelles(Topol & x,bool y, Parallel::NewMPI * curr): VoronoiMicelles(x,y){}
 	VoronoiMicelles(Topol &,bool);
+	virtual void WriteLastJSON(std::ofstream & fout){};
 
 	virtual void getData();
 	virtual ~VoronoiMicelles();

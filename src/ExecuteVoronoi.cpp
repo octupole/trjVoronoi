@@ -8,7 +8,7 @@
 #include "ExecuteVoronoi.h"
 #include "Atoms.h"
 #include "Voronoi.h"
-#include "VoronoiMicelles.h"
+#include "VoronoiMicellesJSON.h"
 #include "VoronoiBinary.h"
 
 namespace Voro {
@@ -56,7 +56,12 @@ ExecuteVoronoi<T>::ExecuteVoronoi(trj::TrjRead & MyIn) {
 	}catch(const string & s) {cout << s <<endl;Finale::Finalize::Final();}
 
 	if(fin1x){
-		vor=new VoronoiBinary(*fin1x);
+		cout << JSONOutput<<endl;
+		if(JSONOutput)
+			vor=new VoronoiBinary<VoronoiMicellesJSON>(*fin1x);
+		else
+			vor=new VoronoiBinary<VoronoiMicelles>(*fin1x);
+
 		ofstream & fout=*foutx;
 
 		CurrMPI->Barrier();
@@ -105,12 +110,21 @@ ExecuteVoronoi<T>::ExecuteVoronoi(trj::TrjRead & MyIn, Topol & Topology):
 		}
 	} catch(const string & s){cout << s<<endl;
 	Finale::Finalize::Final();exit(1);}
+	cout << JSONOutput <<  endl;exit(1);
 
-
-	if(binOutput)
-		vor=new VoronoiBinary(*foutx,Topology,bHyd, CurrMPI);
-	else
-		vor=new VoronoiMicelles(Topology,bHyd);
+	if(JSONOutput){
+		if(binOutput){
+			vor=new VoronoiBinary<VoronoiMicellesJSON>(*foutx,Topology,bHyd, CurrMPI);
+		}else{
+			vor=new VoronoiMicellesJSON(Topology,bHyd);
+		}
+	}else{
+		if(binOutput){
+			vor=new VoronoiBinary<VoronoiMicelles>(*foutx,Topology,bHyd, CurrMPI);
+		} else{
+			vor=new VoronoiMicelles(Topology,bHyd);
+		}
+	}
 	Percolation<T>::setPercoCutoff(MyIn.gPercoCutoff());
 
 	Clustering=MyIn.bbClust();
@@ -154,6 +168,7 @@ void ExecuteVoronoi<T>::__RunPost(){
 
 		cout << fixed << setw(5) << "----> Time Step " << vor->gTime() << ss.str()<<"\n";
 	}
+	vor->WriteLastJSON(Comms->getStream());
 	Comms->appendStreams();
 	if(bDel) Comms->removeFiles();
 	CurrMPI->Barrier();
@@ -205,6 +220,7 @@ void ExecuteVoronoi<T>::__RunTrajectory(Atoms<T> * atmx){
 		cout << fixed << setw(5) << "----> Time Step " << ntime << ss.str()<<"\n";
 	}
 
+	vor->WriteLastJSON(Comms->getStream());
 	Comms->appendStreams();
 	if(bDel) Comms->removeFiles();
 	Comms->closeStream();   // close stream!!!
@@ -245,6 +261,7 @@ void ExecuteVoronoi<T>::__SetUp(trj::TrjRead & MyIn){
 	bDel=MyIn.bbDel();
 	bHyd=MyIn.bbHyd();
 	binOutput=MyIn.bbOutBin();
+	JSONOutput=MyIn.bbOutJSON();
 	fileout_bin=MyIn.gfileout_bin();
 
 	fpdb=MyIn.gFpdb();

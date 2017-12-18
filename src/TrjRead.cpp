@@ -108,6 +108,12 @@ void TrjRead::Input(){
 			if(inmap["-o"].size() > 2) throw string("\n More than one entry for " + inmap["-o"][0] + " option \n");
 			fileout=inmap["-o"][1];
 		}
+		if(!inmap["-json"].empty()) {
+			if(inmap["-json"].size() < 2) throw string("\n filename expected for " + inmap["-json"][0] + " option \n");
+			if(inmap["-json"].size() > 2) throw string("\n More than one entry for " + inmap["-json"][0] + " option \n");
+			fileout=inmap["-json"][1];
+			bOutJSON=true;
+		}
 		if(!inmap["-b"].empty()) {
 			if(inmap["-b"].size() != 2) throw string(" Number of first frame needed for " + inmap["-b"][0] + " option ");
 			stringstream(inmap["-b"][1])>> nstart;

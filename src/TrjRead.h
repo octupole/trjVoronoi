@@ -122,6 +122,7 @@ class TrjRead: public trjInput {
 	bool bOnce{false};
 	bool bPost{false};
 	bool bOutBin{false};
+	bool bOutJSON{false};
 
 	int MyOrder{1};
 	size_t BoxMultiply{1};
@@ -190,6 +191,7 @@ public:
 	Values<bool> bbOnce{bOnce};
 	Values<bool> bbPost{bPost};
 	Values<bool> bbOutBin{bOutBin};
+	Values<bool> bbOutJSON{bOutJSON};
 
 
 	Streams<Fstream> gFinx;

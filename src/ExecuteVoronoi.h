@@ -52,6 +52,7 @@ class ExecuteVoronoi {
 	bool bDel{false};
 	bool bHyd{false};
 	bool binOutput{false};
+	bool JSONOutput{false};
 	double Rcut_in{-1.0},Rcut{-1.0};
 	/// @endcond
 	double MassSolute{-1.0}; ///< Molecular mass of the solute. Used to compute alpha.

@@ -9,10 +9,12 @@
 #define VORONOI_VORONOIBINARY_H_
 
 #include "VoronoiMicelles.h"
+#include "VoronoiMicellesJSON.h"
 
 namespace Voro {
 
-class VoronoiBinary: public VoronoiMicelles {
+template <typename T>
+class VoronoiBinary: public T {
 	void WriteIt(std::ofstream &);
 	void ReadIt(std::ifstream &);
 public:

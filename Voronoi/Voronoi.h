@@ -93,7 +93,6 @@ protected:
 	void gather(vector<int> & y);
 	virtual void WriteIt(std::ofstream &)=0;
 	virtual void ReadIt(std::ifstream &)=0;
-
 	virtual void __compShell()=0;
 	virtual void __searchNeighs(int a,int b)=0;
 	virtual void __computeAggregate()=0;
@@ -120,6 +119,7 @@ public:
 	Voronoi(Topol &,bool);
 	Voronoi(Topol &,bool, Parallel::NewMPI *);
 	Voronoi(ifstream & x);
+	virtual void WriteLastJSON(std::ofstream &)=0;
 	template <typename T>
 	void Start(float, Atoms<T> &);
 	void doVoro__();

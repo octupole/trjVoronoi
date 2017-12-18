@@ -11,8 +11,8 @@ AM_CXXFLAGS = -std=c++11
 # the previous manual Makefile
 lib_LIBRARIES = libvoro.a
 libvoro_a_SOURCES = Voronoi.cpp  VoronoiMicelles.cpp VoronoiSetter.cpp\
-	VoronoiBinary.cpp IteratorVoronoi.cpp
+	VoronoiBinary.cpp IteratorVoronoi.cpp VoronoiMicellesJSON.cpp 
 
 LDADD = libvoro.a
 include_HEADERS = Voronoi.h  VoronoiMicelles.h VoronoiSetter.h\
-	VoronoiBinary.h IteratorVoronoi.h
+	VoronoiBinary.h IteratorVoronoi.h VoronoiMicellesJSON.h 

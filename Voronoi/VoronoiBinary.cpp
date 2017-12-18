@@ -8,36 +8,42 @@
 #include "VoronoiBinary.h"
 
 namespace Voro {
-void VoronoiBinary::WriteIt(std::ofstream & fout){
-	if(writeBinary)
-		bPrintBody(fout);
+template <typename T>
+void VoronoiBinary<T>::WriteIt(std::ofstream & fout){
+	if(this->writeBinary)
+		this->bPrintBody(fout);
 	else
-		VoronoiMicelles::WriteIt(fout);
+		T::WriteIt(fout);
 
 }
-void VoronoiBinary::ReadIt(std::ifstream & fin){
-	bReadBody(fin);
+template <typename T>
+void VoronoiBinary<T>::ReadIt(std::ifstream & fin){
+	this->bReadBody(fin);
 }
 
-VoronoiBinary::VoronoiBinary(ifstream & fin) {
-	bReadHeader(fin);
-	Vol=vector<double>(nr);
-	Neighs=vector<vector<int>>(nr);
-	Surface=vector<vector<double>>(nr);
-	area.Allocate(nresid,nc);
-	Vols.Allocate(nresid);
-	wShells=vector<vector<int>>(VoronoiSetter::maxLevel);
+template <typename T>
+VoronoiBinary<T>::VoronoiBinary(ifstream & fin) {
+	this->bReadHeader(fin);
+	this->Vol=vector<double>(this->nr);
+	this->Neighs=vector<vector<int>>(this->nr);
+	this->Surface=vector<vector<double>>(this->nr);
+	this->area.Allocate(this->nresid,this->nc);
+	this->Vols.Allocate(this->nresid);
+	this->wShells=vector<vector<int>>(VoronoiSetter::maxLevel);
 
 	this->readBinary=true;
 }
-VoronoiBinary::VoronoiBinary(ofstream & fout,Topol & myTop,bool bH, Parallel::NewMPI * curr): VoronoiMicelles::VoronoiMicelles(myTop,bH){
+template <typename T>
+VoronoiBinary<T>::VoronoiBinary(ofstream & fout,Topol & myTop,bool bH, Parallel::NewMPI * curr): T(myTop,bH){
 	if(!curr->Get_Rank())
 		this->bPrintHeader(fout);
 	this->writeBinary=true;
 }
 
-VoronoiBinary::~VoronoiBinary() {
+template <typename T>
+VoronoiBinary<T>::~VoronoiBinary() {
 	// TODO Auto-generated destructor stub
 }
-
+template class VoronoiBinary<VoronoiMicelles>;
+template class VoronoiBinary<VoronoiMicellesJSON>;
 } /* namespace Voro */
