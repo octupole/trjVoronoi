@@ -110,7 +110,6 @@ ExecuteVoronoi<T>::ExecuteVoronoi(trj::TrjRead & MyIn, Topol & Topology):
 		}
 	} catch(const string & s){cout << s<<endl;
 	Finale::Finalize::Final();exit(1);}
-	cout << JSONOutput <<  endl;exit(1);
 
 	if(JSONOutput){
 		if(binOutput){
