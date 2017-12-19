@@ -22,12 +22,13 @@
 #include "xdrfile_xtc.h"
 #include "xdrfile_seek.h"
 #include "Percolation.h"
+#include <map>
 
 using namespace DVECT;
 using namespace MATRIX;
 using std::vector;
 using namespace Enums;
-
+using std::map;
 
 template <typename T>
 class brot{
@@ -68,11 +69,13 @@ class Atoms {
 	using Matrix=MMatrix<T>;
 protected:
 	bool firsttime{true};
+
 	int nr{0};
 	int status{0};
 	vector<Dvect> x;
 	vector<Dvect> xa;
 	Metric<T> Mt;
+	static map<string,T> Masses;
 	static int    step_c;
 	static float  prec_c,time_c;
 	vector<double> rd;
