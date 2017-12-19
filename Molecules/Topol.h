@@ -79,6 +79,7 @@ protected:
 	size_t nres{0};
 	size_t maxtype{0};
 	int bGMax{0};
+
 	vector<vector<int> > RefRes,SelRes;
 	vector<string> atomname;
 	vector<int> atomtypeNo;
@@ -87,6 +88,7 @@ protected:
 	vector<vector<int> > cidx;
 	vector<string> TypeNames;
 	vector<double> rd;
+	vector<double> Mass;
 	vector<string> atSFactor;
 	vector<int> bG;
 	vector<int> ResType;
@@ -159,6 +161,7 @@ public:
 		return resinfo[n];
 	}
 	const vector<double> & getrd() const {return rd;};
+	const vector<double> & getMass() const {return Mass;};
 	const vector<string> & get_atSFactor() const {return atSFactor;}
 	vector<MySubunit> & getMySub(){
 		return MySub;

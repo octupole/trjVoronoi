@@ -22,7 +22,7 @@
 #include "xdrfile_xtc.h"
 #include "xdrfile_seek.h"
 #include "Percolation.h"
-#include <map>
+
 
 using namespace DVECT;
 using namespace MATRIX;
@@ -75,10 +75,10 @@ protected:
 	vector<Dvect> x;
 	vector<Dvect> xa;
 	Metric<T> Mt;
-	static map<string,T> Masses;
 	static int    step_c;
 	static float  prec_c,time_c;
 	vector<double> rd;
+	vector<double> Mass;
 
 	virtual void ReadaStep(FstreamC * );
 	virtual void ReadaStep(FstreamF * );
@@ -128,11 +128,7 @@ public:
 	Typedefs::real Dist(const int,const int);
 	vector<Dvect> getX() const {return x;};
 	vector<Dvect> getXA() const {return xa;};
-	void setrd(vector<double> & rdx) {rd=rdx;};
-	void setrd(Topol_NS::Topol & y){
-		rd=y.getrd();
-
-	};
+	void setTopol(Topol_NS::Topol &);
 	double getrd(int n){return rd[n];}
 
 	float getTime(){return time_c;}

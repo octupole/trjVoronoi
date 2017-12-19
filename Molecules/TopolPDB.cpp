@@ -18,7 +18,31 @@ auto countRes=[](size_t & n, string & oldRes, string currRes) {
 		oldRes=currRes;
 	}
 };
+auto myName=[](string s, string res){
+	const string knownRes{"SOD NA CLA K MG CA ZN"};
+	string atom;
 
+	if(knownRes.find(s) != string::npos){
+		if(s == "SOD")
+			atom="Na";
+		else if(s == "CLA")
+			atom="Cl";
+		else {
+			std::transform(s.begin()+1,s.end(),s.begin()+1,tolower);
+			atom=s;
+		}
+	} else{
+		if(s.find_first_not_of("1234") == 1){
+			if(s.compare(1,1,"H") == 0){
+				atom="H";
+			}
+		}else if(s == "FE" || s == "Fe")
+			atom="Fe";
+		else
+			atom=s.substr(0,1);
+	}
+	return atom;
+};
 void TopolPDB::operator()(const vector<string> & data0 ){
 	if(data0.empty()) return;
 	map<string,vector<string> > mapps;
@@ -129,20 +153,28 @@ vector<PDBdata> TopolPDB::SplitResidue(vector<string> & v0){
 		offsetRes++;
 
 	}
-
-	for(size_t o=0;o < y.size(); o++){
-		yout[o].at=atmindx[o]+offset;
-		yout[o].res=resindx[o];
-		yout[o].resn=resname[o];
-		yout[o].atn=y[o].atn;
-		yout[o].type=y[o].type;
-		yout[o].x=y[o].x;
-		yout[o].domd=y[o].domd;
-		yout[o].domn=y[o].domn;
-		yout[o].first=v0[o].substr(0,61);
-		yout[o].last=v0[o].substr(66,14);
+	try{
+		for(size_t o=0;o < y.size(); o++){
+			yout[o].at=atmindx[o]+offset;
+			yout[o].res=resindx[o];
+			yout[o].resn=resname[o];
+			yout[o].atn=y[o].atn;
+			yout[o].type=y[o].type;
+			yout[o].x=y[o].x;
+			yout[o].domd=y[o].domd;
+			yout[o].domn=y[o].domn;
+			yout[o].first=v0[o].substr(0,61);
+			yout[o].last=v0[o].substr(66,14);
+			string atm=myName(yout[o].atn,yout[o].resn);
+			if(Masses.count(atm) != 1) throw string("Unknown atom found");
+			yout[o].mass=Masses[atm];
+		}
+	}catch(const string & s){
+		cout << s << endl;
+		exit(1);
 	}
 	offset+=v0.size();
+
 	return yout;
 }
 

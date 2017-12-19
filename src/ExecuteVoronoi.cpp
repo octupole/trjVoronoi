@@ -185,8 +185,8 @@ void ExecuteVoronoi<T>::__RunTrajectory(Atoms<T> * atmx){
 
 		float ntime=atmA->getTime();
 		int nClusters{0};
+		atmA->setTopol(*Top);
 		if(Clustering){
-			atmA->setrd(*Top);
 			static struct Once{
 				Once(Atoms<T> * atmA, Topol_NS::Topol * myTop){
 					atmA->SetupPercolate(*myTop);

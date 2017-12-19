@@ -283,6 +283,7 @@ void Topol::ExtractInfo(TopolPDB & data,bool bRD){
 		}
 
 		xc.push_back(data[i].x);
+		Mass.push_back(data[i].mass);
 		int ntype=mytype.Sfind(sub2);
 		cidx0[ntype].push_back(nat);
 		atomtypeNo.push_back(mytype.strFindResTypeNum(ntype));
