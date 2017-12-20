@@ -17,6 +17,7 @@
 #include "HeaderTrj.h"
 #include "Topol.h"
 #include "Contacts.h"
+#include "Gyration.h"
 
 #include "xdrfile.h"
 #include "xdrfile_xtc.h"
@@ -75,10 +76,12 @@ protected:
 	vector<Dvect> x;
 	vector<Dvect> xa;
 	Metric<T> Mt;
+	vector<Gyration<T>> Rg_i,Rg_stat;
 	static int    step_c;
 	static float  prec_c,time_c;
 	vector<double> rd;
-	vector<double> Mass;
+	vector<double> mass,massNCH;
+	int Rg_count{0};
 
 	virtual void ReadaStep(FstreamC * );
 	virtual void ReadaStep(FstreamF * );
@@ -92,6 +95,7 @@ protected:
 	virtual void __ReconstructOneCluster(vector<bool> & a){};
 	virtual Dvect __FindCell(const vector<vector<int>> & x,const vector<vector<int>> & y){return Dvect();};
 	Percolation<T> * Perco{nullptr};
+	void CalcGyro(vector<double> &,vector<Gyration<T>> &);
 
 public:
 	Atoms(){};
@@ -107,6 +111,8 @@ public:
 		plane & operator=(double dd){xc[3]=dd;return *this;};
 		plane & operator=(int i){n=i;return *this;};
 	} ax;
+	void Gyro();
+	vector<Gyration<T>> & getRg_i(){return Rg_i;};
 
 	void setDim(const int n);
 	void setCoord(const Metric<T> &, const rvec *, const AtomIndex & );

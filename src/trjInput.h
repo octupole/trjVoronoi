@@ -12,6 +12,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include "ClearUsage.h"
 using std::map;
 using std::string;
 using std::vector;
@@ -27,7 +28,7 @@ protected:
 	vector<string> unknownC;
 	map<int,string> Usage;
 public:
-	trjInput(int nv,char ** v);
+	trjInput(int nv,char ** v,ClearUsage &);
 	virtual ~trjInput();
 	vector<string> & operator[](const char * y){return inmap[y];}
 	vector<string> & bTest(){return unknownC;};

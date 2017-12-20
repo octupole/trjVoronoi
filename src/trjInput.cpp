@@ -8,7 +8,8 @@
 #include "trjInput.h"
 
 namespace trj {
-trjInput::trjInput(int ntot,char ** v) {
+trjInput::trjInput(int ntot,char ** v, ClearUsage & clr) {
+	auto ClrU=[this](std::initializer_list<int> list){for(auto op: list) Usage[op].clear();};
 	vector<string> in;
 
 	inmap["-o"]=in;
@@ -87,7 +88,7 @@ trjInput::trjInput(int ntot,char ** v) {
 			"\t\tLennard-Jones sigma parameters multiplied by an offset factor of 1.5\n";
 	Usage[25]="\t -json fileout \n"
 			"\t\tWrite output to a JSON format\n";
-
+	clr.ClrU(Usage);
 	int n=1;
 	string key;
 	for(;n<ntot;){

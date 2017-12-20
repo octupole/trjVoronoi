@@ -5,6 +5,72 @@
  *      Author: marchi
  */
 #include "Atoms.h"
+#include "jacobi.h"
+template <typename T>
+class Jacob{
+	double ** iner;
+	double ** ei;
+	double * Im;
+	static Dvect Im_s;
+	void  eigsort(DDvect<T>  & d, MMatrix<T>  * v=NULL){
+		int k;
+		int n=DIM;
+		for (int i=0;i<n-1;i++) {
+			double p=d[k=i];
+			for (int j=i;j<n;j++)
+				if (d[j] >= p) p=d[k=j];
+			if (k != i) {
+				d[k]=d[i];
+				d[i]=p;
+				if (v != NULL){
+					for (int j=0;j<n;j++) {
+						p=(*v)[j][i];
+						(*v)[j][i]=(*v)[j][k];
+						(*v)[j][k]=p;
+					}
+				}
+			}
+		}
+	}
+public:
+	Jacob():  iner(NULL), ei(NULL),Im(NULL){};
+	~Jacob(){
+		for(int o=0;o<DIM;o++) delete [] iner[o];
+		delete [] iner;
+		for(int o=0;o<DIM;o++) delete [] ei[o];
+		delete [] ei;
+		delete [] Im;
+	}
+	void operator()(MMatrix<T> & iner0, DDvect<T> & Im0, MMatrix<T> & ei0, int & nrot){
+		if(!iner) {
+			iner=new double * [DIM];
+			for(int o=0;o<DIM;o++) iner[o]=new double [DIM];
+		}
+		if(!ei) {
+			ei=new double * [DIM];
+			for(int o=0;o<DIM;o++) ei[o]=new double [DIM];
+		}
+		if(!Im) Im=new double [DIM];
+		for(int o=0;o<DIM;o++){
+			for(int p=0;p<DIM;p++){
+				iner[o][p]=iner0[o][p];
+			}
+		}
+		jacobi(iner,DIM,Im,ei,&nrot);
+
+		for(int o=0;o<DIM;o++){
+			Im0[o]=Im[o];
+			for(int p=0;p<DIM;p++){
+				ei0[o][p]=ei[o][p];
+			}
+		}
+
+		eigsort(Im0,&ei0);
+	}
+
+};
+template <typename T>
+Dvect Jacob<T>::Im_s=0.0;
 
 template<typename T>
 int    Atoms<T>::step_c=0;
@@ -17,8 +83,18 @@ float Atoms<T>::time_c=0.0;
 
 template <typename T>
 void Atoms<T>::setTopol(Topol_NS::Topol & y){
+	const double massH{1.00784};
+	const double massC{12.00960};
+	const double eps{1.0e-4};
 	rd=y.getrd();
-	Mass=y.getMass();
+	mass=y.getMass();
+	massNCH=mass;
+	std::transform(massNCH.begin(),massNCH.end(),massNCH.begin(),[=](double x){
+		return (abs(x-massH) < eps || abs(x-massC) <eps)?0.0:x;
+	});
+	for(size_t o{0};o<mass.size();o++){
+
+	}
 };
 
 template <typename T>
@@ -63,6 +139,90 @@ Atoms<T> & Atoms<T>::operator()(const int natoms){
 
 	return *this;
 };
+template <typename T>
+void Atoms<T>::CalcGyro(vector<double> & massa,vector<Gyration<T>> & Rg){
+	vector<vector<int> > mCluster=Perco->getCluster();
+	vector<vector<int> > mAtoms=Perco->getAtoms();
+	for(size_t o=0;o<mCluster.size();o++){
+		Rg[o]=0.0;
+		Dvect cm,cmG;
+		double unit_nmm2=1.0/(unit_nm*unit_nm);
+
+		int ntot=0;
+		double tmass=0.0;
+		for(size_t p=0;p<mCluster[o].size();p++){
+			int n=mCluster[o][p];
+			for(size_t q=0;q<mAtoms[n].size();q++){
+				int i=mAtoms[n][q];
+				for(int o1=0;o1<DIM;o1++) cm[o1]+=x[i][o1]*massa[i];
+				for(int o1=0;o1<DIM;o1++) cmG[o1]+=x[i][o1];
+				tmass+=massa[i];
+				ntot++;
+			}
+		}
+		cm/=tmass;
+		cmG/=static_cast<int> (ntot);
+		Dvect x0;
+		Dvect Gm,Im,axis;
+		Matrix Giner;
+		Matrix ei,ei2;
+		double MyRg=0;
+		int oa=0;
+		for(size_t p=0;p<mCluster[o].size();p++){
+			int n=mCluster[o][p];
+			for(size_t q=0;q<mAtoms[n].size();q++){
+				int nn=mAtoms[n][q];
+				for(int o1=0;o1<DIM;o1++) x0[o1]=cmG[o1]-x[nn][o1];
+				Giner+=x0%x0*unit_nmm2;
+			}
+		}
+		Giner/=static_cast<double> (ntot);
+		int nrot;
+		Jacob<T>()(Giner,Gm,ei,nrot);
+		for(int o1=0;o1<DIM;o1++) MyRg+=Gm[o1];
+		Matrix Inertia;
+		for(size_t p=0;p<mCluster[o].size();p++){
+			int n=mCluster[o][p];
+			for(size_t q=0;q<mAtoms[n].size();q++){
+				int nn=mAtoms[n][q];
+				for(int o1=0;o1<DIM;o1++) x0[o1]=cm[o1]-x[nn][o1];
+
+				Inertia[XX][XX]+=(sqr(x0[YY])+sqr(x0[ZZ]))*massa[nn];
+				Inertia[YY][YY]+=(sqr(x0[ZZ])+sqr(x0[XX]))*massa[nn];
+				Inertia[ZZ][ZZ]+=(sqr(x0[XX])+sqr(x0[YY]))*massa[nn];
+				Inertia[XX][YY]-=(x0[XX]*x0[YY])*massa[nn];
+				Inertia[XX][ZZ]-=(x0[XX]*x0[ZZ])*massa[nn];
+				Inertia[YY][ZZ]-=(x0[YY]*x0[ZZ])*massa[nn];
+			}
+		}
+		Inertia[YY][XX]=Inertia[XX][YY];
+		Inertia[ZZ][XX]=Inertia[XX][ZZ];
+		Inertia[ZZ][YY]=Inertia[YY][ZZ];
+		Jacob<T>()(Inertia,Im,ei2,nrot);
+		Im*=unit_nmm2;
+		double fact=5.0/tmass/2.0;
+		axis[XX]=fact*(Im[YY]+Im[ZZ]-Im[XX]);
+		axis[YY]=fact*(Im[XX]+Im[ZZ]-Im[YY]);
+		axis[ZZ]=fact*(Im[YY]+Im[XX]-Im[ZZ]);
+		MyRg=(axis[XX]+axis[YY]+axis[ZZ])/5.0;
+		Rg[o](MyRg,Im,Gm,axis);
+	}
+
+}
+template <typename T>
+void Atoms<T>::Gyro(){
+	vector<vector<int> > mCluster=Perco->getCluster();
+	vector<vector<int> > mAtoms=Perco->getAtoms();
+
+	vector<Gyration<T>> Rg=vector<Gyration<T>>(mCluster.size());
+	Rg_i.clear();
+	Gyration<T>::setTime(time_c);
+	CalcGyro(mass,Rg);
+	copy(Rg.begin(),Rg.end(),back_inserter(Rg_i));
+	CalcGyro(massNCH,Rg);
+	copy(Rg.begin(),Rg.end(),back_inserter(Rg_i));
+	Rg_count++;
+}
 
 template <typename T>
 Atoms<T> & Atoms<T>::operator=(const Atoms<T> & y){

@@ -12,7 +12,8 @@ AM_CXXFLAGS = -std=c++11
 
 bin_PROGRAMS = trjVoronoi
 
-trjVoronoi_SOURCES = ExecuteVoronoi.cpp TrjRead.cpp  trjInput.cpp  trjVoronoi.cpp
+trjVoronoi_SOURCES = ExecuteVoronoi.cpp TrjRead.cpp  trjInput.cpp  trjVoronoi.cpp ClearUsage.cpp
 
-trjVoronoi_DEPENDENCIES = ../trjlib/libtrj.a ../Molecules/libmol.a ../Voronoi/libvoro.a ../voro++/libvoro++.a
+trjVoronoi_DEPENDENCIES = ../trjlib/libtrj.a ../Molecules/libmol.a ../Voronoi/libvoro.a ../voro++/libvoro++.a\
+	../Properties/libprop.a ../alglib/libalg.a
 

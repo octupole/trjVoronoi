@@ -5,5 +5,5 @@
 
 ACLOCAL_AMFLAGS = -I m4
 AUTOMAKE_OPTIONS = foreign
-SUBDIRS = Molecules voro++ Voronoi trjlib src 
+SUBDIRS = Molecules voro++ Voronoi trjlib Properties alglib src 
 

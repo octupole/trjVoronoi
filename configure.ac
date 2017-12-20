@@ -29,8 +29,8 @@ AC_ARG_WITH(xdr-dir,
         [xdr_dir=$withval],[xdr_dir="$PWD/xdrfile-src/xdr"])
 
 
-CPPFLAGS="$CPPFLAGS -I$xdr_dir/include -I../trjlib -I../Molecules -I../voro++ -I../Voronoi "
-LDFLAGS="$LDFLAGS  -L$xdr_dir/lib -L../Voronoi -L../voro++ -L../Molecules -L../trjlib"
+CPPFLAGS="$CPPFLAGS -I$xdr_dir/include -I../trjlib -I../Molecules -I../voro++ -I../Voronoi -I../Properties -I../alglib "
+LDFLAGS="$LDFLAGS  -L$xdr_dir/lib -L../Voronoi -L../voro++ -L../Molecules -L../trjlib -L../Properties -L../alglib"
 
 AC_SEARCH_LIBS([read_xtc_natoms],[xdrfile xdrfile_mpi],[],AC_MSG_ERROR([xdrfile is needed. You must provide a path to the libraryor use --with-xdr-dir=dir]))
 
@@ -64,7 +64,7 @@ fi
 
 AM_CONDITIONAL(MPI, test "$enable_mpi" = "yes")
 
-LIBS=" -lvoro -lvoro++  -lmol -ltrj $LIBS "
+LIBS=" -lvoro -lvoro++  -lmol -ltrj -lprop -lalg $LIBS "
 
 # Checks for programs.
 
@@ -78,6 +78,7 @@ AC_TYPE_SIZE_T
 
 AC_CHECK_FUNCS([remove sqrt strdup mkstemp exit])
 
-AC_CONFIG_FILES([Makefile Voronoi/Makefile Molecules/Makefile voro++/Makefile trjlib/Makefile src/Makefile])
+AC_CONFIG_FILES([Makefile Voronoi/Makefile Molecules/Makefile voro++/Makefile 
+     trjlib/Makefile src/Makefile Properties/Makefile] alglib/Makefile)
 AC_OUTPUT
 

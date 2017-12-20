@@ -221,7 +221,7 @@ public:
 	Streams<ifstream> gFdefdomain;
 	Streams<ifstream> gFtest;
 
-	TrjRead(int nv,char ** v);
+	TrjRead(int nv,char ** v, ClearUsage &);
 	void Input();
 	virtual ~TrjRead();
 };

@@ -9,7 +9,7 @@
 namespace trj {
 Parallel::NewMPI * TrjRead::CurrMPI=nullptr;
 
-TrjRead::TrjRead(int nv,char ** v): trjInput::trjInput(nv,v) {
+TrjRead::TrjRead(int nv,char ** v, ClearUsage & clr): trjInput::trjInput(nv,v,clr) {
 	// TODO Auto-generated constructor stub
 	string comm0(v[0]);
 	size_t mypos=comm0.find_last_of("/")+1;

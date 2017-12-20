@@ -21,9 +21,9 @@ using namespace std;
 
 class hist1D{
 protected:
+public:
 	double hisX{0};
 	double nhis{0.0};
-public:
 	hist1D():hisX(0.0),nhis(0){};
 	hist1D(double his0,double nhis0): hisX(his0),nhis(nhis0){};
 	hist1D(double his0): hisX{his0}{};
@@ -39,6 +39,7 @@ public:
 		hisX*=a;
 		return *this;
 	}
+	double gHisx(){return hisX;}
 	bool isZero(){
 		return nhis == 0;
 	}

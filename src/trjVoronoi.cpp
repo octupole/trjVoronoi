@@ -68,6 +68,8 @@
 #include "Atoms.h"
 #include "PickSelection.h"
 #include "Finalize.h"
+#include "ClearUsage.h"
+
 using namespace Topol_NS;
 
 using namespace std;
@@ -91,7 +93,8 @@ int main(int argc, char ** argv){
 	/**
 	 * read input
 	 */
-	trj::TrjRead MyIn(argc,argv);
+	ClearUsage clr({});
+	trj::TrjRead MyIn(argc,argv,clr);
 	MyIn.Input();
 	timer::Timer myTime;
 	Topol_NS::Topol MyTop;
