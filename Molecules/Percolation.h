@@ -81,6 +81,7 @@ class Percolation {
 	void rCluster(size_t);
 	int count{0};
 	function<double(int,int)> myPercoCutoff;
+	virtual void __Writeit(ostream &);
 
 public:
 	static void setPercoCutoff(double cut){PercoCutoff=cut;}
@@ -99,8 +100,10 @@ public:
 	listcon & getContacts(){return Contacts;}
 	vector<Comp> & getClustComp(){return ClustComp;}
 	virtual ~Percolation();
-	template <typename G>
-	friend ostream & operator<<(ostream & , Percolation<G> &);
+	friend ostream & operator<<(ostream & fout, Percolation & perco){
+		perco.__Writeit(fout);
+		return fout;
+	}
 
 };
 

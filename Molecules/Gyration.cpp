@@ -13,16 +13,22 @@ template <typename T>
 Gyration<T>::~Gyration(){};
 
 template <typename T>
-ofstream & operator<<(ofstream & fout , Gyration<T> & Rgs){
-	fout << "  time = "<< fixed << setw(8) << setprecision(4) << Rgs.time_c;
-	fout << "  Rg = "<< fixed << setw(8) << setprecision(4) << sqrt(Rgs.Radg);
-	fout << "  a = " << fixed << setw(8) << setprecision(4) << sqrt(Rgs.axis[XX]) ;
-	fout << "  b = " << fixed << setw(8) << setprecision(4) << sqrt(Rgs.axis[YY]) ;
-	fout << "  c = " << fixed << setw(8) << setprecision(4) << sqrt(Rgs.axis[ZZ]) ;
-	fout << "  I_x = " << fixed << setw(8) << setprecision(4) << sqrt(Rgs.I[XX]) ;
-	fout << "  I_y = " << fixed << setw(8) << setprecision(4) << sqrt(Rgs.I[YY]) ;
-	fout << "  I_z = " << fixed << setw(8) << setprecision(4) << sqrt(Rgs.I[ZZ]) ;
+void Gyration<T>::__Writeit(ofstream & fout, string label, int o){
+	fout << label<< fixed << setw(3) << o;
+	fout << "  time = "<< fixed << setw(8) << setprecision(4) << time_c;
+	fout << "  Rg = "<< fixed << setw(8) << setprecision(4) << sqrt(Radg);
+	fout << "  a = " << fixed << setw(8) << setprecision(4) << sqrt(axis[XX]) ;
+	fout << "  b = " << fixed << setw(8) << setprecision(4) << sqrt(axis[YY]) ;
+	fout << "  c = " << fixed << setw(8) << setprecision(4) << sqrt(axis[ZZ]) ;
+	fout << "  I_x = " << fixed << setw(8) << setprecision(4) << sqrt(I[XX]) ;
+	fout << "  I_y = " << fixed << setw(8) << setprecision(4) << sqrt(I[YY]) ;
+	fout << "  I_z = " << fixed << setw(8) << setprecision(4) << sqrt(I[ZZ]) ;
 	fout << endl;
+
+}
+template <typename T>
+ofstream & operator<<(ofstream & fout , Gyration<T> & Rgs){
+	Rgs.__Writeit(fout,"  ClusMIC = ",0);
 	return fout;
 }
 
@@ -31,31 +37,17 @@ ofstream & operator<<(ofstream & fout , vector<Gyration<T>> & Rgs){
 	size_t beg0=0,beg1=Rgs.size()/2;
 	size_t end0=Rgs.size()/2,end1=Rgs.size();
 	for(size_t o=beg0;o<end0;o++){
-		fout << "  ClusMIC = "<< fixed << setw(3) << o;
-		fout << "  time = "<< fixed << setw(8) << setprecision(4) << Rgs[o].time_c;
-		fout << "  Rg = "<< fixed << setw(8) << setprecision(4) << sqrt(Rgs[o].Radg);
-		fout << "  a = " << fixed << setw(8) << setprecision(4) << sqrt(Rgs[o].axis[XX]) ;
-		fout << "  b = " << fixed << setw(8) << setprecision(4) << sqrt(Rgs[o].axis[YY]) ;
-		fout << "  c = " << fixed << setw(8) << setprecision(4) << sqrt(Rgs[o].axis[ZZ]) ;
-		fout << "  I_x = " << fixed << setw(8) << setprecision(4) << sqrt(Rgs[o].I[XX]) ;
-		fout << "  I_y = " << fixed << setw(8) << setprecision(4) << sqrt(Rgs[o].I[YY]) ;
-		fout << "  I_z = " << fixed << setw(8) << setprecision(4) << sqrt(Rgs[o].I[ZZ]) ;
-		fout << endl;
+		Rgs[o].__Writeit(fout,"  ClusMIC = ",o);
 	}
 	int oo=0;
 	for(size_t o=beg1;o<end1;o++){
-		fout << "  ClusPOL = "<< fixed << setw(3) << oo++;
-		fout << "  time = "<< fixed << setw(8) << setprecision(4) << Rgs[o].time_c;
-		fout << "  Rg = "<< fixed << setw(8) << setprecision(4) << sqrt(Rgs[o].Radg);
-		fout << "  a = " << fixed << setw(8) << setprecision(4) << sqrt(Rgs[o].axis[XX]) ;
-		fout << "  b = " << fixed << setw(8) << setprecision(4) << sqrt(Rgs[o].axis[YY]) ;
-		fout << "  c = " << fixed << setw(8) << setprecision(4) << sqrt(Rgs[o].axis[ZZ]) ;
-		fout << "  I_x = " << fixed << setw(8) << setprecision(4) << sqrt(Rgs[o].I[XX]) ;
-		fout << "  I_y = " << fixed << setw(8) << setprecision(4) << sqrt(Rgs[o].I[YY]) ;
-		fout << "  I_z = " << fixed << setw(8) << setprecision(4) << sqrt(Rgs[o].I[ZZ]) ;
-		fout << endl;
+		Rgs[o].__Writeit(fout,"  ClusPOL = ",o);
 	}
 	return fout;
 }
 template class Gyration<float>;
 template class Gyration<double>;
+template ofstream & operator<<(ofstream &,vector<Gyration<float>>&);
+template ofstream & operator<<(ofstream &,vector<Gyration<double>>&);
+template ofstream & operator<<(ofstream &,Gyration<float>&);
+template ofstream & operator<<(ofstream &,Gyration<double>&);

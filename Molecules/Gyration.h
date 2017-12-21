@@ -20,12 +20,14 @@ using namespace MATRIX;
 
 template <typename T>
 class Gyration{
+protected:
 	using Dvect=DDvect<T>;
 	using Matrix=MMatrix<T>;
 
 	double Radg{0};
 	Dvect I,G,axis;
 	static double time_c;
+	virtual void __Writeit(ofstream &,string, int);
 public:
 	Gyration(){};
 	Gyration(double a,Dvect & b, Dvect & c, Dvect & d): Radg(a),I(b),G(c), axis(d) {};

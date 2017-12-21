@@ -138,8 +138,8 @@ public:
 	double getrd(int n){return rd[n];}
 
 	float getTime(){return time_c;}
-	void SetupPercolate();
-	void SetupPercolate(Topol_NS::Topol &x);
+	void SetupPercolate(bool=false);
+	void SetupPercolate(Topol_NS::Topol &x,bool=false);
 	int Percolate();
 	int Percolate(double y){
 		this->Perco->setRcut(y);
@@ -151,7 +151,7 @@ public:
 
 	void pdb(const vector<string> & c);
 	vector<Dvect> getGC();
-
+	vector<Comp> & getComp(){return Perco->getClustComp();}
 	friend Fstream & operator+=(Fstream & fin, Atoms & y){
 		if(FstreamC * finC=dynamic_cast<FstreamC *> (&fin))
 			y.moveOffset(finC);

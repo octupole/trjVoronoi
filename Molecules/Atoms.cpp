@@ -508,10 +508,10 @@ void Atoms<T>::moveOffset(std::ifstream & fin){
 }
 
 template <typename T>
-void Atoms<T>::SetupPercolate(){
+void Atoms<T>::SetupPercolate(bool JSON){
 }
 template <typename T>
-void Atoms<T>::SetupPercolate(Topol_NS::Topol & myTop){
+void Atoms<T>::SetupPercolate(Topol_NS::Topol & myTop, bool JSON){
 	auto & Reference=myTop.gReferenceResidues();
 
 	auto & atmss=myTop.getAtomName();

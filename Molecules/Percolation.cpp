@@ -240,29 +240,28 @@ void Percolation<T>::doContacts(vector<Dvect> & v, Matrix & co, Matrix & oc){
 	}
 }
 template <typename T>
-std::ostream & operator<<(std::ostream & fout , Percolation<T> & y){
-	fout << "%$        at step No. " << y.count <<"\n%$"<<endl;
+void Percolation<T>::__Writeit(ostream & fout){
+	fout << "%$        at step No. " << count <<"\n%$"<<endl;
 	fout << "%$        Contacts \n%$ " <<endl;
-	for(size_t n=0; n < y.Contacts.size(); n++){
-		fout << n << " " + y.Name[n] << " ;;  " << y.Contacts[n].size() << " ";
-		for(size_t m=0; m < y.Contacts[n].size(); m++) {
-			int i=y.Contacts[n][m];
-			fout << i << " " + y.Name[i] << " " ;
+	for(size_t n=0; n < Contacts.size(); n++){
+		fout << n << " " + Name[n] << " ;;  " << Contacts[n].size() << " ";
+		for(size_t m=0; m < Contacts[n].size(); m++) {
+			int i=Contacts[n][m];
+			fout << i << " " + Name[i] << " " ;
 		}
 		fout <<endl;
 	}
 	fout <<endl;
 	fout << "%$        Clusters  \n%$ " <<endl;
-	for(size_t n=0; n < y.Clusters.size(); n++){
-		fout << n << "::  " << y.Clusters[n].size() << " " ;
-		for(size_t m=0; m < y.Clusters[n].size(); m++) {
-			int i=y.Clusters[n][m];
-			fout << i << " " + y.Name[i] << " " ;
+	for(size_t n=0; n < Clusters.size(); n++){
+		fout << n << "::  " << Clusters[n].size() << " " ;
+		for(size_t m=0; m < Clusters[n].size(); m++) {
+			int i=Clusters[n][m];
+			fout << i << " " + Name[i] << " " ;
 		}
 		fout <<endl;
 	}
 	fout << endl;
-	return fout;
 }
 
 
