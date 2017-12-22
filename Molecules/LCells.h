@@ -28,7 +28,7 @@ class LCells {
 	using Dvect=DDvect<T>;
 	typedef vector<int> vectint;
 	int nr{0};
-	T Rcut{0.0};
+	T Rcut{1.3};
 	const T Rmax{4.5};
 
 	vector<int> nc={-1,-1,-1};

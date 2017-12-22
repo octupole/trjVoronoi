@@ -10,6 +10,7 @@
 
 namespace Enums{
 enum myAtoms {Reference, Selection};
+enum myWriteOptions { noJSON, JSON};
 }
 
 

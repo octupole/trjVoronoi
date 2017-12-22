@@ -13,7 +13,7 @@ template <typename T>
 Gyration<T>::~Gyration(){};
 
 template <typename T>
-void Gyration<T>::__Writeit(ofstream & fout, string label, int o){
+void Gyration<T>::__Writeit(ostream & fout, string label, int o){
 	fout << label<< fixed << setw(3) << o;
 	fout << "  time = "<< fixed << setw(8) << setprecision(4) << time_c;
 	fout << "  Rg = "<< fixed << setw(8) << setprecision(4) << sqrt(Radg);
@@ -26,28 +26,28 @@ void Gyration<T>::__Writeit(ofstream & fout, string label, int o){
 	fout << endl;
 
 }
-template <typename T>
-ofstream & operator<<(ofstream & fout , Gyration<T> & Rgs){
-	Rgs.__Writeit(fout,"  ClusMIC = ",0);
-	return fout;
-}
 
 template <typename T>
-ofstream & operator<<(ofstream & fout , vector<Gyration<T>> & Rgs){
+ostream & operator<<(ostream & fout , Gyration<T> * Rgs){
+	Rgs->__Writeit(fout,"  ClusMIC = ",0);
+	return fout;
+}
+template <typename T>
+ostream & operator<<(ostream & fout , vector<Gyration<T> *> & Rgs){
 	size_t beg0=0,beg1=Rgs.size()/2;
 	size_t end0=Rgs.size()/2,end1=Rgs.size();
 	for(size_t o=beg0;o<end0;o++){
-		Rgs[o].__Writeit(fout,"  ClusMIC = ",o);
+		Rgs[o]->__Writeit(fout,"  ClusMIC = ",o);
 	}
 	int oo=0;
-	for(size_t o=beg1;o<end1;o++){
-		Rgs[o].__Writeit(fout,"  ClusPOL = ",o);
+	for(size_t o=beg1;o<end1;o++,oo++){
+		Rgs[o]->__Writeit(fout,"  ClusPOL = ",oo);
 	}
 	return fout;
 }
 template class Gyration<float>;
 template class Gyration<double>;
-template ofstream & operator<<(ofstream &,vector<Gyration<float>>&);
-template ofstream & operator<<(ofstream &,vector<Gyration<double>>&);
-template ofstream & operator<<(ofstream &,Gyration<float>&);
-template ofstream & operator<<(ofstream &,Gyration<double>&);
+template ostream & operator<<(ostream &,vector<Gyration<float>*>&);
+template ostream & operator<<(ostream &,vector<Gyration<double>*>&);
+template ostream & operator<<(ostream &,Gyration<float>*);
+template ostream & operator<<(ostream &,Gyration<double>*);

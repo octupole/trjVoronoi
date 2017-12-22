@@ -27,7 +27,6 @@ void LCells<T>::Init(Matrix & co0, const vector<Dvect> & y){
 	co=co0;
 	oc=co.Inversion();
 	nr=x.size();
-
 	try{
 		if(co[XX][XX] < Rcut*2.0) throw string{"Box is too small to run with neighbor lists."};
 	}catch(const string & s){
@@ -48,7 +47,7 @@ void LCells<T>::Init(Matrix & co0, const vector<Dvect> & y){
 				Chainp[m][n]=vector<vectint>(nc[ZZ]);
 		}
 	}
-	if(nnl.size()) nnl.clear();
+	nnl.clear();
 	nnl=vector<vectint>(nr);
 }
 
@@ -93,6 +92,7 @@ void LCells<T>::Index(){
 
 template <typename T>
 vector<vector<int> > & LCells<T>::List(bool UpperHalf){
+
 	if(nc[XX] < 0 && nc[YY] < 0 && nc[ZZ] < 0) {
 		for(size_t n=0;n< x.size();n++){
 			Dvect X=co*x[n];
@@ -127,6 +127,7 @@ vector<vector<int> > & LCells<T>::List(bool UpperHalf){
 		Cellp[i][ZZ]=(mz%nc[ZZ]+nc[ZZ])%nc[ZZ];
 		Chainp[mx][my][mz].push_back(i);
 	}
+
 	for(size_t n=0;n< x.size();n++){
 		Dvect X=co*x[n];
 		vectint i=Cellp[n];
@@ -151,7 +152,6 @@ vector<vector<int> > & LCells<T>::List(bool UpperHalf){
 			}
 		}
 	}
-
 	return nnl;
 }
 template <typename T>

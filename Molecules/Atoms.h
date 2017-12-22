@@ -18,11 +18,14 @@
 #include "Topol.h"
 #include "Contacts.h"
 #include "Gyration.h"
+#include "GyrationJSON.h"
 
 #include "xdrfile.h"
 #include "xdrfile_xtc.h"
 #include "xdrfile_seek.h"
 #include "Percolation.h"
+#include "PercolationJSON.h"
+#include "myEnums.hpp"
 
 
 using namespace DVECT;
@@ -30,6 +33,7 @@ using namespace MATRIX;
 using std::vector;
 using namespace Enums;
 using std::map;
+
 
 template <typename T>
 class brot{
@@ -70,13 +74,15 @@ class Atoms {
 	using Matrix=MMatrix<T>;
 protected:
 	bool firsttime{true};
+	const T HALF{0.5000-0.0001};
+	static int calls;
 
 	int nr{0};
 	int status{0};
 	vector<Dvect> x;
 	vector<Dvect> xa;
 	Metric<T> Mt;
-	vector<Gyration<T>> Rg_i,Rg_stat;
+	vector<Gyration<T> *> Rg_i;
 	static int    step_c;
 	static float  prec_c,time_c;
 	vector<double> rd;
@@ -92,17 +98,17 @@ protected:
 	virtual void moveOffset(std::ifstream &);
 	virtual void WriteaStep(FstreamC * );
 	virtual void WriteaStep(FstreamF * );
-	virtual void __ReconstructOneCluster(vector<bool> & a){};
-	virtual Dvect __FindCell(const vector<vector<int>> & x,const vector<vector<int>> & y){return Dvect();};
+	virtual void __ReconstructOneCluster(vector<bool> &);
 	Percolation<T> * Perco{nullptr};
-	void CalcGyro(vector<double> &,vector<Gyration<T>> &);
+	void CalcGyro(vector<double> &,vector<Gyration<T> *> &);
+	Dvect __FindCell(const vector<vector<int>> & ,const vector<vector<int>> & );
 
 public:
 	Atoms(){};
 	Atoms(const int);
 	Atoms(const AtomIndex &);
 	Atoms(const Atoms &);
-	virtual ~Atoms(){delete Perco;};
+	virtual ~Atoms();
 	struct plane{
 		Typedefs::real xc[4];
 		int n;
@@ -111,8 +117,9 @@ public:
 		plane & operator=(double dd){xc[3]=dd;return *this;};
 		plane & operator=(int i){n=i;return *this;};
 	} ax;
+	template <Enums::myWriteOptions OPT>
 	void Gyro();
-	vector<Gyration<T>> & getRg_i(){return Rg_i;};
+	vector<Gyration<T>*> & getRg_i(){return Rg_i;};
 
 	void setDim(const int n);
 	void setCoord(const Metric<T> &, const rvec *, const AtomIndex & );
@@ -122,6 +129,7 @@ public:
 	Atoms & operator=(const T);
 	Dvect & operator[](const int i){return x[i];};
 	Atoms & operator()(const int);
+	void Reconstruct(Contacts<T> *);
 
 	void Rot(const Matrix);
 	int getNR()const{return nr;};
@@ -138,8 +146,8 @@ public:
 	double getrd(int n){return rd[n];}
 
 	float getTime(){return time_c;}
-	void SetupPercolate(bool=false);
-	void SetupPercolate(Topol_NS::Topol &x,bool=false);
+	template <Enums::myWriteOptions OPT>
+	void SetupPercolate(Topol_NS::Topol &x);
 	int Percolate();
 	int Percolate(double y){
 		this->Perco->setRcut(y);

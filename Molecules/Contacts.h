@@ -11,9 +11,8 @@
 #include <algorithm>
 #include <limits>
 const size_t SIZE_T=10000000;
-const double RCUT=3.5*0.1;  // in nameters!
-const double RCUT_IN=3.0*0.1; // in nanometers!!
-
+#define RCUT 1.5
+#define RCUT_IN 1.3
 template <typename T>
 class Contacts {
 	using Dvect=DDvect<T>;
@@ -29,7 +28,7 @@ protected:
 	T Rcut{RCUT}, Rcut_in{RCUT_IN};
 	virtual void Init(vector<Dvect> & y,Matrix & co, Matrix & oc){
 		CO=co;OC=oc;v.clear();v=y;b.clear();b=vector<bool>(v.size(),true);
-		List.clear();nnl.clear();
+		List.clear();
 		Ind=0;
 	}
 	void rCluster(size_t);

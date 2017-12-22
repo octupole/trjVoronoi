@@ -27,16 +27,27 @@ protected:
 	double Radg{0};
 	Dvect I,G,axis;
 	static double time_c;
-	virtual void __Writeit(ofstream &,string, int);
+	virtual void __Writeit(ostream &,string, int);
 public:
 	Gyration(){};
 	Gyration(double a,Dvect & b, Dvect & c, Dvect & d): Radg(a),I(b),G(c), axis(d) {};
 	virtual ~Gyration();
+	double gRadg(){return Radg;}
+	Dvect gI(){return I;}
+	Dvect gG(){return G;}
+	Dvect gaxis(){return axis;}
 	void operator()(double a,Dvect & b, Dvect & c, Dvect & d){
 		Radg=a;I=b;G=c;axis=d;
 	}
 	void operator()(double a,Dvect & b, Dvect & c, Dvect & d, double tt){
 		Radg=a;I=b;G=c;axis=d;time_c=tt;
+	}
+	Gyration & operator=(const Gyration & y){
+		Radg=y.Radg;
+		I=y.I;
+		G=y.G;
+		axis=y.axis;
+		return *this;
 	}
 	static void setTime(double tt){time_c=tt;};
 	Gyration operator/(int n){
@@ -59,8 +70,12 @@ public:
 		return *this;
 	}
 	template <typename G>
-	friend ofstream & operator<<(ofstream & , Gyration<G> &);
+	friend ostream & operator<<(ostream & , Gyration<G> &);
 	template <typename G>
-	friend ofstream & operator<<(ofstream & , vector<Gyration<G>> &);
+	friend ostream & operator<<(ostream & , vector<Gyration<G>> &);
+	template <typename G>
+	friend ostream & operator<<(ostream & , Gyration<G> *);
+	template <typename G>
+	friend ostream & operator<<(ostream & , vector<Gyration<G> *> &);
 };
 #endif /* GYRATION_H_ */

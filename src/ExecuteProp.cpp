@@ -22,6 +22,14 @@ template <typename T>
 void ExecuteProp<T>::__Print(ofstream & y){}
 
 template <typename T>
+T min3(MMatrix<T> co){
+  T myMin=1e10;
+  for(auto q=0;q<DIM;q++){
+    if(myMin > 5.0*co[q][q]) myMin=5.0*co[q][q];
+  }
+  return myMin;
+};
+template <typename T>
 ExecuteProp<T>::ExecuteProp(trj::TrjRead & MyIn) {
 	__SetUp(MyIn);
 
@@ -116,10 +124,16 @@ template <typename T>
 void ExecuteProp<T>::__RunTrajectory(Atoms<T> * atmx){
 
 	myiterators::IteratorAtoms<T> iter_atm(atmx,finx,nstart,nend,nskip);
+    Contacts<T> * Con0;
+    if(Rcut_in < 0) Rcut_in=Rcut;
+    Con0=new Contacts<T>(Rcut,Rcut);
 
 	while((++iter_atm).isReferenced()){
 		stringstream ss;
 		Atoms<T> * atmA=iter_atm();
+		Metric<T> Mt=atmA->getMt();
+		MMatrix<T> CO=Mt.getCO();
+
 
 		float ntime=atmA->getTime();
 		int nClusters{0};
@@ -127,9 +141,11 @@ void ExecuteProp<T>::__RunTrajectory(Atoms<T> * atmx){
 		if(Clustering){
 
 			static struct Once{
-				Once(Atoms<T> * atmA, Topol_NS::Topol * myTop, bool whichJSON){
-					atmA->SetupPercolate(*myTop,whichJSON);
-
+				Once(Atoms<T> * atmA, Topol_NS::Topol * myTop, bool JSON){
+					if(JSON)
+						atmA->template SetupPercolate<Enums::JSON>(*myTop);
+					else
+						atmA->template SetupPercolate<Enums::noJSON>(*myTop);
 				}
 			} _Once(atmA, Top,JSONOutput);
 			if(bOnce){
@@ -138,6 +154,9 @@ void ExecuteProp<T>::__RunTrajectory(Atoms<T> * atmx){
 			}else {
 				nClusters=atmA->Percolate();
 			}
+
+			atmA->Reconstruct(Con0);
+
 		}
 		switch(nClusters){
 		case 0:
@@ -148,8 +167,11 @@ void ExecuteProp<T>::__RunTrajectory(Atoms<T> * atmx){
 		default:
 			ss<< "    " << fixed << setw(4) << nClusters<<" clusters <-----";
 		}
+		if(this->JSONOutput)
+			atmA->template Gyro<Enums::JSON>();
+		else
+			atmA->template Gyro<Enums::noJSON>();
 
-		atmA->Gyro();
 
 		Comms->getStream() << atmA->getRg_i();
 		Comms->getStream() << atmA->getComp();
@@ -176,7 +198,11 @@ void ExecuteProp<T>::__RunPDB(Atoms<T> * atm){
 	}
 	atm->pdb(data);
 	float ntime=atm->getTime();
-	atm->Gyro();
+	if(this->JSONOutput)
+		atm->template Gyro<Enums::JSON>();
+	else
+		atm->template Gyro<Enums::noJSON>();
+
 
 	Comms->getStream() << atm->getRg_i();
 	Comms->getStream() << atm->getComp();

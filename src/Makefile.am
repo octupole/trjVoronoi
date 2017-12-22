@@ -18,3 +18,6 @@ trjProp_SOURCES = ExecuteProp.cpp TrjRead.cpp  trjInput.cpp  trjProp.cpp ClearUs
 trjVoronoi_DEPENDENCIES = ../trjlib/libtrj.a ../Molecules/libmol.a ../Voronoi/libvoro.a ../voro++/libvoro++.a\
 	../Properties/libprop.a ../alglib/libalg.a
 
+trjProp_DEPENDENCIES = ../trjlib/libtrj.a ../Molecules/libmol.a ../Voronoi/libvoro.a ../voro++/libvoro++.a\
+	../Properties/libprop.a ../alglib/libalg.a
+

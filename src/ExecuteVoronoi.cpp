@@ -188,10 +188,13 @@ void ExecuteVoronoi<T>::__RunTrajectory(Atoms<T> * atmx){
 		atmA->setTopol(*Top);
 		if(Clustering){
 			static struct Once{
-				Once(Atoms<T> * atmA, Topol_NS::Topol * myTop){
-					atmA->SetupPercolate(*myTop);
+				Once(Atoms<T> * atmA, Topol_NS::Topol * myTop, bool JSON){
+					if(JSON)
+							atmA->template SetupPercolate<Enums::JSON>(*myTop);
+						else
+							atmA->template SetupPercolate<Enums::noJSON>(*myTop);
 				}
-			} _Once(atmA, Top);
+			} _Once(atmA, Top, this->JSONOutput);
 			if(bOnce){
 				static struct Once_p{int nClusters{0};Once_p(Atoms<T> *atmA){nClusters=atmA->Percolate();}} __Once_p(atmA);
 				nClusters=__Once_p.nClusters;

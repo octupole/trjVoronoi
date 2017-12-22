@@ -12,3 +12,5 @@ PercolationJSON<T>::~PercolationJSON() {
 	// TODO Auto-generated destructor stub
 }
 
+template class PercolationJSON<float>;
+template class PercolationJSON<double>;

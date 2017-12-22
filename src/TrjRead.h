@@ -104,7 +104,7 @@ class TrjRead: public trjInput {
 	ofstream * fout_saxsx{nullptr};
 	vector<int> WignerArgs{0,0,0};
 	DVECT::DDvect<double> e0{0.0};
-	double Rcut{3.5};
+	double Rcut{15.0};
 	double Rcut_in{-1.0};
 	double MassSolute{-1.0};
 	double PercoCutoff{0.0};

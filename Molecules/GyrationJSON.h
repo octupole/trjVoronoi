@@ -15,6 +15,14 @@ template <typename T>
 class GyrationJSON: public Gyration<T> {
 public:
 	using Gyration<T>::Gyration;
+	GyrationJSON(GyrationJSON<T> & y){
+		this->Radg=y.Radg;
+		this->I=y.I;
+		this->G=y.G;
+		this->axis=y.axis;
+	}
+
+
 	virtual ~GyrationJSON();
 };
 

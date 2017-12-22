@@ -7,6 +7,9 @@
 #include "Atoms.h"
 #include "jacobi.h"
 template <typename T>
+int Atoms<T>::calls=0;
+
+template <typename T>
 class Jacob{
 	double ** iner;
 	double ** ei;
@@ -70,6 +73,50 @@ public:
 
 };
 template <typename T>
+class PBCvect{
+	using Dvect=DDvect<T>;
+	static vector<Dvect> * nxyz;
+	PBCvect(){};
+	static void __compVect(){
+		const int M{3};
+		nxyz=new vector<Dvect>;
+		for(int o=0;o<M;o++){
+			double nx=static_cast<double>(o-1);
+			for(int p=0;p<M;p++){
+				double ny=static_cast<double>(p-1);
+				for(int q=0;q<M;q++){
+					double nz=static_cast<double>(q-1);
+					nxyz->push_back(Dvect(nx,ny,nz));
+				}
+			}
+		}
+
+	};
+public:
+	static vector<Dvect> & getVec(){__compVect();return *nxyz;}
+};
+
+template <typename T>
+vector<DDvect<T>> * PBCvect<T>::nxyz=nullptr;
+
+template <typename T>
+class CellComp{
+	using Dvect=DDvect<T>;
+	using Matrix=MMatrix<T>;
+	Dvect Xd;
+	Matrix co;
+public:
+	CellComp(Dvect& x, Dvect & y, Matrix & c): Xd(x-y), co(c){};
+	CellComp(Dvect& x, Matrix & c): Xd(x), co(c){};
+	bool operator()(const Dvect & x, const Dvect & y){
+		Dvect x1=Xd+x;
+		Dvect x2=Xd+y;
+		Dvect xc1=co*x1;
+		Dvect xc2=co*x2;
+		return xc1.Norm() < xc2.Norm();
+	}
+};
+template <typename T>
 Dvect Jacob<T>::Im_s=0.0;
 
 template<typename T>
@@ -92,9 +139,6 @@ void Atoms<T>::setTopol(Topol_NS::Topol & y){
 	std::transform(massNCH.begin(),massNCH.end(),massNCH.begin(),[=](double x){
 		return (abs(x-massH) < eps || abs(x-massC) <eps)?0.0:x;
 	});
-	for(size_t o{0};o<mass.size();o++){
-
-	}
 };
 
 template <typename T>
@@ -140,11 +184,12 @@ Atoms<T> & Atoms<T>::operator()(const int natoms){
 	return *this;
 };
 template <typename T>
-void Atoms<T>::CalcGyro(vector<double> & massa,vector<Gyration<T>> & Rg){
+void Atoms<T>::CalcGyro(vector<double> & massa,vector<Gyration<T>*> & Rg){
 	vector<vector<int> > mCluster=Perco->getCluster();
 	vector<vector<int> > mAtoms=Perco->getAtoms();
+
 	for(size_t o=0;o<mCluster.size();o++){
-		Rg[o]=0.0;
+		*Rg[o]=0.0;
 		Dvect cm,cmG;
 		double unit_nmm2=1.0/(unit_nm*unit_nm);
 
@@ -205,22 +250,61 @@ void Atoms<T>::CalcGyro(vector<double> & massa,vector<Gyration<T>> & Rg){
 		axis[YY]=fact*(Im[XX]+Im[ZZ]-Im[YY]);
 		axis[ZZ]=fact*(Im[YY]+Im[XX]-Im[ZZ]);
 		MyRg=(axis[XX]+axis[YY]+axis[ZZ])/5.0;
-		Rg[o](MyRg,Im,Gm,axis);
-	}
+		(*Rg[o])(MyRg,Im,Gm,axis);
 
+	}
 }
 template <typename T>
+template<Enums::myWriteOptions OPT>
 void Atoms<T>::Gyro(){
 	vector<vector<int> > mCluster=Perco->getCluster();
 	vector<vector<int> > mAtoms=Perco->getAtoms();
 
-	vector<Gyration<T>> Rg=vector<Gyration<T>>(mCluster.size());
+	vector<Gyration<T> *> Rg=vector<Gyration<T>*>(mCluster.size());
+	switch(OPT){
+	case Enums::JSON:
+		for(auto & ip: Rg)
+			ip=new GyrationJSON<T>();
+		break;
+	default:
+		for(auto & ip: Rg)
+			ip=new Gyration<T>();
+		break;
+	}
 	Rg_i.clear();
 	Gyration<T>::setTime(time_c);
-	CalcGyro(mass,Rg);
-	copy(Rg.begin(),Rg.end(),back_inserter(Rg_i));
-	CalcGyro(massNCH,Rg);
-	copy(Rg.begin(),Rg.end(),back_inserter(Rg_i));
+
+	switch(OPT){
+	case Enums::JSON:
+		CalcGyro(mass,Rg);
+		for(size_t o{0};o<Rg.size();o++){
+			double a{Rg[o]->gRadg()};
+			Dvect I{Rg[o]->gI()};
+			Dvect G{Rg[o]->gG()};
+			Dvect axis{Rg[o]->gaxis()};
+			Rg_i.push_back(new GyrationJSON<T>(a,I,G,axis));
+		}
+		CalcGyro(massNCH,Rg);
+		for(size_t o{0};o<Rg.size();o++){
+			double a{Rg[o]->gRadg()};
+			Dvect I{Rg[o]->gI()};
+			Dvect G{Rg[o]->gG()};
+			Dvect axis{Rg[o]->gaxis()};
+			Rg_i.push_back(new GyrationJSON<T>(a,I,G,axis));
+		}
+		break;
+	default:
+		CalcGyro(mass,Rg);
+		for(size_t o{0};o<Rg.size();o++)
+			Rg_i.push_back(new Gyration<T>(*Rg[o]));
+
+		CalcGyro(massNCH,Rg);
+		for(size_t o{0};o<Rg.size();o++)
+			Rg_i.push_back(new Gyration<T>(*Rg[o]));
+		break;
+
+	}
+
 	Rg_count++;
 }
 
@@ -508,10 +592,8 @@ void Atoms<T>::moveOffset(std::ifstream & fin){
 }
 
 template <typename T>
-void Atoms<T>::SetupPercolate(bool JSON){
-}
-template <typename T>
-void Atoms<T>::SetupPercolate(Topol_NS::Topol & myTop, bool JSON){
+template<Enums::myWriteOptions OPT>
+void Atoms<T>::SetupPercolate(Topol_NS::Topol & myTop){
 	auto & Reference=myTop.gReferenceResidues();
 
 	auto & atmss=myTop.getAtomName();
@@ -523,8 +605,14 @@ void Atoms<T>::SetupPercolate(Topol_NS::Topol & myTop, bool JSON){
 	vector<vector<int>> MySel;
 	for(size_t o{0};o<Reference.size();o++)
 		MySel.push_back(Index[Reference[o]]);
-
-	this->Perco=new Percolation<T>(MySel,rd,resn,atmss);
+	switch(OPT){
+	case Enums::JSON:
+		this->Perco=new PercolationJSON<T>(MySel,rd,resn,atmss);
+		break;
+	default:
+		this->Perco=new Percolation<T>(MySel,rd,resn,atmss);
+		break;
+	}
 }
 
 
@@ -544,6 +632,7 @@ int Atoms<T>::Percolate() {
 	this->Perco->Accumulate();
 	return result;
 }
+
 template <typename T>
 vector<DDvect<T>> Atoms<T>::getGC(){
 	try{
@@ -570,7 +659,221 @@ vector<DDvect<T>> Atoms<T>::getGC(){
 	}
 	return R_CM;
 }
+template<typename T>
+void Atoms<T>::__ReconstructOneCluster(vector<bool> & atSolv){
+	vector<vector<int> > mCluster=Perco->getCluster();
+	vector<vector<int> > mAtoms=Perco->getAtoms();
+	Matrix co=Mt.getCO();
+	Matrix oc=Mt.getOC();
+	Dvect xcmC{0};
+	size_t u{0};
+	for(size_t p=0;p<mCluster[0].size();p++){
+		int n=mCluster[0][p];
+		for(size_t i=0;i<mAtoms[n].size();i++){
+			int ia=mAtoms[n][i];
+			xcmC[XX]+=xa[ia][XX];
+			xcmC[YY]+=xa[ia][YY];
+			xcmC[ZZ]+=xa[ia][ZZ];
+			u++;
+		}
+	}
+	xcmC/=static_cast<double>(u);
+	for(auto ia=0;ia<nr;ia++){
+		for(int o=0;o<DIM;o++){
+			 xa[ia][o]-=xcmC[o]-HALF;
+			 if(atSolv[ia]) {
+				 xa[ia][o]-=rint(xa[ia][o]-HALF);
+			 }
+		}
+	}
+	//> Obtain new Cartesian coordinates from reduced xa's
+	for(auto ia=0;ia<nr;ia++){
+		for(int o=0;o<DIM;o++){
+			x[ia][o]=Mt.getCO()[o][XX]*xa[ia][XX]+Mt.getCO()[o][YY]*xa[ia][YY]+Mt.getCO()[o][ZZ]*xa[ia][ZZ];
+		}
+	}
+}
 
+template <typename T>
+void Atoms<T>::Reconstruct(Contacts<T> * con0){
+
+	vector<Dvect> nxyz=PBCvect<T>::getVec();
+	vector<vector<int> > mCluster=Perco->getCluster();
+	vector<vector<int> > mAtoms=Perco->getAtoms();
+
+	Matrix co=Mt.getCO();
+	Matrix oc=Mt.getOC();
+	T v[DIM];
+	v[XX]=co[XX][XX];v[YY]=co[YY][YY];v[ZZ]=co[ZZ][ZZ];
+
+	T MinCO=*min_element(v,v+3)*0.5;  // Half the smallest axis is the cutoff distance for atom shifts
+	Dvect Xref;
+
+	// Reconstruct each one of the molecules
+	vector<Dvect> xcm(mAtoms.size(),0);
+
+	for(size_t o=0;o<mAtoms.size();o++){
+
+		Xref=xa[mAtoms[o][0]];
+		for(size_t p=0;p<mAtoms[o].size();p++){
+			int n=mAtoms[o][p];
+			Dvect x1=Xref-xa[n];
+			Dvect xp=xa[n];
+			Dvect xc1=co*x1;
+			if(xc1.Norm() > MinCO) {
+				Dvect tmp=*min_element(nxyz.begin(),nxyz.end(),CellComp<T>(x1,co));
+				for(int q=0; q < DIM;q++) xa[n][q]=xa[n][q]-tmp[q];
+			}
+			Xref=xa[n];
+		}
+		// Compute molecule center of mass xcm
+		for(size_t p=0;p<mAtoms[o].size();p++){
+			Dvect xx=xa[mAtoms[o][p]];
+			xcm[o]+=xx;
+		}
+		xcm[o]/=static_cast<T>(mAtoms[o].size());
+	}
+
+	//
+	for(size_t o=0;o<mCluster.size();o++){
+		Dvect xcmC{0};
+		vector<Dvect> xcm0(mCluster[o].size());
+
+		for(size_t p=0;p<mCluster[o].size();p++){
+			xcm0[p]=xcm[mCluster[o][p]];
+		}
+
+//		Contacts * con0=new Contacts(xcm0,co,oc);
+
+		(*con0)(xcm0,co,oc);
+		con0->Neighbors();
+		size_t p=0,q=0,qq=0;
+// Start with a reference molecule p=0;
+		Xref=xcm0[p]; // Initial reference molecule is the first on the list
+		p=con0->next(); //p is now the next molecule closest to p-1
+
+		while (p < SIZE_T){
+			size_t n=mCluster[o][p];
+			Dvect x1=Xref-xcm0[p];
+			Dvect xc1=co*x1;
+
+			if(xc1.Norm() >= MinCO) {
+				Dvect tmp=*min_element(nxyz.begin(),nxyz.end(),CellComp<T>(x1,co));
+				for(int q=0; q < DIM;q++) xcm[n][q]=xcm[n][q]-tmp[q];
+				for(int q=0; q < DIM;q++) xcm0[p][q]=xcm0[p][q]-tmp[q];
+
+				for(size_t i=0;i<mAtoms[n].size();i++){
+					int ia=mAtoms[n][i];
+					for(int q=0; q < DIM;q++) xa[ia][q]=xa[ia][q]-tmp[q];
+					}
+
+			}
+
+			Xref=xcm0[p];
+			p=con0->next(); //p is now the next molecule closest to p-1
+
+		};
+		// Compute the center of mass of the cluster
+		for(size_t p=0;p<mCluster[o].size();p++){
+			xcmC+=xcm0[p];
+		}
+		xcmC/=static_cast<T>(mCluster[o].size());
+		for(size_t p=0;p<mCluster[o].size();p++){
+			int n=mCluster[o][p];
+			for(size_t i=0;i<mAtoms[n].size();i++){
+				int ia=mAtoms[n][i];
+				xa[ia][XX]=xa[ia][XX]-rint(xcmC[XX]-HALF);
+				xa[ia][YY]=xa[ia][YY]-rint(xcmC[YY]-HALF);
+				xa[ia][ZZ]=xa[ia][ZZ]-rint(xcmC[ZZ]-HALF);
+			}
+
+		}
+
+	}
+
+	//> Obtain new Cartesian coordinates from reduced xa's
+
+	for(size_t i1=0;i1<mCluster.size();i1++){
+		for(size_t i2=0;i2<mCluster[i1].size();i2++){
+			int n=mCluster[i1][i2];
+			for(size_t i=0;i<mAtoms[n].size();i++){
+				int ia=mAtoms[n][i];
+				for(int o=0;o<DIM;o++){
+					xa[ia][o]=xa[ia][o]+0.5;
+					x[ia][o]=Mt.getCO()[o][XX]*xa[ia][XX]+Mt.getCO()[o][YY]*xa[ia][YY]+Mt.getCO()[o][ZZ]*xa[ia][ZZ];
+				}
+			}
+		}
+	}
+}
+template <typename T>
+DDvect<T> Atoms<T>::__FindCell(const vector<vector<int> > & mCluster, const vector<vector<int> > & mAtoms){
+	vector<Dvect> x(nr);
+	Matrix CO(Mt.getCO());
+	for(auto o=0;o<nr;o++){
+		for(auto n=0;n<DIM;n++){
+			x[o][n]=xa[o][n];
+		}
+	}
+	vector<T> xcm(mAtoms.size(),0.0);
+	Dvect myReturn{T{0.0}};
+	T dx=0.2;
+	for(auto n=0;n<DIM;n++){
+		size_t Nn=CO[n][n]/dx;
+		size_t M{0};
+		T ddx=1.0/Nn;
+		vector<int> myPBC(Nn);
+		while(M < Nn){
+			size_t bCount{0};
+			for(auto o=0;o<nr;o++){
+				x[o][n]+=ddx;
+			}
+			for(size_t o=0;o<mAtoms.size();o++){
+				// Compute molecule center of mass xcm
+				xcm[o]=0.0;
+				for(size_t p=0;p<mAtoms[o].size();p++){
+					T xx=x[mAtoms[o][p]][n];
+					xcm[o]+=xx;
+				}
+				xcm[o]/=static_cast<T>(mAtoms[o].size());
+				xcm[o]-=rint(xcm[o]-0.5);
+			}
+
+			for(size_t o=0;o<mCluster.size();o++){
+				int nn=mCluster[o][0];
+				T Xref=xcm[nn];
+				for(size_t p=1;p<mCluster[o].size();p++){
+					int nn=mCluster[o][p];
+					T PBC=rint(Xref-xcm[nn]);
+					if(PBC) bCount++;
+				}
+			}
+			myPBC[M]=bCount;
+			M++;
+		}
+		auto result = std::minmax_element(myPBC.begin(),myPBC.end());
+		auto it1=std::find_if(myPBC.begin(),myPBC.end(),[result](int q){return q==*result.first;});
+		auto it2=std::find_if(it1,myPBC.end(),[result](int q){return q!=*result.first;});
+		auto j=std::distance(myPBC.begin(),it1)+std::distance(it1,it2)/2;
+		myReturn[n]=j*ddx;
+	}
+	return 	myReturn;
+}
+template <typename T>
+Atoms<T>::~Atoms(){
+	delete Perco;
+	for(auto & op: Rg_i){
+		delete op;
+	}
+
+}
 template class Atoms<float>;
 template class Atoms<double>;
-
+template void Atoms<double>::Gyro<Enums::noJSON>();
+template void Atoms<double>::Gyro<Enums::JSON>();
+template void Atoms<float>::Gyro<Enums::noJSON>();
+template void Atoms<float>::Gyro<Enums::JSON>();
+template void Atoms<double>::SetupPercolate<Enums::noJSON>(Topol_NS::Topol &);
+template void Atoms<double>::SetupPercolate<Enums::JSON>(Topol_NS::Topol &);
+template void Atoms<float>::SetupPercolate<Enums::noJSON>(Topol_NS::Topol &);
+template void Atoms<float>::SetupPercolate<Enums::JSON>(Topol_NS::Topol &);

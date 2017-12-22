@@ -13,3 +13,5 @@ GyrationJSON<T>::~GyrationJSON() {
 	// TODO Auto-generated destructor stub
 }
 
+template class GyrationJSON<float>;
+template class GyrationJSON<double>;

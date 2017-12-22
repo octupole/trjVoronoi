@@ -6,6 +6,7 @@
  */
 
 #include "Contacts.h"
+
 template <typename T>
 void Contacts<T>::rCluster(size_t m){
 	b[m]=false;
@@ -20,11 +21,12 @@ void Contacts<T>::rCluster(size_t m){
 }
 template <typename T>
 void Contacts<T>::CompNei(){
-	double cut2=Rcut_in*Rcut_in;
+	T cut2=Rcut_in*Rcut_in;
 	nnl=vector<vector<int>>(v.size());
 	for(size_t o=0;o<v.size();o++){
 		Dvect x_o=v[o];
-		for(size_t p=o+1;p<v.size();p++){
+		for(size_t p=0;p<v.size();p++){
+			if(p == o) continue;
 			Dvect x_p=v[p];
 			Dvect xs{x_p-x_o};
 			for(int q=0;q<DIM;q++){
@@ -40,11 +42,12 @@ void Contacts<T>::CompNei(){
 template <typename T>
 void Contacts<T>::Neighbors(){
 	List.push_back(Ind);
+	LCells<T> Cells(CO,v,Rcut);
+
 	if(v.size() > 1){
-		LCells<T> Cells(CO,v,Rcut);
 		if(Cells.test()){
 			Cells.Index();
-			nnl=Cells.List();
+			nnl=Cells.List(false);
 		} else{
 			CompNei();
 		}
@@ -65,7 +68,7 @@ size_t Contacts<T>::next(){
 
 template <typename T>
 Contacts<T>::~Contacts() {
-
+	// TODO Auto-generated destructor stub
 }
 template class Contacts<float>;
 template class Contacts<double>;

@@ -31,7 +31,7 @@ namespace DVECT{
 
 	template <class T>
 	struct DDvect{
-		T x[DIM];
+		T x[DIM]{0,0,0};
 		DDvect(){};
 		DDvect(T x0, T y0, T z0){
 			x[XX]=x0;

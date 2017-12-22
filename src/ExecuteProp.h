@@ -21,6 +21,8 @@
 #include "Percolation.h"
 #include "Atoms.h"
 #include "Gyration.h"
+#include "GyrationJSON.h"
+#include "myEnums.hpp"
 template<typename T>
 class Atoms;
 
