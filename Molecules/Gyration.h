@@ -9,6 +9,8 @@
 #include <iomanip>
 #include <cstdlib>
 #include <vector>
+#include "json.hpp"
+using nlohmann::json;
 
 #include "MyUtilClass.h"
 
@@ -23,6 +25,7 @@ class Gyration{
 protected:
 	using Dvect=DDvect<T>;
 	using Matrix=MMatrix<T>;
+	static json myJson;
 
 	double Radg{0};
 	Dvect I,G,axis;
@@ -33,6 +36,7 @@ public:
 	Gyration(double a,Dvect & b, Dvect & c, Dvect & d): Radg(a),I(b),G(c), axis(d) {};
 	virtual ~Gyration();
 	double gRadg(){return Radg;}
+	static json & gJson(){return myJson;}
 	Dvect gI(){return I;}
 	Dvect gG(){return G;}
 	Dvect gaxis(){return axis;}

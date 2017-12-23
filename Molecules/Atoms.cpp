@@ -295,9 +295,9 @@ void Atoms<T>::Gyro(){
 		break;
 	default:
 		CalcGyro(mass,Rg);
-		for(size_t o{0};o<Rg.size();o++)
+		for(size_t o{0};o<Rg.size();o++){
 			Rg_i.push_back(new Gyration<T>(*Rg[o]));
-
+		}
 		CalcGyro(massNCH,Rg);
 		for(size_t o{0};o<Rg.size();o++)
 			Rg_i.push_back(new Gyration<T>(*Rg[o]));

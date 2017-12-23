@@ -10,9 +10,16 @@
 
 #include "Gyration.h"
 #include "json.hpp"
+#include <set>
+#include <string>
 
+using std::set;
+using std::string;
+using nlohmann::json;
 template <typename T>
 class GyrationJSON: public Gyration<T> {
+	static set<string> Time;
+	void __Writeit(ostream &,string, int);
 public:
 	using Gyration<T>::Gyration;
 	GyrationJSON(GyrationJSON<T> & y){
@@ -21,7 +28,6 @@ public:
 		this->G=y.G;
 		this->axis=y.axis;
 	}
-
 
 	virtual ~GyrationJSON();
 };

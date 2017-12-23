@@ -62,7 +62,7 @@ template <typename T>
 class Percolation {
 	using Dvect=DDvect<T>;
 	using Matrix=MMatrix<T>;
-
+protected:
 	size_t nr{0};
 	vector<vector<int> > Atoms;
 	vector<int> bAtoms;

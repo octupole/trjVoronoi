@@ -8,6 +8,8 @@
 #include "Gyration.h"
 template <typename T>
 double Gyration<T>::time_c=-1.0;
+template <typename T>
+json Gyration<T>::myJson;
 
 template <typename T>
 Gyration<T>::~Gyration(){};
@@ -29,7 +31,7 @@ void Gyration<T>::__Writeit(ostream & fout, string label, int o){
 
 template <typename T>
 ostream & operator<<(ostream & fout , Gyration<T> * Rgs){
-	Rgs->__Writeit(fout,"  ClusMIC = ",0);
+	Rgs->__Writeit(fout,"Tot",0);
 	return fout;
 }
 template <typename T>
@@ -37,11 +39,11 @@ ostream & operator<<(ostream & fout , vector<Gyration<T> *> & Rgs){
 	size_t beg0=0,beg1=Rgs.size()/2;
 	size_t end0=Rgs.size()/2,end1=Rgs.size();
 	for(size_t o=beg0;o<end0;o++){
-		Rgs[o]->__Writeit(fout,"  ClusMIC = ",o);
+		Rgs[o]->__Writeit(fout,"Tot",o);
 	}
 	int oo=0;
 	for(size_t o=beg1;o<end1;o++,oo++){
-		Rgs[o]->__Writeit(fout,"  ClusPOL = ",oo);
+		Rgs[o]->__Writeit(fout,"Pol",oo);
 	}
 	return fout;
 }

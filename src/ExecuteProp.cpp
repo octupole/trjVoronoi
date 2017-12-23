@@ -112,6 +112,14 @@ ExecuteProp<T>::ExecuteProp(trj::TrjRead & MyIn, Topol & Topology):
 	Rcut_in=MyIn.gRcut_in();
 };
 template <typename T>
+void ExecuteProp<T>::__lastBuffer(ofstream & fout){
+	if(this->JSONOutput){
+		fout <<"\""<<"Gyr"<<"\": ";
+		fout<<Gyration<T>::gJson();
+		fout<<"}}";
+	}
+}
+template <typename T>
 void ExecuteProp<T>::operator()(Atoms<T> * atx){
 
 	if(finx)
@@ -174,11 +182,11 @@ void ExecuteProp<T>::__RunTrajectory(Atoms<T> * atmx){
 
 
 		Comms->getStream() << atmA->getRg_i();
-		Comms->getStream() << atmA->getComp();
+		Comms->getStream() << *atmA->gPerco();
 
 		cout << fixed << setw(5) << "----> Time Step " << ntime << ss.str()<<"\n";
 	}
-
+__lastBuffer(Comms->getStream());
 	Comms->appendStreams();
 	if(bDel) Comms->removeFiles();
 	Comms->closeStream();   // close stream!!!

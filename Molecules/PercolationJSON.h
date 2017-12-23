@@ -10,9 +10,12 @@
 
 #include "Percolation.h"
 #include "json.hpp"
+using nlohmann::json;
 
 template <typename T>
 class PercolationJSON: public Percolation<T> {
+	json myJson;
+	void __Writeit(ostream &);
 public:
 	using Percolation<T>::Percolation;
 	virtual ~PercolationJSON();

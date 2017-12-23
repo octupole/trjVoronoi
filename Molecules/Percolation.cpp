@@ -241,27 +241,28 @@ void Percolation<T>::doContacts(vector<Dvect> & v, Matrix & co, Matrix & oc){
 }
 template <typename T>
 void Percolation<T>::__Writeit(ostream & fout){
-	fout << "%$        at step No. " << count <<"\n%$"<<endl;
-	fout << "%$        Contacts \n%$ " <<endl;
-	for(size_t n=0; n < Contacts.size(); n++){
-		fout << n << " " + Name[n] << " ;;  " << Contacts[n].size() << " ";
-		for(size_t m=0; m < Contacts[n].size(); m++) {
-			int i=Contacts[n][m];
-			fout << i << " " + Name[i] << " " ;
+	map<string,int> mapRes;
+	map<string,int> mapResAtm;
+
+	for(size_t o=0;o<Clusters.size();o++){
+		mapRes.clear();mapResAtm.clear();
+		for(size_t p=0;p<this->Clusters[o].size();p++){
+			int n=this->Clusters[o][p];
+			mapRes[this->pResn[n]]++;
+			for(size_t q{0};q<this->Atoms[n].size();q++){
+				mapResAtm[this->pResn[n]]++;
+			}
 		}
-		fout <<endl;
-	}
-	fout <<endl;
-	fout << "%$        Clusters  \n%$ " <<endl;
-	for(size_t n=0; n < Clusters.size(); n++){
-		fout << n << "::  " << Clusters[n].size() << " " ;
-		for(size_t m=0; m < Clusters[n].size(); m++) {
-			int i=Clusters[n][m];
-			fout << i << " " + Name[i] << " " ;
+		int ntot{0};
+		for(auto it{mapRes.begin()};it!= mapRes.end();it++){
+			ntot+=it->second;
 		}
-		fout <<endl;
+		fout << "  Cluster = "<< std::fixed << std::setw(3) << o << " Size " << ntot << " : ";
+		for(auto it{mapRes.begin()};it!= mapRes.end();it++){
+			fout << it->first << "[" << it->second << "] ";
+		}
+		fout << endl;
 	}
-	fout << endl;
 }
 
 
