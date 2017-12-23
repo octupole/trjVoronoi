@@ -27,6 +27,7 @@ struct MyData {
 };
 class Groups {
 	vector<bool> MyBeta;
+
 public:
 	Groups();
 	Groups(vector<Dvect> &,vector<MyResidue> &, vector<string> &);

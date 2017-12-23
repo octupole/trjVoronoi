@@ -10,7 +10,8 @@
 #include <cstdlib>
 #include <vector>
 #include "json.hpp"
-using nlohmann::json;
+#include <functional>
+
 
 #include "MyUtilClass.h"
 
@@ -19,13 +20,14 @@ using nlohmann::json;
 using namespace std;
 using namespace DVECT;
 using namespace MATRIX;
-
+using nlohmann::json;
 template <typename T>
 class Gyration{
 protected:
 	using Dvect=DDvect<T>;
 	using Matrix=MMatrix<T>;
 	static json myJson;
+	std::function<T(T)> mySqrt=[](T x){return x>0?sqrt(x):-1;};
 
 	double Radg{0};
 	Dvect I,G,axis;

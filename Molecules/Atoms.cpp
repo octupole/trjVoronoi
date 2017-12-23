@@ -187,7 +187,6 @@ template <typename T>
 void Atoms<T>::CalcGyro(vector<double> & massa,vector<Gyration<T>*> & Rg){
 	vector<vector<int> > mCluster=Perco->getCluster();
 	vector<vector<int> > mAtoms=Perco->getAtoms();
-
 	for(size_t o=0;o<mCluster.size();o++){
 		*Rg[o]=0.0;
 		Dvect cm,cmG;

@@ -6,6 +6,7 @@
  */
 
 #include "Gyration.h"
+using nlohmann::json;
 template <typename T>
 double Gyration<T>::time_c=-1.0;
 template <typename T>
@@ -18,13 +19,13 @@ template <typename T>
 void Gyration<T>::__Writeit(ostream & fout, string label, int o){
 	fout << label<< fixed << setw(3) << o;
 	fout << "  time = "<< fixed << setw(8) << setprecision(4) << time_c;
-	fout << "  Rg = "<< fixed << setw(8) << setprecision(4) << sqrt(Radg);
-	fout << "  a = " << fixed << setw(8) << setprecision(4) << sqrt(axis[XX]) ;
-	fout << "  b = " << fixed << setw(8) << setprecision(4) << sqrt(axis[YY]) ;
-	fout << "  c = " << fixed << setw(8) << setprecision(4) << sqrt(axis[ZZ]) ;
-	fout << "  I_x = " << fixed << setw(8) << setprecision(4) << sqrt(I[XX]) ;
-	fout << "  I_y = " << fixed << setw(8) << setprecision(4) << sqrt(I[YY]) ;
-	fout << "  I_z = " << fixed << setw(8) << setprecision(4) << sqrt(I[ZZ]) ;
+	fout << "  Rg = "<< fixed << setw(8) << setprecision(4) << mySqrt(Radg);
+	fout << "  a = " << fixed << setw(8) << setprecision(4) << mySqrt(axis[XX]) ;
+	fout << "  b = " << fixed << setw(8) << setprecision(4) << mySqrt(axis[YY]) ;
+	fout << "  c = " << fixed << setw(8) << setprecision(4) << mySqrt(axis[ZZ]) ;
+	fout << "  I_x = " << fixed << setw(8) << setprecision(4) << mySqrt(I[XX]) ;
+	fout << "  I_y = " << fixed << setw(8) << setprecision(4) << mySqrt(I[YY]) ;
+	fout << "  I_z = " << fixed << setw(8) << setprecision(4) << mySqrt(I[ZZ]) ;
 	fout << endl;
 
 }

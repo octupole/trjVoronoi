@@ -114,7 +114,7 @@ ExecuteProp<T>::ExecuteProp(trj::TrjRead & MyIn, Topol & Topology):
 template <typename T>
 void ExecuteProp<T>::__lastBuffer(ofstream & fout){
 	if(this->JSONOutput){
-		fout <<"\""<<"Gyr"<<"\": ";
+		fout <<"\""<<"gyro"<<"\": ";
 		fout<<Gyration<T>::gJson();
 		fout<<"}}";
 	}
