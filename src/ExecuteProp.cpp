@@ -186,7 +186,7 @@ void ExecuteProp<T>::__RunTrajectory(Atoms<T> * atmx){
 
 		cout << fixed << setw(5) << "----> Time Step " << ntime << ss.str()<<"\n";
 	}
-__lastBuffer(Comms->getStream());
+	__lastBuffer(Comms->getStream());
 	Comms->appendStreams();
 	if(bDel) Comms->removeFiles();
 	Comms->closeStream();   // close stream!!!
