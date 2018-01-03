@@ -30,7 +30,7 @@ void GyrationJSON<T>::__Writeit(ostream & fout, string label, int o){
 		Time.insert(TimeC);
 		if(firstTime){
 			firstTime=false;
-			fout <<"{"<<endl;
+			fout <<"  "<<endl;
 			fout <<"\""<<TimeC<<"\": ";
 		}else{
 			fout <<"\""<<"gyro"<<"\": ";

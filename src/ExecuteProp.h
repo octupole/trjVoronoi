@@ -82,6 +82,7 @@ class ExecuteProp {
 	void __RunPDB(Atoms<T> *);
 	void __RunTrajectory(Atoms<T> *);
 	void __lastBuffer(ofstream &);
+	void __wrapOutfile();
 public:
 	ExecuteProp(trj::TrjRead & x);
 	ExecuteProp(trj::TrjRead & x, Topol & y);

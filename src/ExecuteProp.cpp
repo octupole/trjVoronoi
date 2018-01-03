@@ -116,7 +116,7 @@ void ExecuteProp<T>::__lastBuffer(ofstream & fout){
 	if(this->JSONOutput){
 		fout <<"\""<<"gyro"<<"\": ";
 		fout<<Gyration<T>::gJson();
-		fout<<"}}";
+		fout<<"},";
 	}
 }
 template <typename T>
@@ -191,9 +191,37 @@ void ExecuteProp<T>::__RunTrajectory(Atoms<T> * atmx){
 	if(bDel) Comms->removeFiles();
 	Comms->closeStream();   // close stream!!!
 	CurrMPI->Barrier();
+	if(this->JSONOutput){
+		__wrapOutfile();
+	}
 	CurrMPI->~NewMPI();
 	cout << "\nProgram completed: Output data written to " + fileout << "\n\n";
 
+}
+template <typename T>
+void ExecuteProp<T>::__wrapOutfile(){
+	if(CurrMPI->Get_Rank() == 0){
+		char * buffer0= strdup("./.tmpfileXXXXXX");
+		try{if(mkstemp(buffer0) == -1) throw "temporary file cannot be created";}
+		catch(const char * s){std::cout << s << std::endl;exit(-1);}
+		string tmpFile(buffer0);
+		fstream myfout(buffer0,fstream::out|fstream::trunc|fstream::binary);
+		fstream myfin(fileout.c_str(),fstream::in|fstream::binary);
+		myfin.seekg(0,ios::beg);
+		myfout<<"{";
+		myfout << myfin.rdbuf();
+		myfout.seekg(-1,ios::end);
+		myfout.put('}');
+		myfout.close();
+		myfin.close();
+		myfin.open(buffer0,fstream::in|fstream::binary);
+		myfout.open(fileout.c_str(),fstream::out|fstream::trunc|fstream::binary);
+		myfout<< myfin.rdbuf();
+		myfout.close();myfin.close();
+		try{if(remove(buffer0) != 0) throw string("---->> Temporary files cannot be removed! <<-----");}
+		catch(const string & s){std::cout << s << std::endl;}
+	}
+	CurrMPI->Barrier();
 }
 template <typename T>
 void ExecuteProp<T>::__RunPDB(Atoms<T> * atm){
