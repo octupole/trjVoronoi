@@ -12,9 +12,23 @@ set<string> GyrationJSON<T>::Time;
 
 template <typename T>
 void GyrationJSON<T>::__Writeit(ostream & fout, string label, int o){
-	auto mySqrt=this->mySqrt;
 	static bool firstTime{true};
 	string TimeC=std::to_string(this->time_c);
+	if(!Time.count(TimeC)){
+		Time.insert(TimeC);
+		if(firstTime){
+			firstTime=false;
+			fout <<"\""<<TimeC<<"\": ";
+		}else{
+			fout <<"\""<<"gyro"<<"\": ";
+			fout<< this->myJson;
+			this->myJson.clear();
+			fout <<"},";
+			fout <<"\""<<TimeC<<"\": ";
+		}
+
+	}
+	auto mySqrt=this->mySqrt;
 
 	json & myType=this->myJson[label];
 	json myClust;
@@ -26,21 +40,6 @@ void GyrationJSON<T>::__Writeit(ostream & fout, string label, int o){
 	myClust["ax"].push_back(mySqrt(this->axis[YY]));
 	myClust["ax"].push_back(mySqrt(this->axis[ZZ]));
 	myType.push_back(myClust);
-	if(!Time.count(TimeC)){
-		Time.insert(TimeC);
-		if(firstTime){
-			firstTime=false;
-			fout <<"  "<<endl;
-			fout <<"\""<<TimeC<<"\": ";
-		}else{
-			fout <<"\""<<"gyro"<<"\": ";
-			fout<< this->myJson;
-			this->myJson.clear();
-			fout <<"},";
-			fout <<"\""<<TimeC<<"\": ";
-		}
-
-	}
 }
 
 template <typename T>
