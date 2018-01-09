@@ -9,8 +9,13 @@
 #define MOLECULES_PERCOLATIONJSON_H_
 
 #include "Percolation.h"
+#include <functional>
+#include <sstream>
+#include <iterator>
+
 #include "json.hpp"
 using nlohmann::json;
+using std::hash;
 
 template <typename T>
 class PercolationJSON: public Percolation<T> {
