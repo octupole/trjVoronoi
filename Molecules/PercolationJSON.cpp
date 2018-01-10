@@ -32,6 +32,7 @@ void PercolationJSON<T>::__Writeit(ostream & fout){
 		json tmp;
 		for(auto it{mapRes.begin()};it!= mapRes.end();it++){
 			std::stringstream ss;
+			std::sort(Tag[it->first].begin(),Tag[it->first].end());
 			std::copy(Tag[it->first].begin(),Tag[it->first].end(),std::ostream_iterator<int>( ss," "));
 			tmp[it->first]={it->second,mapResAtm[it->first],str_hash(ss.str())};
 		}

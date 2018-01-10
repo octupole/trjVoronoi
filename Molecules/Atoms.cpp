@@ -258,6 +258,7 @@ template<Enums::myWriteOptions OPT>
 void Atoms<T>::Gyro(){
 	vector<vector<int> > mCluster=Perco->getCluster();
 	vector<vector<int> > mAtoms=Perco->getAtoms();
+	std::hash<string> str_hash;
 
 	vector<Gyration<T> *> Rg=vector<Gyration<T>*>(mCluster.size());
 	switch(OPT){
@@ -277,19 +278,35 @@ void Atoms<T>::Gyro(){
 	case Enums::JSON:
 		CalcGyro(mass,Rg);
 		for(size_t o{0};o<Rg.size();o++){
+			vector<int> Tag;
+			for(size_t p=0;p<mCluster[o].size();p++){
+				int n=mCluster[o][p];
+				Tag.push_back(n);
+			}
+			std::sort(Tag.begin(),Tag.end());
+			std::stringstream ss;
+			std::copy(Tag.begin(),Tag.end(),std::ostream_iterator<int>( ss," "));
 			double a{Rg[o]->gRadg()};
 			Dvect I{Rg[o]->gI()};
 			Dvect G{Rg[o]->gG()};
 			Dvect axis{Rg[o]->gaxis()};
-			Rg_i.push_back(new GyrationJSON<T>(a,I,G,axis));
+			Rg_i.push_back(new GyrationJSON<T>(a,I,G,axis,str_hash(ss.str())));
 		}
 		CalcGyro(massNCH,Rg);
 		for(size_t o{0};o<Rg.size();o++){
+			vector<int> Tag;
+			for(size_t p=0;p<mCluster[o].size();p++){
+				int n=mCluster[o][p];
+				Tag.push_back(n);
+			}
+			std::sort(Tag.begin(),Tag.end());
+			std::stringstream ss;
+			std::copy(Tag.begin(),Tag.end(),std::ostream_iterator<int>( ss," "));
 			double a{Rg[o]->gRadg()};
 			Dvect I{Rg[o]->gI()};
 			Dvect G{Rg[o]->gG()};
 			Dvect axis{Rg[o]->gaxis()};
-			Rg_i.push_back(new GyrationJSON<T>(a,I,G,axis));
+			Rg_i.push_back(new GyrationJSON<T>(a,I,G,axis,str_hash(ss.str())));
 		}
 		break;
 	default:
