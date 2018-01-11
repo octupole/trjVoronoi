@@ -99,6 +99,7 @@ public:
 	listcon & getAtoms(){return Atoms;}
 	listcon & getContacts(){return Contacts;}
 	vector<Comp> & getClustComp(){return ClustComp;}
+	vector<string> & getpResn(){return pResn;}
 	virtual ~Percolation();
 	friend ostream & operator<<(ostream & fout, Percolation & perco){
 		perco.__Writeit(fout);

@@ -256,8 +256,9 @@ void Atoms<T>::CalcGyro(vector<double> & massa,vector<Gyration<T>*> & Rg){
 template <typename T>
 template<Enums::myWriteOptions OPT>
 void Atoms<T>::Gyro(){
-	vector<vector<int> > mCluster=Perco->getCluster();
-	vector<vector<int> > mAtoms=Perco->getAtoms();
+	vector<vector<int> >  mCluster=Perco->getCluster();
+	vector<vector<int> >  mAtoms=Perco->getAtoms();
+	vector<string>  & Types=Perco->getpResn();
 	std::hash<string> str_hash;
 
 	vector<Gyration<T> *> Rg=vector<Gyration<T>*>(mCluster.size());
@@ -278,35 +279,45 @@ void Atoms<T>::Gyro(){
 	case Enums::JSON:
 		CalcGyro(mass,Rg);
 		for(size_t o{0};o<Rg.size();o++){
-			vector<int> Tag;
+			map<string,vector<int>> Tag;
 			for(size_t p=0;p<mCluster[o].size();p++){
 				int n=mCluster[o][p];
-				Tag.push_back(n);
+				Tag[Types[n]].push_back(n);
 			}
-			std::sort(Tag.begin(),Tag.end());
-			std::stringstream ss;
-			std::copy(Tag.begin(),Tag.end(),std::ostream_iterator<int>( ss," "));
+			map<string,size_t> tstr;
+			for(auto tags: Tag){
+				vector<int> v=tags.second;
+				std::sort(v.begin(),v.end());
+				std::stringstream ss;
+				std::copy(v.begin(),v.end(),std::ostream_iterator<int>( ss," "));
+				tstr[tags.first]=str_hash(ss.str());
+			}
 			double a{Rg[o]->gRadg()};
 			Dvect I{Rg[o]->gI()};
 			Dvect G{Rg[o]->gG()};
 			Dvect axis{Rg[o]->gaxis()};
-			Rg_i.push_back(new GyrationJSON<T>(a,I,G,axis,str_hash(ss.str())));
+			Rg_i.push_back(new GyrationJSON<T>(a,I,G,axis,tstr));
 		}
 		CalcGyro(massNCH,Rg);
 		for(size_t o{0};o<Rg.size();o++){
-			vector<int> Tag;
+			map<string,vector<int>> Tag;
 			for(size_t p=0;p<mCluster[o].size();p++){
 				int n=mCluster[o][p];
-				Tag.push_back(n);
+				Tag[Types[n]].push_back(n);
 			}
-			std::sort(Tag.begin(),Tag.end());
-			std::stringstream ss;
-			std::copy(Tag.begin(),Tag.end(),std::ostream_iterator<int>( ss," "));
+			map<string,size_t> tstr;
+			for(auto tags: Tag){
+				vector<int> v=tags.second;
+				std::sort(v.begin(),v.end());
+				std::stringstream ss;
+				std::copy(v.begin(),v.end(),std::ostream_iterator<int>( ss," "));
+				tstr[tags.first]=str_hash(ss.str());
+			}
 			double a{Rg[o]->gRadg()};
 			Dvect I{Rg[o]->gI()};
 			Dvect G{Rg[o]->gG()};
 			Dvect axis{Rg[o]->gaxis()};
-			Rg_i.push_back(new GyrationJSON<T>(a,I,G,axis,str_hash(ss.str())));
+			Rg_i.push_back(new GyrationJSON<T>(a,I,G,axis,tstr));
 		}
 		break;
 	default:

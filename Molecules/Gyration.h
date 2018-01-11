@@ -28,7 +28,7 @@ protected:
 	using Matrix=MMatrix<T>;
 	static json myJson;
 	std::function<T(T)> mySqrt=[](T x){return x>0?sqrt(x):-1;};
-	size_t str_hash{0};
+	map<string,size_t> str_hash;
 	double Radg{0};
 	Dvect I,G,axis;
 	static double time_c;
@@ -36,7 +36,7 @@ protected:
 public:
 	Gyration(){};
 	Gyration(double a,Dvect & b, Dvect & c, Dvect & d): Radg(a),I(b),G(c), axis(d) {};
-	Gyration(double a,Dvect & b, Dvect & c, Dvect & d, size_t hashtag): Radg(a),I(b),G(c), axis(d), str_hash(hashtag) {};
+	Gyration(double a,Dvect & b, Dvect & c, Dvect & d, map<string,size_t> & hashtag): Radg(a),I(b),G(c), axis(d), str_hash(hashtag) {};
 	virtual ~Gyration();
 	double gRadg(){return Radg;}
 	static json & gJson(){return myJson;}
