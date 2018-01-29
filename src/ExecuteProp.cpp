@@ -41,7 +41,8 @@ ExecuteProp<T>::ExecuteProp(trj::TrjRead & MyIn) {
 	nend=MyIn.gnend();
 	nskip=MyIn.gnskip();
 	bTest=MyIn.bbTestVol();
-
+	fout_pdbx=MyIn.gFout_pdbx();
+	fout_ndxx=MyIn.gFout_ndxx();
 	if(finx){
 		size_t TotFrame=finx->gFrameStep();
 		try{
@@ -146,6 +147,7 @@ void ExecuteProp<T>::__RunTrajectory(Atoms<T> * atmx){
 		float ntime=atmA->getTime();
 		int nClusters{0};
 		atmA->setTopol(*Top);
+
 		if(Clustering){
 
 			static struct Once{
@@ -175,14 +177,26 @@ void ExecuteProp<T>::__RunTrajectory(Atoms<T> * atmx){
 		default:
 			ss<< "    " << fixed << setw(4) << nClusters<<" clusters <-----";
 		}
-		if(this->JSONOutput)
-			atmA->template Gyro<Enums::JSON>();
-		else
-			atmA->template Gyro<Enums::noJSON>();
 
+		if(fout_pdbx){
+			if(CurrMPI->Get_Rank() == 0)
+				(*fout_pdbx) << *atmA;
+			CurrMPI->Barrier();
 
-		Comms->getStream() << atmA->getRg_i();
-		Comms->getStream() << *atmA->gPerco();
+		} else if(fout_ndxx){
+			atmA->setNdx(true);
+			if(CurrMPI->Get_Rank() == 0)
+				(*fout_ndxx) << *atmA;
+			CurrMPI->Barrier();
+		} else{
+			if(this->JSONOutput)
+				atmA->template Gyro<Enums::JSON>();
+			else
+				atmA->template Gyro<Enums::noJSON>();
+			Comms->getStream() << atmA->getRg_i();
+			Comms->getStream() << *atmA->gPerco();
+		}
+
 
 		cout << fixed << setw(5) << "----> Time Step " << ntime << ss.str()<<"\n";
 	}

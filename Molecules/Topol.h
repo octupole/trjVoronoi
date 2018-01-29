@@ -111,6 +111,7 @@ protected:
 
 	void FindGroups(vector<Dvect> &,int);
 	void AllignGroups(vector<Dvect> &,int &,vector<int>&,int );
+	TopolPDB PDB;
 public:
 	static std::ofstream * fDomainPDB;
 	static bool bAuto;
@@ -121,7 +122,7 @@ public:
 	virtual ~Topol();
 	bool CheckResidue(const string & s);
 	vector<string> & getStringTypeNames(){return TypeNames;};
-
+	TopolPDB & gPDB(){return PDB;};
 	map<string,vector<vector<int> > > & getDef(){return DefRes;}
 	map<string,vector<vector<int> > > & getDefNH(){return DefResNH;}
 	vector<int> & gReferenceResidues(){return ReferenceResidues;};

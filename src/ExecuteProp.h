@@ -40,9 +40,11 @@ class ExecuteProp {
 	ios::streampos len;
 	static size_t nnx,nny,nnz; ///< The three dimension of the grid
 	bool Clustering{false}; ///< Do clustering or not
-	 bool bTest{false};
+	bool bTest{false};
+	bool bndx{false};
 	/// @cond TEST
 	ofstream * foutp1{nullptr};
+
 	int nacc{1};
 	/// @endcond
 	static Parallel::NewMPI * CurrMPI; ///< Point to current communicator if mpi invoked
@@ -64,6 +66,8 @@ class ExecuteProp {
 	ifstream * fpdb{nullptr}; ///< input stream pointer for pdb file
 	Fstream * finx{nullptr}; ///< Interface for special input stream for trajectory files
 	ofstream * foutx{nullptr}; ///< output stream
+	ofstream * fout_pdbx{nullptr};
+	ofstream * fout_ndxx{nullptr};
 	ifstream * fin1x{nullptr}; ///<input stream pointer to saved voronoi binary file
 	/// @cond TEST
 	ifstream * fidb{nullptr};

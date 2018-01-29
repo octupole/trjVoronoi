@@ -261,6 +261,7 @@ void Topol::ExtractInfo(TopolPDB & data,bool bRD){
 	resinfo.clear();
 	MySub.clear();
 	CIndex.clear();
+	PDB=data;
 
 	MyResidue mytmp;
 	vector<MyResidue> atres;

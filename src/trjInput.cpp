@@ -14,6 +14,7 @@ trjInput::trjInput(int ntot,char ** v, ClearUsage & clr) {
 
 	inmap["-o"]=in;
 	inmap["-obin"]=in;
+	inmap["-opdb"]=in;
 	inmap["-in"]=in;
 	inmap["-dcd"]=in;
 	inmap["-xtc"]=in;
@@ -52,8 +53,10 @@ trjInput::trjInput(int ntot,char ** v, ClearUsage & clr) {
 	Usage[0]="\t -dcd file.dcd \n";
 	Usage[1]="\t -xtc file.xtc\n";
 	Usage[2]="\t -pdb file.pdb \n";
-	Usage[3]="\t -o fileout \n";
-	Usage[4]="\t- b No. First Frame \n";
+	Usage[3]="\t -o fileout \n"
+			"\tFor a file with a .pdb extension: Write pdb files for the solute \n"
+			"\tFor a file with a .ndx extention: Write ndx files for the solute \n";
+	Usage[4]="\t -b No. First Frame \n";
 	Usage[5]="\t -e No. Last Frame\n";
 	Usage[6]="\t -obin file.bin\n";
 	Usage[7]="\t -in file.bin\n";

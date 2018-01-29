@@ -44,7 +44,7 @@ void TrjRead::Input(){
 	int pGroup{-1}; // From 0 to ngrps, ngrps no. of selected groups
 	bool bPrintVols{true};
 	bool bPrintAreas{false};
-
+	bool bpdbOut{false};
 	try{
 		if(!inmap["-dcd"].empty()) {
 			if(inmap["-dcd"].size() < 2) throw string("\n Filename expected for " + inmap["-dcd"][0] + " option \n");
@@ -107,6 +107,12 @@ void TrjRead::Input(){
 			if(inmap["-o"].size() < 2) throw string("\n filename expected for " + inmap["-o"][0] + " option \n");
 			if(inmap["-o"].size() > 2) throw string("\n More than one entry for " + inmap["-o"][0] + " option \n");
 			fileout=inmap["-o"][1];
+		}
+		if(!inmap["-opdb"].empty()) {
+			if(inmap["-opdb"].size() < 2) throw string("\n filename expected for " + inmap["-opdb"][0] + " option \n");
+			if(inmap["-opdb"].size() > 2) throw string("\n More than one entry for " + inmap["-opdb"][0] + " option \n");
+			fileout=inmap["-opdb"][1];
+			bpdbOut=true;
 		}
 		if(!inmap["-json"].empty()) {
 			if(inmap["-json"].size() < 2) throw string("\n filename expected for " + inmap["-json"][0] + " option \n");
@@ -242,12 +248,26 @@ void TrjRead::Input(){
 
 	string tmp1=fileout.substr(0,fileout.find_first_of("."));
 	string tmp2=".dat";
-
+	if(fileout.substr(fileout.find_first_of(".")+1).find("pdb") != string::npos){
+		fout_pdbx=new ofstream(fileout.c_str(),ios::out);
+		bClust=true;
+	} else if(bpdbOut){
+		fout_pdbx=new ofstream(fileout.c_str(),ios::out);
+		bClust=true;
+	}
+	if(fileout.substr(fileout.find_first_of(".")+1).find("ndx") != string::npos){
+		fout_ndxx=new ofstream(fileout.c_str(),ios::out);
+		bClust=true;
+	} else if(bpdbOut){
+		fout_ndxx=new ofstream(fileout.c_str(),ios::out);
+		bClust=true;
+	}
 
 	gFinx=finx;
 	gFin1=fin1;
 	gFout_xtcx=fout_xtcx;
 	gFout_pdbx=fout_pdbx;
+	gFout_ndxx=fout_ndxx;
 	gFoutx=foutx;
 
 	gFpdb=&fpdb;

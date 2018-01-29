@@ -16,6 +16,7 @@
 #include "MyUtilClass.h"
 #include "HeaderTrj.h"
 #include "Topol.h"
+#include "TopolPDB.h"
 #include "Contacts.h"
 #include "Gyration.h"
 #include "GyrationJSON.h"
@@ -73,6 +74,7 @@ class Atoms {
 	using Dvect=DDvect<T>;
 	using Matrix=MMatrix<T>;
 protected:
+	static int cPrint_calls;
 	bool firsttime{true};
 	const T HALF{0.5000-0.0001};
 	static int calls;
@@ -102,7 +104,10 @@ protected:
 	Percolation<T> * Perco{nullptr};
 	void CalcGyro(vector<double> &,vector<Gyration<T> *> &);
 	Dvect __FindCell(const vector<vector<int>> & ,const vector<vector<int>> & );
-
+	void cPrint(ostream &);
+	void ndxPrint(ostream &);
+	Topol_NS::TopolPDB PDB;
+	bool bndx{false};
 public:
 	Atoms(){};
 	Atoms(const int);
@@ -130,7 +135,7 @@ public:
 	Dvect & operator[](const int i){return x[i];};
 	Atoms & operator()(const int);
 	void Reconstruct(Contacts<T> *);
-
+	void setNdx(bool b){bndx=b;}
 	void Rot(const Matrix);
 	int getNR()const{return nr;};
 	const Metric<T> & getMt() const {return Mt;};
@@ -186,7 +191,10 @@ public:
 			y.WriteaStep(foutC);
 		return fout;
 	}
-
+	friend ostream & operator<<(ostream & fout , Atoms & y ){
+		y.cPrint(fout);
+		return fout;
+	}
 	friend std::ifstream & operator>>(std::ifstream & fin, Atoms & y){
 		y.ReadaStep(fin);
 		return fin;

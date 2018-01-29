@@ -71,6 +71,7 @@ class TrjRead: public trjInput {
 	bool inputfile{false};
 	bool bnoSplineOut{false};
 	bool bShell{false};
+	bool bndx{false};
 	string filein,fileout="Micelles.out",filechg="Charges.dat",filepdb;
 	string fileoutp1,fileoutp2,fileoutp3;
 	string fileout_bin{"Micelles.bin"};
@@ -86,6 +87,7 @@ class TrjRead: public trjInput {
 	Fstream * fin2x{nullptr};
 	Fstream * fout_xtcx{nullptr};
 	ofstream * fout_pdbx{nullptr};
+	ofstream * fout_ndxx{nullptr};
 	ofstream * fout_dip{nullptr};
 	ofstream * fout_cmx{nullptr};
 	ofstream * fout_elx{nullptr};
@@ -182,6 +184,7 @@ public:
 	Values<bool> binputfile{inputfile};
 	Values<bool> bbnoSplineOut{bnoSplineOut};
 	Values<bool> bbShell{bShell};
+	Values<bool> bbNdx{bndx};
 	Values<bool> bbDel{bDel};
 	Values<bool> bbWriteFab{bWriteFab};
 	Values<bool> bbTestVol{bTestVol};
@@ -198,6 +201,7 @@ public:
 	Streams<Fstream> gFin2x;
 	Streams<Fstream> gFout_xtcx;
 	Streams<ofstream> gFout_pdbx;
+	Streams<ofstream> gFout_ndxx;
 	Streams<ofstream> gFout_dip;
 	Streams<ofstream> gFout_cmx;
 	Streams<ofstream> gFout_elx;
