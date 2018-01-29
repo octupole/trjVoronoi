@@ -438,6 +438,7 @@ Atoms<T> Atoms<T>::OCtoCO(){
 		for(int o=0;o<DIM;o++) other.x[i][o]=Mt.getCO()[o][0]*x[i][0]+Mt.getCO()[o][1]*x[i][1]+Mt.getCO()[o][2]*x[i][2];
 	return other;
 }
+
 template <typename T>
 void Atoms<T>::ndxPrint(ostream & fout){
 	vector<vector<int> > mCluster=Perco->getCluster();
@@ -458,16 +459,18 @@ void Atoms<T>::ndxPrint(ostream & fout){
 		}
 		int N{0};
 		for( auto idx : myndx){
-			if(N%16)
-				fout << idx << " " ;
+		  if((N+1)%16)
+				fout << idx+1 << " " ;
 			else
 				if(N) fout <<"\n";
 
 			N++;
 		}
+
 		fout << endl;
 	}
 }
+
 template <typename T>
 void Atoms<T>::cPrint(ostream & fout){
 	if(bndx) return ndxPrint(fout);
