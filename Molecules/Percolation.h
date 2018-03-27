@@ -82,6 +82,7 @@ protected:
 	int count{0};
 	function<double(int,int)> myPercoCutoff;
 	virtual void __Writeit(ostream &);
+	Matrix CO,OC;
 
 public:
 	static void setPercoCutoff(double cut){PercoCutoff=cut;}

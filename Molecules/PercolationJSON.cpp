@@ -17,6 +17,7 @@ void PercolationJSON<T>::__Writeit(ostream & fout){
 	map<string,int> mapRes;
 	map<string,int> mapResAtm;
 	std::hash<string> str_hash;
+
 	for(size_t o=0;o<this->Clusters.size();o++){
 		json myClust;
 		mapRes.clear();mapResAtm.clear();
@@ -42,9 +43,19 @@ void PercolationJSON<T>::__Writeit(ostream & fout){
 		}
 		myJson["cluster"].push_back(tmp);
 	}
-
-	fout <<"{\"cluster\": ";
-	fout<<myJson["cluster"]<<",";
+	vector<T> co,oc;
+	for(size_t n{0};n< DIM;n++)
+		for(size_t m{0};m< DIM;m++){
+			co.push_back(this->CO[n][m]);
+			oc.push_back(this->OC[n][m]);
+		}
+	myJson["CO"]=co;
+	myJson["OC"]=oc;
+	fout <<"{";
+	for(auto it=myJson.begin();it != myJson.end();++it){
+		fout << "\""<<it.key() <<"\": ";
+		fout<<myJson[it.key()]<<",";
+	}
 	myJson.clear();
 }
 

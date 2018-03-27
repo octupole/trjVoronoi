@@ -252,7 +252,7 @@ void Atoms<T>::CalcGyro(vector<double> & massa,vector<Gyration<T>*> & Rg){
 		axis[YY]=fact*(Im[XX]+Im[ZZ]-Im[YY]);
 		axis[ZZ]=fact*(Im[YY]+Im[XX]-Im[ZZ]);
 		MyRg=(axis[XX]+axis[YY]+axis[ZZ])/5.0;
-		(*Rg[o])(MyRg,Im,Gm,axis);
+		(*Rg[o])(MyRg,Im,Gm,axis,cm);
 
 	}
 }
@@ -299,7 +299,8 @@ void Atoms<T>::Gyro(){
 			Dvect I{Rg[o]->gI()};
 			Dvect G{Rg[o]->gG()};
 			Dvect axis{Rg[o]->gaxis()};
-			Rg_i.push_back(new GyrationJSON<T>(a,I,G,axis,tstr));
+			Dvect xcm{Rg[o]->gXcm()};
+			Rg_i.push_back(new GyrationJSON<T>(a,I,G,axis,xcm,tstr));
 		}
 		CalcGyro(massNCH,Rg);
 		for(size_t o{0};o<Rg.size();o++){
@@ -320,7 +321,8 @@ void Atoms<T>::Gyro(){
 			Dvect I{Rg[o]->gI()};
 			Dvect G{Rg[o]->gG()};
 			Dvect axis{Rg[o]->gaxis()};
-			Rg_i.push_back(new GyrationJSON<T>(a,I,G,axis,tstr));
+			Dvect xcm{Rg[o]->gXcm()};
+			Rg_i.push_back(new GyrationJSON<T>(a,I,G,axis,xcm,tstr));
 		}
 		break;
 	default:

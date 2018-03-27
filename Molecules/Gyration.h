@@ -31,23 +31,36 @@ protected:
 	map<string,size_t> str_hash;
 	double Radg{0};
 	Dvect I,G,axis;
+	Dvect * xcmx{nullptr};
 	static double time_c;
 	virtual void __Writeit(ostream &,string, int);
 public:
 	Gyration(){};
 	Gyration(double a,Dvect & b, Dvect & c, Dvect & d): Radg(a),I(b),G(c), axis(d) {};
 	Gyration(double a,Dvect & b, Dvect & c, Dvect & d, map<string,size_t> & hashtag): Radg(a),I(b),G(c), axis(d), str_hash(hashtag) {};
+	Gyration(double a,Dvect & b, Dvect & c, Dvect & d, Dvect & xcm, map<string,size_t> & hashtag): Radg(a),I(b),G(c), axis(d), xcmx{new Dvect{xcm}}, str_hash(hashtag) {};
 	virtual ~Gyration();
 	double gRadg(){return Radg;}
 	static json & gJson(){return myJson;}
 	Dvect gI(){return I;}
 	Dvect gG(){return G;}
 	Dvect gaxis(){return axis;}
+	Dvect gXcm(){return *xcmx;}
 	void operator()(double a,Dvect & b, Dvect & c, Dvect & d){
 		Radg=a;I=b;G=c;axis=d;
 	}
+	void operator()(double a,Dvect & b, Dvect & c, Dvect & d, Dvect & xcm){
+		Radg=a;I=b;G=c;axis=d;
+		if(!xcmx) xcmx=new Dvect{xcm};
+		else *xcmx=xcm;
+	}
 	void operator()(double a,Dvect & b, Dvect & c, Dvect & d, double tt){
 		Radg=a;I=b;G=c;axis=d;time_c=tt;
+	}
+	void operator()(double a,Dvect & b, Dvect & c, Dvect & d, Dvect & xcm, double tt){
+		Radg=a;I=b;G=c;axis=d;time_c=tt;
+		if(!xcmx) xcmx=new Dvect{xcm};
+		else *xcmx=xcm;
 	}
 	Gyration & operator=(const Gyration & y){
 		Radg=y.Radg;

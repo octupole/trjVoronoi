@@ -238,6 +238,8 @@ void Percolation<T>::doContacts(vector<Dvect> & v, Matrix & co, Matrix & oc){
 			Contacts[n]=tmp[n];
 		}
 	}
+	CO=co;
+	OC=oc;
 }
 template <typename T>
 void Percolation<T>::__Writeit(ostream & fout){
