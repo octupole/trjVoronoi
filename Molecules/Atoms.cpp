@@ -255,6 +255,7 @@ void Atoms<T>::CalcGyro(vector<double> & massa,vector<Gyration<T>*> & Rg){
 		(*Rg[o])(MyRg,Im,Gm,axis,cm);
 
 	}
+
 }
 template <typename T>
 template<Enums::myWriteOptions OPT>

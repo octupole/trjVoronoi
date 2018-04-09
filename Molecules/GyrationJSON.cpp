@@ -39,9 +39,9 @@ void GyrationJSON<T>::__Writeit(ostream & fout, string label, int o){
 	myClust["ax"].push_back(mySqrt(this->axis[XX]));
 	myClust["ax"].push_back(mySqrt(this->axis[YY]));
 	myClust["ax"].push_back(mySqrt(this->axis[ZZ]));
-	myClust["xcm"].push_back(mySqrt((*this->xcmx)[XX]));
-	myClust["xcm"].push_back(mySqrt((*this->xcmx)[YY]));
-	myClust["xcm"].push_back(mySqrt((*this->xcmx)[ZZ]));
+	myClust["xcm"].push_back((*this->xcmx)[XX]);
+	myClust["xcm"].push_back((*this->xcmx)[YY]);
+	myClust["xcm"].push_back((*this->xcmx)[ZZ]);
 	for(auto tags: this->str_hash){
 		myClust["hsh"][tags.first]=tags.second;
 	}
