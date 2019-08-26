@@ -22,6 +22,7 @@ class GyrationJSON: public Gyration<T> {
 	void __Writeit(ostream &,string, int);
 public:
 	using Gyration<T>::Gyration;
+	GyrationJSON(){};
 	GyrationJSON(GyrationJSON<T> & y){
 		this->Radg=y.Radg;
 		this->I=y.I;
